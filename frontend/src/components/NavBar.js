@@ -2,14 +2,17 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
+import '../styles/NavBar.css'; // Assuming you have a separate CSS file for styling
 
 const NavBar = () => {
   return (
     <nav>
-      <ul>
-        <li><Link to="/">Home</Link></li>
-        <li><Link to="/account">Account</Link></li>
-        {/* Add more navigation links as needed */}
+      <ul className="nav-list">
+        <li className="nav-item left"><Link to="/">Home</Link></li>
+        <li className="nav-item center">
+          <input type="text" placeholder="Search" className="search-bar" />
+        </li>
+        <li className="nav-item right"><Link to="/login">Login</Link></li>
       </ul>
     </nav>
   );
