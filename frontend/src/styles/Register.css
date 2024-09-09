@@ -1,14 +1,6 @@
 /* src/styles/Register.css */
 
-body {
-    margin: 0;
-    padding: 0;
-    font-family: 'Arial', sans-serif;
-    background-color: #141414;
-    color: #fff;
-  }
-  
-  .register-container {
+.register-container {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -17,29 +9,23 @@ body {
     background-color: #141414;
   }
   
-  .register-form {
+  .register-form, .verify-form {
     background-color: #333;
     padding: 30px;
     border-radius: 8px;
     width: 100%;
-    max-width: 500px; /* Responsive max width */
+    max-width: 500px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
     color: #fff;
   }
   
-  .register-form h2, .register-form h3 {
+  .register-form h2, .register-form h3, .verify-form h2 {
     text-align: center;
     color: #fff;
     margin-bottom: 20px;
   }
   
-  .register-form h3 {
-    color: #e50914; /* Netflix's red color for section headers */
-    margin-top: 30px;
-    font-size: 18px;
-  }
-  
-  .register-form input {
+  .register-form input, .verify-form input {
     width: 100%;
     padding: 12px;
     margin-bottom: 15px;
@@ -48,16 +34,25 @@ body {
     background-color: #444;
     color: #fff;
     font-size: 14px;
-    box-sizing: border-box; /* Ensure padding doesn't overflow */
+    box-sizing: border-box;
     outline: none;
-    transition: background-color 0.3s ease;
   }
   
-  .register-form input:focus {
-    background-color: #555; /* Slight change on focus */
+  .register-form input:focus, .verify-form input:focus {
+    background-color: #555;
   }
   
-  .register-button {
+  .subscribe-label {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  .subscribe-label input {
+    margin-right: 10px;
+  }
+  
+  .register-button, .verify-button {
     width: 100%;
     padding: 12px;
     background-color: #e50914;
@@ -69,39 +64,18 @@ body {
     transition: background-color 0.3s ease;
   }
   
-  .register-button:hover {
+  .register-button:hover, .verify-button:hover {
     background-color: #f40612;
   }
   
-  @media (max-width: 768px) {
-    .register-form {
-      padding: 20px;
-      max-width: 90%;
-    }
-  
-    .register-form input {
-      font-size: 16px;
-    }
-  
-    .register-button {
-      font-size: 18px;
-      padding: 14px;
-    }
+  .success-message {
+    text-align: center;
+    color: #fff;
   }
   
-  @media (max-width: 480px) {
-    .register-form {
-      padding: 15px;
-    }
-  
-    .register-form input {
-      font-size: 14px;
-      padding: 10px;
-    }
-  
-    .register-button {
-      font-size: 16px;
-      padding: 12px;
-    }
+  .error-message {
+    color: red;
+    text-align: center;
+    margin-bottom: 15px;
   }
   

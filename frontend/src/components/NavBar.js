@@ -1,10 +1,8 @@
-// src/components/NavBar.js
-
 import React from 'react';
 import { Link } from 'react-router-dom';
-import '../styles/NavBar.css'; // Assuming you have a separate CSS file for styling
+import '../styles/NavBar.css';
 
-const NavBar = ({ onLoginClick }) => {
+const NavBar = ({ onLoginClick, userName, onLogout }) => {
   return (
     <nav>
       <ul className="nav-list">
@@ -13,7 +11,14 @@ const NavBar = ({ onLoginClick }) => {
           <input type="text" placeholder="Search" className="search-bar" />
         </li>
         <li className="nav-item right">
-          <button className="login-button" onClick={onLoginClick}>Login</button>
+          {userName ? (
+            <div>
+              <span>Welcome, {userName}</span>
+              <button className="logout-button" onClick={onLogout}>Logout</button>
+            </div>
+          ) : (
+            <button className="login-button" onClick={onLoginClick}>Login</button>
+          )}
         </li>
       </ul>
     </nav>

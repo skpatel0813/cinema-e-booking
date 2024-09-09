@@ -1,11 +1,10 @@
-// src/pages/Home.js
-
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import NavBar from '../components/NavBar'; // Import NavBar component
 import DetailedModal from '../components/DetailedModal'; // Import the DetailedModal component
 import LoginModal from '../components/LoginModal'; // Import the LoginModal component
 import '../styles/Home.css'; // Import CSS for styling
+import { useNavigate } from 'react-router-dom'; // To handle navigation
 
 const Home = () => {
   const [movies, setMovies] = useState([]);
@@ -14,11 +13,19 @@ const Home = () => {
   const [showLoginModal, setShowLoginModal] = useState(false); // State to control login modal visibility
   const [showRegisterModal, setShowRegisterModal] = useState(false); // State to control register modal visibility
   const [selectedCategory, setSelectedCategory] = useState('nowPlaying'); // State to track selected category
+  const [userName, setUserName] = useState(''); // State to track logged-in user
+  const navigate = useNavigate(); // For navigation
 
   useEffect(() => {
+    // Check if user is logged in by checking localStorage for username
+    const storedUserName = localStorage.getItem('user');
+    if (storedUserName) {
+      setUserName(storedUserName);
+    }
+
+    // Fetch movie data
     axios.get('/api/movies/home')
       .then(response => {
-        console.log('Response Data:', response.data); // Log to verify data structure
         if (Array.isArray(response.data)) {
           setMovies(response.data); // Set movies state with data array
         } else {
@@ -29,7 +36,6 @@ const Home = () => {
   }, []);
 
   const handleViewDetails = (movie) => {
-    console.log('Selected Movie:', movie); // Debugging log
     setSelectedMovie(movie); // Set the selected movie
     setShowDetailedModal(true); // Show the detailed modal
   };
@@ -60,6 +66,12 @@ const Home = () => {
   const handleSwitchToLogin = () => {
     setShowRegisterModal(false); // Hide the register modal
     setShowLoginModal(true); // Show the login modal
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('user'); // Remove user from local storage
+    setUserName(''); // Reset userName state
+    navigate('/'); // Redirect to home page
   };
 
   // Slice movies array for different categories
@@ -98,8 +110,8 @@ const Home = () => {
 
   return (
     <div>
-      {/* Ensure NavBar is only rendered once */}
-      <NavBar onLoginClick={handleLoginClick} /> 
+      {/* Pass userName to NavBar and also pass handleLogout to allow the user to log out */}
+      <NavBar onLoginClick={handleLoginClick} userName={userName} onLogout={handleLogout} /> 
       
       <div className="header">
         <h1>Movies to Watch</h1>
