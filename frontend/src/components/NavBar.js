@@ -4,7 +4,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import '../styles/NavBar.css'; // Assuming you have a separate CSS file for styling
 
-const NavBar = () => {
+const NavBar = ({ onLoginClick }) => {
   return (
     <nav>
       <ul className="nav-list">
@@ -12,7 +12,9 @@ const NavBar = () => {
         <li className="nav-item center">
           <input type="text" placeholder="Search" className="search-bar" />
         </li>
-        <li className="nav-item right"><Link to="/login">Login</Link></li>
+        <li className="nav-item right">
+          <button className="login-button" onClick={onLoginClick}>Login</button>
+        </li>
       </ul>
     </nav>
   );

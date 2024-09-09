@@ -18,6 +18,7 @@ nav {
   
   .nav-item {
     color: #fff;
+    padding: 0 10px; /* Spacing between items */
   }
   
   .nav-item.left {
@@ -43,6 +44,19 @@ nav {
   
   .nav-item a:hover {
     color: #e50914; /* Netflix's red color for hover */
+  }
+  
+  .login-button {
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 16px;
+    cursor: pointer;
+    transition: color 0.3s;
+  }
+  
+  .login-button:hover {
+    color: black;
   }
   
   .search-bar {

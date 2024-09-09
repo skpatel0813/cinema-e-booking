@@ -29,7 +29,7 @@
 }
 
 .nav-links .active-link {
-  color: #fff;
+  color: red;
   font-weight: bold;
   border-bottom: 2px solid #fff; /* Underline for active link */
 }
