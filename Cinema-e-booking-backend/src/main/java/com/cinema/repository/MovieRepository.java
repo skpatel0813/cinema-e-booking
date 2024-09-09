@@ -1,5 +1,3 @@
-// src/main/java/com/cinema/repository/MovieRepository.java
-
 package com.cinema.repository;
 
 import com.cinema.model.Movie;
@@ -13,5 +11,5 @@ import java.util.List;
 public interface MovieRepository extends CrudRepository<Movie, Long> {
 
     @Query("SELECT m FROM Movie m")
-    List<Movie> findRandomMovies();
+    List<Movie> findRandomMovies(); // Modify this if you want to use random logic
 }

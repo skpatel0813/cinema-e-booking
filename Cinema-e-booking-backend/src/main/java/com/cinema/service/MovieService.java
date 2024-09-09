@@ -17,13 +17,8 @@ public class MovieService {
         return movieRepository.findRandomMovies();
     }
 
-    // New method to print movie titles
-    public void printMovieTitles() {
-        List<Movie> movies = getRandomMovies();
-        int i = 1;
-        for (Movie movie : movies) {
-            System.out.println(i + ". " + movie.getTitle() + " " +  movie.getPoster_url());
-            i++;
-        }
+    // Example method to fetch a movie by ID
+    public Movie getMovieById(Long id) {
+        return movieRepository.findById(id).orElse(null);
     }
 }

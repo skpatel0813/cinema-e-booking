@@ -3,10 +3,7 @@ package com.cinema.controller;
 import com.cinema.model.Movie;
 import com.cinema.service.MovieService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -20,9 +17,11 @@ public class MovieController {
 
     @GetMapping("/home")
     public List<Movie> getHomeMovies() {
-        List<Movie> movies = movieService.getRandomMovies();
-        movies.forEach(movie -> System.out.println("Title: " + movie.getTitle() + ", Poster URL: " + movie.getPoster_url()));
-        return movies; // Ensure this returns a list of Movie objects
+        return movieService.getRandomMovies(); // Fetches random movies for the home page
     }
 
+    @GetMapping("/{id}")
+    public Movie getMovieDetails(@PathVariable Long id) {
+        return movieService.getMovieById(id); // Fetches movie details by ID
+    }
 }
