@@ -31,5 +31,5 @@ public class VerificationRequest {
     public void setVerificationCode(String verificationCode) {
         this.verificationCode = verificationCode;
     }
-    
+
 }

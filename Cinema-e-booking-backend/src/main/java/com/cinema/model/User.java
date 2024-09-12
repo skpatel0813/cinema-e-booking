@@ -1,46 +1,80 @@
 package com.cinema.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "user")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class User {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String name;
+
+    @Column(unique = true, nullable = false)
     private String email;
+
+    @Column(nullable = false)
     private String password;
+
     private String phone;
 
-    // Home address
+    @Column(name = "street")
     private String street;
+
+    @Column(name = "city")
     private String city;
+
+    @Column(name = "state")
     private String state;
+
+    @Column(name = "zip")
     private String zip;
 
-    // Optional billing address and payment
-    private String billingStreet;
-    private String billingCity;
-    private String billingState;
-    private String billingZip;
-    private String cardType;
-    private String cardNumber;
-    private String expirationDate;
-
-    private boolean subscribeToPromotions;
-    private String verificationCode;
+    @Column(name = "is_verified")
     private boolean isVerified;
 
-    // Getters and Setters
+    @Column(name = "verification_code")
+    private String verificationCode;
 
+    @Column(name = "subscribe_to_promotions")
+    private boolean subscribeToPromotions;
+
+    @Column(name = "billing_street")
+    private String billingStreet;
+
+    @Column(name = "billing_city")
+    private String billingCity;
+
+    @Column(name = "billing_state")
+    private String billingState;
+
+    @Column(name = "billing_zip")
+    private String billingZip;
+
+    @Column(name = "card_number")
+    private String cardNumber;
+
+    @Column(name = "card_type")
+    private String cardType;
+
+    @Column(name = "expiration_date")
+    private String expirationDate;
+
+    // Constructors
+    public User() {}
+
+    public User(String name, String email, String password, String phone, boolean subscribeToPromotions) {
+        this.name = name;
+        this.email = email;
+        this.password = password;
+        this.phone = phone;
+        this.subscribeToPromotions = subscribeToPromotions;
+        this.isVerified = false;
+    }
+
+    // Getters and Setters for all fields
     public Long getId() {
         return id;
     }
@@ -79,6 +113,30 @@ public class User {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    public boolean isVerified() {
+        return isVerified;
+    }
+
+    public void setVerified(boolean isVerified) {
+        this.isVerified = isVerified;
+    }
+
+    public String getVerificationCode() {
+        return verificationCode;
+    }
+
+    public void setVerificationCode(String verificationCode) {
+        this.verificationCode = verificationCode;
+    }
+
+    public boolean isSubscribeToPromotions() {
+        return subscribeToPromotions;
+    }
+
+    public void setSubscribeToPromotions(boolean subscribeToPromotions) {
+        this.subscribeToPromotions = subscribeToPromotions;
     }
 
     public String getStreet() {
@@ -145,14 +203,6 @@ public class User {
         this.billingZip = billingZip;
     }
 
-    public String getCardType() {
-        return cardType;
-    }
-
-    public void setCardType(String cardType) {
-        this.cardType = cardType;
-    }
-
     public String getCardNumber() {
         return cardNumber;
     }
@@ -161,35 +211,19 @@ public class User {
         this.cardNumber = cardNumber;
     }
 
+    public String getCardType() {
+        return cardType;
+    }
+
+    public void setCardType(String cardType) {
+        this.cardType = cardType;
+    }
+
     public String getExpirationDate() {
         return expirationDate;
     }
 
     public void setExpirationDate(String expirationDate) {
         this.expirationDate = expirationDate;
-    }
-
-    public boolean isSubscribeToPromotions() {
-        return subscribeToPromotions;
-    }
-
-    public void setSubscribeToPromotions(boolean subscribeToPromotions) {
-        this.subscribeToPromotions = subscribeToPromotions;
-    }
-
-    public String getVerificationCode() {
-        return verificationCode;
-    }
-
-    public void setVerificationCode(String verificationCode) {
-        this.verificationCode = verificationCode;
-    }
-
-    public boolean isVerified() {
-        return isVerified;
-    }
-
-    public void setVerified(boolean isVerified) {
-        this.isVerified = isVerified;
     }
 }
