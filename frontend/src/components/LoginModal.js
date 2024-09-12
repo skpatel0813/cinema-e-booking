@@ -17,8 +17,9 @@ const LoginModal = ({ isOpen, onClose }) => {
       .then(response => {
         console.log('Logged in successfully:', response.data);
 
-        // Store the user's name in localStorage
+        // Store the user's name and email in localStorage
         localStorage.setItem('user', response.data.name);
+        localStorage.setItem('userEmail', response.data.email);
 
         // Redirect to the homepage
         onClose(); // Close the modal on successful login

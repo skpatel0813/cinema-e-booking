@@ -1,33 +1,34 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
-import NavBar from '../components/NavBar'; // Import NavBar component
-import DetailedModal from '../components/DetailedModal'; // Import the DetailedModal component
-import LoginModal from '../components/LoginModal'; // Import the LoginModal component
-import '../styles/Home.css'; // Import CSS for styling
-import { useNavigate } from 'react-router-dom'; // To handle navigation
+import NavBar from '../components/NavBar'; 
+import DetailedModal from '../components/DetailedModal'; 
+import LoginModal from '../components/LoginModal'; 
+import EditProfileModal from '../components/EditProfileModal'; // Import EditProfileModal
+import '../styles/Home.css'; 
+import { useNavigate } from 'react-router-dom'; 
 
 const Home = () => {
   const [movies, setMovies] = useState([]);
-  const [selectedMovie, setSelectedMovie] = useState(null); // State to track selected movie
-  const [showDetailedModal, setShowDetailedModal] = useState(false); // State to control detailed modal visibility
-  const [showLoginModal, setShowLoginModal] = useState(false); // State to control login modal visibility
-  const [showRegisterModal, setShowRegisterModal] = useState(false); // State to control register modal visibility
-  const [selectedCategory, setSelectedCategory] = useState('nowPlaying'); // State to track selected category
-  const [userName, setUserName] = useState(''); // State to track logged-in user
-  const navigate = useNavigate(); // For navigation
+  const [selectedMovie, setSelectedMovie] = useState(null); 
+  const [showDetailedModal, setShowDetailedModal] = useState(false); 
+  const [showLoginModal, setShowLoginModal] = useState(false); 
+  const [showRegisterModal, setShowRegisterModal] = useState(false); 
+  const [showEditProfileModal, setShowEditProfileModal] = useState(false); // For Edit Profile Modal
+  const [selectedCategory, setSelectedCategory] = useState('nowPlaying'); 
+  const [userName, setUserName] = useState(''); 
+  const movieListRef = useRef(null); 
+  const navigate = useNavigate(); 
 
   useEffect(() => {
-    // Check if user is logged in by checking localStorage for username
     const storedUserName = localStorage.getItem('user');
     if (storedUserName) {
       setUserName(storedUserName);
     }
 
-    // Fetch movie data
     axios.get('/api/movies/home')
       .then(response => {
         if (Array.isArray(response.data)) {
-          setMovies(response.data); // Set movies state with data array
+          setMovies(response.data);
         } else {
           console.error('Expected an array but got:', response.data);
         }
@@ -36,50 +37,70 @@ const Home = () => {
   }, []);
 
   const handleViewDetails = (movie) => {
-    setSelectedMovie(movie); // Set the selected movie
-    setShowDetailedModal(true); // Show the detailed modal
+    setSelectedMovie(movie);
+    setShowDetailedModal(true); 
   };
 
   const handleCloseDetailedModal = () => {
-    setShowDetailedModal(false); // Hide the detailed modal
-    setSelectedMovie(null); // Reset the selected movie
+    setShowDetailedModal(false); 
+    setSelectedMovie(null); 
   };
 
   const handleLoginClick = () => {
-    setShowRegisterModal(false); // Ensure RegisterModal is closed
-    setShowLoginModal(true); // Show the login modal
+    setShowRegisterModal(false); 
+    setShowLoginModal(true); 
   };
 
   const handleCloseLoginModal = () => {
-    setShowLoginModal(false); // Hide the login modal
+    setShowLoginModal(false); 
   };
 
   const handleSwitchToRegister = () => {
-    setShowLoginModal(false); // Hide the login modal
-    setShowRegisterModal(true); // Show the register modal
+    setShowLoginModal(false); 
+    setShowRegisterModal(true); 
   };
 
   const handleCloseRegisterModal = () => {
-    setShowRegisterModal(false); // Hide the register modal
+    setShowRegisterModal(false); 
   };
 
   const handleSwitchToLogin = () => {
-    setShowRegisterModal(false); // Hide the register modal
-    setShowLoginModal(true); // Show the login modal
+    setShowRegisterModal(false); 
+    setShowLoginModal(true); 
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('user'); // Remove user from local storage
-    setUserName(''); // Reset userName state
-    navigate('/'); // Redirect to home page
+    localStorage.removeItem('user'); 
+    setUserName(''); 
+    navigate('/'); 
   };
 
-  // Slice movies array for different categories
+  const handleEditProfileClick = () => {
+    setShowEditProfileModal(true); // Show Edit Profile Modal
+  };
+
+  const handleCloseEditProfileModal = () => {
+    setShowEditProfileModal(false); // Hide Edit Profile Modal
+  };
+
+  const scrollLeft = () => {
+    movieListRef.current.scrollBy({
+      left: -500, 
+      behavior: 'smooth'
+    });
+  };
+
+  const scrollRight = () => {
+    movieListRef.current.scrollBy({
+      left: 500, 
+      behavior: 'smooth'
+    });
+  };
+
   const nowPlayingMovies = movies.slice(0, 5);
   const comingSoonMovies = movies.slice(5, 10);
   const onDemandMovies = movies.slice(10, 15);
 
-  // Function to render movies based on selected category
   const renderMovies = () => {
     let categoryMovies = [];
     if (selectedCategory === 'nowPlaying') {
@@ -91,28 +112,36 @@ const Home = () => {
     }
 
     return (
-      <div className="movie-list">
-        {categoryMovies.map(movie => (
-          <div key={movie.movie_id} className="movie-card" onClick={() => handleViewDetails(movie)}>
-            <img 
-              src={movie.poster_url} 
-              alt={movie.title} 
-              className="movie-poster"
-              onError={(e) => e.target.style.display = 'none'}
-            />
-            <h2>{movie.title}</h2>
-            <button className="book-now-btn" onClick={() => handleViewDetails(movie)}>Get Tickets</button>
-          </div>
-        ))}
+      <div className="carousel-container">
+        <button className="scroll-arrow left" onClick={scrollLeft}>&lt;</button> 
+        <div className="movie-list" ref={movieListRef}>
+          {categoryMovies.map(movie => (
+            <div key={movie.movie_id} className="movie-card" onClick={() => handleViewDetails(movie)}>
+              <img 
+                src={movie.poster_url} 
+                alt={movie.title} 
+                className="movie-poster"
+                onError={(e) => e.target.style.display = 'none'}
+              />
+              <h2>{movie.title}</h2>
+              <button className="book-now-btn" onClick={() => handleViewDetails(movie)}>Get Tickets</button>
+            </div>
+          ))}
+        </div>
+        <button className="scroll-arrow right" onClick={scrollRight}>&gt;</button> 
       </div>
     );
   };
 
   return (
     <div>
-      {/* Pass userName to NavBar and also pass handleLogout to allow the user to log out */}
-      <NavBar onLoginClick={handleLoginClick} userName={userName} onLogout={handleLogout} /> 
-      
+      <NavBar 
+        onLoginClick={handleLoginClick} 
+        userName={userName} 
+        onLogout={handleLogout} 
+        onEditProfileClick={handleEditProfileClick} // Pass Edit Profile handler
+      /> 
+
       <div className="header">
         <h1>Movies to Watch</h1>
         <div className="nav-links">
@@ -137,19 +166,20 @@ const Home = () => {
         </div>
       </div>
 
-      {/* Render movies based on selected category */}
       {renderMovies()}
       
-      {/* Modal to show detailed movie information */}
       <DetailedModal show={showDetailedModal} onClose={handleCloseDetailedModal} movie={selectedMovie} />
 
-      {/* Modal for login functionality */}
       <LoginModal 
         isOpen={showLoginModal} 
         onClose={handleCloseLoginModal}
         onSwitchToRegister={handleSwitchToRegister}
       />
 
+      <EditProfileModal 
+        isOpen={showEditProfileModal} 
+        onClose={handleCloseEditProfileModal}
+      /> 
     </div>
   );
 };

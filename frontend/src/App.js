@@ -6,7 +6,7 @@ import MovieDetails from './pages/MovieDetails';
 import Booking from './pages/Booking';
 import Account from './pages/Account';
 import Register from './pages/Register'; // Assuming Register page is in src/pages
-import './styles/App.css';
+
 
 const App = () => {
   return (

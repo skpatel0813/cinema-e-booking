@@ -1,8 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import '../styles/NavBar.css';
 
-const NavBar = ({ onLoginClick, userName, onLogout }) => {
+const NavBar = ({ onLoginClick, userName, onLogout, onEditProfileClick }) => {
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+
+  const toggleDropdown = () => {
+    setDropdownOpen(!dropdownOpen);
+  };
+
   return (
     <nav>
       <ul className="nav-list">
@@ -12,9 +18,14 @@ const NavBar = ({ onLoginClick, userName, onLogout }) => {
         </li>
         <li className="nav-item right">
           {userName ? (
-            <div>
-              <span>Welcome, {userName}</span>
-              <button className="logout-button" onClick={onLogout}>Logout</button>
+            <div className="user-section">
+              <span onClick={toggleDropdown} className="user-name">Welcome, {userName}</span>
+              {dropdownOpen && (
+                <div className="dropdown">
+                  <button className="dropdown-btn" onClick={onEditProfileClick}>Edit Profile</button>
+                  <button className="dropdown-btn" onClick={onLogout}>Logout</button>
+                </div>
+              )}
             </div>
           ) : (
             <button className="login-button" onClick={onLoginClick}>Login</button>
