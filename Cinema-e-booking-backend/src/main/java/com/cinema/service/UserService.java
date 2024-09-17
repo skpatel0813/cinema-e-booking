@@ -38,6 +38,11 @@ public class UserService {
         user.setVerificationCode(verificationCode);
         user.setVerified(false);
 
+        // Set role to 'user' by default, unless specified
+        if (user.getRole() == null || user.getRole().isEmpty()) {
+            user.setRole("user");
+        }
+
         User savedUser = userRepository.save(user);
         emailService.sendVerificationEmail(user.getEmail(), verificationCode);
 

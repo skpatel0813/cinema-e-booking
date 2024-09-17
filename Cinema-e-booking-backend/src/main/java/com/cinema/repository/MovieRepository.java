@@ -8,8 +8,8 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface MovieRepository extends CrudRepository<Movie, Long> {
+public interface MovieRepository extends CrudRepository<Movie, Integer> {
 
     @Query("SELECT m FROM Movie m")
-    List<Movie> findRandomMovies(); // Modify this if you want to use random logic
+    List<Movie> getRandomMovies(); // Modify this if you want to use random logic
 }

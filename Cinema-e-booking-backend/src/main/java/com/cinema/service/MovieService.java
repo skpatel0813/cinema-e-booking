@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class MovieService {
@@ -14,11 +15,52 @@ public class MovieService {
     private MovieRepository movieRepository;
 
     public List<Movie> getRandomMovies() {
-        return movieRepository.findRandomMovies();
+        return movieRepository.getRandomMovies();
     }
 
-    // Example method to fetch a movie by ID
-    public Movie getMovieById(Long id) {
+    public Movie getMovieById(int id) { // id is int
+
+        System.out.println(id);
         return movieRepository.findById(id).orElse(null);
     }
+
+    public Movie updateMovie(int id, Movie updatedMovie) { // id is int
+        Optional<Movie> existingMovieOpt = movieRepository.findById(id);
+        if (existingMovieOpt.isPresent()) {
+            Movie existingMovie = existingMovieOpt.get();
+
+
+            existingMovie.setNowPlaying(updatedMovie.isNowPlaying());
+            existingMovie.setComingSoon(updatedMovie.isComingSoon());
+            existingMovie.setOnDemand(updatedMovie.isOnDemand());
+
+            // Update the movie fields with the new details
+            existingMovie.setTitle(updatedMovie.getTitle());
+            existingMovie.setCategory(updatedMovie.getCategory());
+            existingMovie.setCast(updatedMovie.getCast());
+            existingMovie.setDirector(updatedMovie.getDirector());
+            existingMovie.setProducer(updatedMovie.getProducer());
+            existingMovie.setSynopsis(updatedMovie.getSynopsis());
+            existingMovie.setReviews(updatedMovie.getReviews());
+            existingMovie.setTrailer_url(updatedMovie.getTrailer_url());
+            existingMovie.setPoster_url(updatedMovie.getPoster_url());
+            existingMovie.setRatingCode(updatedMovie.getRatingCode());
+            existingMovie.setShowTime(updatedMovie.getShowTime());
+            existingMovie.setPrice(updatedMovie.getPrice());
+
+            return movieRepository.save(existingMovie); // Save the updated movie
+        } else {
+            throw new IllegalArgumentException("Movie with ID " + id + " not found.");
+        }
+    }
+
+    public void deleteMovie(int id) {
+        movieRepository.deleteById(id);
+    }
+
+    // Save or update movie
+    public Movie save(Movie movie) {
+        return movieRepository.save(movie); // This is where the 'save' method is called
+    }
+
 }

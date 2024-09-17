@@ -62,16 +62,20 @@ public class User {
     @Column(name = "expiration_date")
     private String expirationDate;
 
+    @Column(name = "role", nullable = false)
+    private String role = "user";  // Default role is 'user'
+
     // Constructors
     public User() {}
 
-    public User(String name, String email, String password, String phone, boolean subscribeToPromotions) {
+    public User(String name, String email, String password, String phone, boolean subscribeToPromotions, String role) {
         this.name = name;
         this.email = email;
         this.password = password;
         this.phone = phone;
         this.subscribeToPromotions = subscribeToPromotions;
         this.isVerified = false;
+        this.role = role;  // 'admin' or 'user'
     }
 
     // Getters and Setters for all fields
@@ -225,5 +229,13 @@ public class User {
 
     public void setExpirationDate(String expirationDate) {
         this.expirationDate = expirationDate;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 }

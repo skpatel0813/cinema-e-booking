@@ -7,6 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @RestController
 @RequestMapping("/api")
 public class UserController {
@@ -37,7 +40,11 @@ public class UserController {
     public ResponseEntity<?> loginUser(@RequestBody LoginRequest request) {
         User user = userService.verifyLogin(request.getEmail(), request.getPassword());
         if (user != null) {
-            return ResponseEntity.ok(user);
+            // Return role and username for frontend to manage user/admin behavior
+            Map<String, String> response = new HashMap<>();
+            response.put("userName", user.getName());
+            response.put("role", user.getRole());
+            return ResponseEntity.ok(response);
         }
         return ResponseEntity.badRequest().body("Invalid credentials");
     }
@@ -84,6 +91,3 @@ class LoginRequest {
     public String getPassword() { return password; }
     public void setPassword(String password) { this.password = password; }
 }
-
-// DTO for password change request
-
