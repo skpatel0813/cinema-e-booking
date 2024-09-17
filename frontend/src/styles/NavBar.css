@@ -1,6 +1,7 @@
 /* Navigation Bar */
 .nav-list {
   display: flex;
+  align-items: center; /* Align all items to the center vertically */
   justify-content: space-between;
   padding: 10px;
   background-color: #111;
@@ -16,13 +17,36 @@
   margin-right: 20px;
 }
 
+.filter-search-container {
+  display: flex;
+  align-items: center; /* Ensure filter button and search bar are aligned horizontally */
+}
+
+.filter-btn {
+  background-color: #e50914;
+  color: white;
+  padding: 10px;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+}
+
 .search-bar {
-  padding: 5px;
-  border-radius: 3px;
+  margin-left: 10px; /* Space between filter and search bar */
+  padding: 10px;
+  border-radius: 5px;
+  border: none;
+  background-color: #333;
+  color: white;
+}
+
+.search-bar::placeholder {
+  color: #bbb;
 }
 
 .user-section {
-  position: relative;
+  display: flex;
+  align-items: center; /* Align the login/logout button with the rest of the items */
 }
 
 .user-name {
@@ -56,11 +80,6 @@
   background-color: #ff1c1c;
 }
 
-/* Close dropdown on clicking outside */
-.user-section:hover .dropdown {
-  display: block;
-}
-
 .login-button {
   background-color: #e50914;
   color: white;
@@ -68,4 +87,110 @@
   border-radius: 5px;
   border: none;
   cursor: pointer;
+}
+
+/* Close dropdown on clicking outside */
+.user-section:hover .dropdown {
+  display: block;
+}
+
+/* Filter dropdown styles */
+.filter-dropdown {
+  position: absolute;
+  top: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #222;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+  z-index: 999;
+  width: 300px;
+}
+
+.filter-section {
+  margin-bottom: 20px;
+}
+
+.filter-section h4 {
+  margin-bottom: 10px;
+  color: white;
+}
+
+/* Pill buttons */
+.pill-btn {
+  background-color: #333;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 20px;
+  margin: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.pill-btn.active {
+  background-color: #e50914;
+}
+
+.pill-btn:hover {
+  background-color: #444;
+}
+
+/* Date input */
+.date-input {
+  background-color: #333;
+  color: white;
+  border: none;
+  padding: 8px;
+  border-radius: 5px;
+  width: 100%;
+}
+
+/* Apply filter button */
+.apply-filter-btn {
+  background-color: #e50914;
+  color: white;
+  padding: 10px;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  margin-top: 20px;
+}
+
+.apply-filter-btn:hover {
+  background-color: #ff1c1c;
+}
+
+/* Close filter button */
+.close-filter-btn {
+  background-color: #e50914;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+  float: right;
+  border-radius: 50%;
+  font-size: 16px;
+  margin-top: -10px;
+}
+
+.close-filter-btn:hover {
+  background-color: #ff1c1c;
+}
+
+/* Clear filter button */
+.clear-filter-btn {
+  background-color: #999;
+  color: white;
+  padding: 10px;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.clear-filter-btn:hover {
+  background-color: #666;
 }
