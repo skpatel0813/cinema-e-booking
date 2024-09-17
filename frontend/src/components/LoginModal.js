@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import '../styles/LoginModal.css'; // Assume a CSS file for styling
+import '../styles/LoginModal.css'; // Ensure you have the CSS for styling
 
 const LoginModal = ({ isOpen, onClose }) => {
   const [email, setEmail] = useState('');
@@ -15,15 +15,15 @@ const LoginModal = ({ isOpen, onClose }) => {
 
     axios.post('/api/login', { email, password })
       .then(response => {
-        console.log('Logged in successfully:', response.data);
+        const { userName, role } = response.data;
 
-        // Store the user's name and email in localStorage
-        localStorage.setItem('user', response.data.name);
-        localStorage.setItem('userEmail', response.data.email);
+        // Store the user's name and role in localStorage
+        localStorage.setItem('user', userName);
+        localStorage.setItem('role', role);
 
-        // Redirect to the homepage
-        onClose(); // Close the modal on successful login
-        navigate('/'); // Redirect to homepage
+        // Close the modal on successful login and navigate to homepage
+        onClose();
+        navigate('/');
 
         // Optionally reload the page to update the UI
         window.location.reload();
@@ -32,6 +32,12 @@ const LoginModal = ({ isOpen, onClose }) => {
         console.error('Error logging in:', error);
         setError('Invalid email or password. Please try again.');
       });
+  };
+
+  // Function to navigate to the Register page
+  const handleRegisterNavigation = () => {
+    onClose(); // Close the modal
+    navigate('/register'); // Navigate to the Register page
   };
 
   if (!isOpen) return null;
@@ -60,7 +66,11 @@ const LoginModal = ({ isOpen, onClose }) => {
           <button type="submit" className="login-button">Sign In</button>
           <div className="register-link">
             <span>New User? </span>
-            <button type="button" className="link-button" onClick={() => navigate('/register')}>
+            <button
+              type="button"
+              className="link-button"
+              onClick={handleRegisterNavigation} // Updated button to navigate
+            >
               Register here
             </button>
           </div>
