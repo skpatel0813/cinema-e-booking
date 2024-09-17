@@ -63,4 +63,10 @@ public class MovieService {
         return movieRepository.save(movie); // This is where the 'save' method is called
     }
 
+    // Method to add a new movie to the database
+    public Movie addMovie(Movie movie) {
+        // You can add validation or additional logic here if needed
+        return movieRepository.save(movie);  // Save the movie to the database
+    }
+
 }

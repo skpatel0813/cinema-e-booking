@@ -55,4 +55,15 @@ public class MovieController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error deleting movie");
         }
     }
+
+    @PostMapping
+    public ResponseEntity<?> addMovie(@RequestBody Movie movie) {
+        try {
+            Movie savedMovie = movieService.addMovie(movie);  // Call the addMovie method
+            return ResponseEntity.ok(savedMovie);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Error adding movie");
+        }
+    }
+
 }
