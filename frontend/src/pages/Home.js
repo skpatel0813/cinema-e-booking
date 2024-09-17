@@ -112,7 +112,33 @@ const Home = () => {
     }
   };
 
-  // Render movies in the selected category
+  // Render movies for admin without a carousel
+  const renderAdminMovies = () => {
+    if (movies.length === 0) {
+      return <p>No movies available.</p>;
+    }
+
+    return (
+      <div className="admin-movie-list">
+        {movies.map(movie => (
+          <div key={movie.movie_id || movie.title} className="movie-card">
+            <img 
+              src={movie.poster_url} 
+              alt={movie.title} 
+              className="movie-poster"
+              onError={(e) => e.target.style.display = 'none'}
+            />
+            <h2>{movie.title}</h2>
+            <button className="edit-movie-btn" onClick={() => handleEditMovie(movie)}>
+              Edit Movie
+            </button>
+          </div>
+        ))}
+      </div>
+    );
+  };
+
+  // Render movies in the selected category for regular users
   const renderMovies = () => {
     const categoryMovies = getCategoryMovies();
 
@@ -133,15 +159,9 @@ const Home = () => {
                 onError={(e) => e.target.style.display = 'none'}
               />
               <h2>{movie.title}</h2>
-              {userRole === 'admin' ? (
-                <button className="edit-movie-btn" onClick={() => handleEditMovie(movie)}>
-                  Edit Movie
-                </button>
-              ) : (
-                <button className="book-now-btn" onClick={() => handleViewDetails(movie)}>
-                  Get Tickets
-                </button>
-              )}
+              <button className="book-now-btn" onClick={() => handleViewDetails(movie)}>
+                Get Tickets
+              </button>
             </div>
           ))}
         </div>
@@ -159,31 +179,38 @@ const Home = () => {
         onEditProfileClick={() => setShowEditProfileModal(true)}
       />
 
-      <div className="header">
-        <h1>Movies to Watch</h1>
-        <div className="nav-links">
-          <span 
-            className={selectedCategory === 'nowPlaying' ? 'active-link' : ''} 
-            onClick={() => setSelectedCategory('nowPlaying')}
-          >
-            Now Playing
-          </span>
-          <span 
-            className={selectedCategory === 'comingSoon' ? 'active-link' : ''} 
-            onClick={() => setSelectedCategory('comingSoon')}
-          >
-            Coming Soon
-          </span>
-          <span 
-            className={selectedCategory === 'onDemand' ? 'active-link' : ''} 
-            onClick={() => setSelectedCategory('onDemand')}
-          >
-            On Demand
-          </span>
-        </div>
-      </div>
+      {/* Admins see all movies without carousel */}
+      {userRole === 'admin' ? (
+        renderAdminMovies()
+      ) : (
+        <>
+          <div className="header">
+            <h1>Movies to Watch</h1>
+            <div className="nav-links">
+              <span 
+                className={selectedCategory === 'nowPlaying' ? 'active-link' : ''} 
+                onClick={() => setSelectedCategory('nowPlaying')}
+              >
+                Now Playing
+              </span>
+              <span 
+                className={selectedCategory === 'comingSoon' ? 'active-link' : ''} 
+                onClick={() => setSelectedCategory('comingSoon')}
+              >
+                Coming Soon
+              </span>
+              <span 
+                className={selectedCategory === 'onDemand' ? 'active-link' : ''} 
+                onClick={() => setSelectedCategory('onDemand')}
+              >
+                On Demand
+              </span>
+            </div>
+          </div>
 
-      {renderMovies()}
+          {renderMovies()}
+        </>
+      )}
 
       {/* Detailed Movie Modal */}
       <DetailedModal 

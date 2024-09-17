@@ -170,6 +170,92 @@ nav ul li a:hover {
   background-color: #ff1c1c;
 }
 
+/* Admin Movie List */
+.admin-movie-list {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr); /* Display 5 movies per row */
+  grid-gap: 20px;
+  padding: 30px;
+  background-color: #141414; /* Dark background like the rest of the page */
+}
+
+/* Admin movie card styling */
+.admin-movie-list .movie-card {
+  background-color: #222;
+  color: #fff;
+  text-align: center;
+  cursor: pointer;
+  border-radius: 8px;
+  padding: 20px;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.admin-movie-list .movie-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+}
+
+.admin-movie-list .movie-poster {
+  width: 100%;
+  height: 360px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 15px;
+}
+
+.admin-movie-list h2 {
+  font-size: 20px;
+  margin-bottom: 10px;
+}
+
+.admin-movie-list p {
+  font-size: 14px;
+  color: #b3b3b3;
+}
+
+/* Admin-specific buttons (Edit Movie) */
+.admin-movie-list .edit-movie-btn {
+  background-color: #e50914;
+  color: #fff;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s;
+  margin-top: 10px;
+}
+
+.admin-movie-list .edit-movie-btn:hover {
+  background-color: #ff1c1c;
+}
+
+/* Responsive design to handle smaller screens */
+@media (max-width: 1200px) {
+  .admin-movie-list {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (max-width: 900px) {
+  .admin-movie-list {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .admin-movie-list {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 400px) {
+  .admin-movie-list {
+    grid-template-columns: 1fr;
+  }
+}
+
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .movie-list {

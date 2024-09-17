@@ -3,6 +3,8 @@
 import React from 'react';
 import '../styles/modal.css';  // Import the CSS file
 
+
+
 const DetailedModal = ({ show, onClose, movie }) => {
   if (!show || !movie) return null; // Render nothing if show is false or movie is null
 

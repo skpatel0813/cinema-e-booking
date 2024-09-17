@@ -23,29 +23,30 @@ const NavBar = ({ onLoginClick, userName, onLogout, onEditProfileClick }) => {
     localStorage.removeItem('user');
     localStorage.removeItem('role');
     
-    // Update state in Home.js by calling onLogout
     if (onLogout) {
       onLogout();
     }
 
-    // Redirect to home page
     navigate('/');
-
-    // Optionally force a refresh to ensure the UI updates
     setTimeout(() => {
       window.location.reload();
     }, 100);
+  };
+
+  const handleAddMovieClick = () => {
+    navigate('/add-movie'); // Navigate to the add movie page
   };
 
   return (
     <nav>
       <ul className="nav-list">
         <li className="nav-item left"><Link to="/">Home</Link></li>
-
+        {role === 'admin' && (
+          <li className="nav-item left"><button className="add-movie-btn" onClick={handleAddMovieClick}>Add Movie</button></li>
+        )}
         <li className="nav-item center">
           <input type="text" placeholder="Search" className="search-bar" />
         </li>
-
         <li className="nav-item right">
           {userName ? (
             <div className="user-section">

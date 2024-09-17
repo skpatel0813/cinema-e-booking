@@ -6,6 +6,7 @@ import Booking from './pages/Booking';
 import Account from './pages/Account';
 import Register from './pages/Register'; // Assuming Register page is in src/pages
 import EditMovie from './pages/EditMovie';
+import AddMovie from './pages/AddMovie';
 
 const App = () => {
   return (
@@ -17,6 +18,7 @@ const App = () => {
         <Route path="/account" element={<Account />} />
         <Route path="/register" element={<Register />} /> {/* Add route for Register */}
         <Route path="/edit-movie/:id" element={<EditMovie />} />
+        <Route path="/add-movie" element={<AddMovie />} />
       </Routes>
     </Router>
   );
