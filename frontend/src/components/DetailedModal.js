@@ -17,12 +17,12 @@ const DetailedModal = ({ show, onClose, movie }) => {
         <h2>{movie.title}</h2>
         
         {/* Movie Trailer */}
-        {movie.trailer ? (
+        {movie.trailer_url ? (
           <div className="trailer-container">
             <iframe 
               width="100%" 
               height="400px" 
-              src={movie.trailer} 
+              src={movie.trailer_url} 
               title="Movie Trailer" 
               frameBorder="0" 
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
@@ -39,6 +39,7 @@ const DetailedModal = ({ show, onClose, movie }) => {
           <p><strong>Cast:</strong> {movie.cast || 'Not available'}</p>
           <p><strong>Director:</strong> {movie.director || 'Not available'}</p>
           <p><strong>Producer:</strong> {movie.producer || 'Not available'}</p>
+          <p><strong>Rating:</strong> {movie.ratingCode || 'Not available'}</p>
         </div>
         
         {/* Book Now Button */}
