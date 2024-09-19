@@ -315,6 +315,75 @@ nav ul li a:hover {
 }
 
 
+/* Browse All Movies container */
+.all-movies-container {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr); /* Display 5 movies per row */
+  grid-gap: 20px; /* Space between movies */
+  padding: 30px;
+  background-color: #141414; /* Match the rest of the page */
+}
+
+/* Movie card for "Browse All Movies" view */
+.all-movies-container .movie-card {
+  background-color: #222;
+  color: #fff;
+  text-align: center;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: transform 0.3s, box-shadow 0.3s;
+  padding: 20px;
+}
+
+.all-movies-container .movie-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+}
+
+.all-movies-container .movie-poster {
+  width: 100%;
+  height: 360px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 15px;
+}
+
+.all-movies-container h2 {
+  font-size: 20px;
+  margin-bottom: 10px;
+}
+
+.all-movies-container p {
+  font-size: 14px;
+  color: #b3b3b3;
+}
+
+/* Responsive design for "Browse All Movies" container */
+@media (max-width: 1200px) {
+  .all-movies-container {
+    grid-template-columns: repeat(4, 1fr); /* 4 movies per row */
+  }
+}
+
+@media (max-width: 900px) {
+  .all-movies-container {
+    grid-template-columns: repeat(3, 1fr); /* 3 movies per row */
+  }
+}
+
+@media (max-width: 600px) {
+  .all-movies-container {
+    grid-template-columns: repeat(2, 1fr); /* 2 movies per row */
+  }
+}
+
+@media (max-width: 400px) {
+  .all-movies-container {
+    grid-template-columns: 1fr; /* 1 movie per row */
+  }
+}
+
+
 
 /* Responsive design to handle smaller screens */
 @media (max-width: 1200px) {

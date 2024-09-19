@@ -21,18 +21,18 @@ const Home = () => {
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [filterDate, setFilterDate] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
+  const [browseAll, setBrowseAll] = useState(false); // New state to control "Browse All Movies" view
   const movieListRef = useRef(null);
   const navigate = useNavigate();
 
-  // Fetch movies and user information from localStorage
   useEffect(() => {
     const storedUserName = localStorage.getItem('user');
     const storedUserRole = localStorage.getItem('role');
-    
+
     if (storedUserName) {
       setUserName(storedUserName);
     }
-    
+
     if (storedUserRole) {
       setUserRole(storedUserRole);
     }
@@ -49,7 +49,6 @@ const Home = () => {
       .catch(error => console.error('Error fetching movies:', error));
   }, []);
 
-  // Handle viewing movie details
   const handleViewDetails = (movie) => {
     if (movie) {
       setSelectedMovie(movie);
@@ -59,7 +58,6 @@ const Home = () => {
     }
   };
 
-  // Handle movie editing (for admin)
   const handleEditMovie = (movie) => {
     if (movie) {
       navigate(`/edit-movie/${movie.id}`);
@@ -68,7 +66,6 @@ const Home = () => {
     }
   };
 
-  // Close modals
   const handleCloseDetailedModal = () => {
     setShowDetailedModal(false);
     setSelectedMovie(null);
@@ -78,7 +75,6 @@ const Home = () => {
     setShowEditProfileModal(false);
   };
 
-  // Logout
   const handleLogout = () => {
     setUserName('');
     setUserRole('');
@@ -87,7 +83,6 @@ const Home = () => {
     navigate('/');
   };
 
-  // Scroll for movie carousel
   const scrollLeft = () => {
     movieListRef.current.scrollBy({
       left: -500,
@@ -102,7 +97,6 @@ const Home = () => {
     });
   };
 
-  // Categorize movies
   const getCategoryMovies = () => {
     let filteredMovies = movies;
 
@@ -131,7 +125,6 @@ const Home = () => {
     return filteredMovies;
   };
 
-  // Render movies for admin without a carousel
   const renderAdminMovies = () => {
     if (movies.length === 0) {
       return <p>No movies available.</p>;
@@ -157,7 +150,34 @@ const Home = () => {
     );
   };
 
-  // Render movies in the selected category for regular users
+  // Render movies for the "Browse All" view
+  const renderAllMovies = () => {
+    const allMovies = getCategoryMovies();
+
+    if (allMovies.length === 0) {
+      return <p>No movies available with the selected filters.</p>;
+    }
+
+    return (
+      <div className="all-movies-container">
+        {allMovies.map(movie => (
+          <div key={movie.movie_id || movie.title} className="movie-card">
+            <img 
+              src={movie.poster_url} 
+              alt={movie.title} 
+              className="movie-poster"
+              onError={(e) => e.target.style.display = 'none'}
+            />
+            <h2>{movie.title}</h2>
+            <button className="book-now-btn" onClick={() => handleViewDetails(movie)}>
+              Get Tickets
+            </button>
+          </div>
+        ))}
+      </div>
+    );
+  };
+
   const renderMovies = () => {
     const categoryMovies = getCategoryMovies();
 
@@ -189,7 +209,6 @@ const Home = () => {
     );
   };
 
-  // Handle category selection in filter
   const toggleCategory = (category) => {
     setSelectedCategories(prevState => 
       prevState.includes(category) 
@@ -198,7 +217,6 @@ const Home = () => {
     );
   };
 
-  // Clear filters
   const clearFilters = () => {
     setSelectedCategories([]);
     setFilterDate('');
@@ -240,6 +258,12 @@ const Home = () => {
               >
                 On Demand
               </span>
+              <button 
+                className="browse-all-button"
+                onClick={() => setBrowseAll(!browseAll)} // Toggle Browse All view
+              >
+                {browseAll ? 'Back to Carousel' : 'Browse All Movies'}
+              </button>
               <div className="filter-container">
                 <input
                   type="text"
@@ -286,7 +310,8 @@ const Home = () => {
             </div>
           </div>
 
-          {renderMovies()}
+          {/* Render movies based on the selected view */}
+          {browseAll ? renderAllMovies() : renderMovies()}
         </>
       )}
 
