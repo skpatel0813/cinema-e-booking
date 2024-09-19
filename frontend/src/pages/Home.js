@@ -9,7 +9,6 @@ import { useNavigate } from 'react-router-dom';
 
 const Home = () => {
   const [movies, setMovies] = useState([]);
-  const [filteredMovies, setFilteredMovies] = useState([]);
   const [selectedMovie, setSelectedMovie] = useState(null);
   const [showDetailedModal, setShowDetailedModal] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
@@ -18,8 +17,6 @@ const Home = () => {
   const [selectedCategory, setSelectedCategory] = useState('nowPlaying');
   const [userName, setUserName] = useState('');
   const [userRole, setUserRole] = useState('');
-  const [filters, setFilters] = useState({ categories: [], date: '' });
-  const [searchQuery, setSearchQuery] = useState('');  // New state for search query
   const movieListRef = useRef(null);
   const navigate = useNavigate();
 
@@ -41,39 +38,12 @@ const Home = () => {
       .then(response => {
         if (Array.isArray(response.data)) {
           setMovies(response.data);
-          setFilteredMovies(response.data);  // Set initially without filters
         } else {
           console.error('Expected an array but got:', response.data);
         }
       })
       .catch(error => console.error('Error fetching movies:', error));
   }, []);
-
-  // Handle filtering logic
-  useEffect(() => {
-    let filtered = movies;
-
-    // Apply category filter
-    if (filters.categories.length > 0) {
-      filtered = filtered.filter(movie => 
-        filters.categories.includes(movie.category)
-      );
-    }
-
-    // Apply date filter
-    if (filters.date) {
-      filtered = filtered.filter(movie => new Date(movie.release_date) >= new Date(filters.date));
-    }
-
-    // Apply search filter
-    if (searchQuery) {
-      filtered = filtered.filter(movie =>
-        movie.title.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-    }
-
-    setFilteredMovies(filtered);
-  }, [filters, searchQuery, movies]);
 
   // Handle viewing movie details
   const handleViewDetails = (movie) => {
@@ -111,12 +81,6 @@ const Home = () => {
     localStorage.removeItem('user');
     localStorage.removeItem('role');
     navigate('/');
-  };
-
-  // Clear all filters
-  const handleClearFilters = () => {
-    setFilters({ categories: [], date: '' });
-    setSearchQuery('');
   };
 
   // Scroll for movie carousel
@@ -176,15 +140,17 @@ const Home = () => {
 
   // Render movies in the selected category for regular users
   const renderMovies = () => {
-    if (filteredMovies.length === 0) {
-      return <p>No movies available with the selected filters.</p>;
+    const categoryMovies = getCategoryMovies();
+
+    if (categoryMovies.length === 0) {
+      return <p>No movies available in this category.</p>;
     }
 
     return (
       <div className="carousel-container">
         <button className="scroll-arrow left" onClick={scrollLeft}>&lt;</button>
         <div className="movie-list" ref={movieListRef}>
-          {filteredMovies.map(movie => (
+          {categoryMovies.map(movie => (
             <div key={movie.movie_id || movie.title} className="movie-card">
               <img 
                 src={movie.poster_url} 
@@ -211,9 +177,6 @@ const Home = () => {
         userName={userName} 
         onLogout={handleLogout} 
         onEditProfileClick={() => setShowEditProfileModal(true)}
-        onFilterChange={setFilters}  // Pass filter update function
-        onSearchChange={setSearchQuery}  // Pass search update function
-        onClearFilters={handleClearFilters}  // Pass clear filters function
       />
 
       {/* Admins see all movies without carousel */}
