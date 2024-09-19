@@ -44,9 +44,6 @@ const NavBar = ({ onLoginClick, userName, onLogout, onEditProfileClick }) => {
         {role === 'admin' && (
           <li className="nav-item left"><button className="add-movie-btn" onClick={handleAddMovieClick}>Add Movie</button></li>
         )}
-        <li className="nav-item center">
-          <input type="text" placeholder="Search" className="search-bar" />
-        </li>
         <li className="nav-item right">
           {userName ? (
             <div className="user-section">

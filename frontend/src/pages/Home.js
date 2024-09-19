@@ -17,6 +17,10 @@ const Home = () => {
   const [selectedCategory, setSelectedCategory] = useState('nowPlaying');
   const [userName, setUserName] = useState('');
   const [userRole, setUserRole] = useState('');
+  const [showFilterDropdown, setShowFilterDropdown] = useState(false);
+  const [selectedCategories, setSelectedCategories] = useState([]);
+  const [filterDate, setFilterDate] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
   const movieListRef = useRef(null);
   const navigate = useNavigate();
 
@@ -100,16 +104,31 @@ const Home = () => {
 
   // Categorize movies
   const getCategoryMovies = () => {
-    switch (selectedCategory) {
-      case 'nowPlaying':
-        return movies.slice(0, 5);
-      case 'comingSoon':
-        return movies.slice(5, 10);
-      case 'onDemand':
-        return movies.slice(10, 15);
-      default:
-        return [];
+    let filteredMovies = movies;
+
+    // Filter by categories
+    if (selectedCategories.length > 0) {
+      filteredMovies = filteredMovies.filter(movie =>
+        selectedCategories.includes(movie.category)
+      );
     }
+
+    // Filter by date
+    if (filterDate) {
+      filteredMovies = filteredMovies.filter(movie => {
+        const movieDate = new Date(movie.release_date).toISOString().split('T')[0];
+        return movieDate === filterDate;
+      });
+    }
+
+    // Filter by search term
+    if (searchTerm) {
+      filteredMovies = filteredMovies.filter(movie =>
+        movie.title.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+
+    return filteredMovies;
   };
 
   // Render movies for admin without a carousel
@@ -143,7 +162,7 @@ const Home = () => {
     const categoryMovies = getCategoryMovies();
 
     if (categoryMovies.length === 0) {
-      return <p>No movies available in this category.</p>;
+      return <p>No movies available with the selected filters.</p>;
     }
 
     return (
@@ -168,6 +187,22 @@ const Home = () => {
         <button className="scroll-arrow right" onClick={scrollRight}>&gt;</button>
       </div>
     );
+  };
+
+  // Handle category selection in filter
+  const toggleCategory = (category) => {
+    setSelectedCategories(prevState => 
+      prevState.includes(category) 
+        ? prevState.filter(item => item !== category) 
+        : [...prevState, category]
+    );
+  };
+
+  // Clear filters
+  const clearFilters = () => {
+    setSelectedCategories([]);
+    setFilterDate('');
+    setSearchTerm('');
   };
 
   return (
@@ -205,6 +240,49 @@ const Home = () => {
               >
                 On Demand
               </span>
+              <div className="filter-container">
+                <input
+                  type="text"
+                  className="search-bar"
+                  placeholder="Search movies..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
+                <button
+                  className="filter-button"
+                  onClick={() => setShowFilterDropdown(!showFilterDropdown)}
+                >
+                  Filter
+                </button>
+                {showFilterDropdown && (
+                  <div className="filter-dropdown">
+                    <div className="categories">
+                      {['Adventure', 'Comedy', 'Horror', 'Thriller', 'Drama', 'Action'].map(category => (
+                        <button
+                          key={category}
+                          className={`pill-button ${selectedCategories.includes(category) ? 'selected' : ''}`}
+                          onClick={() => toggleCategory(category)}
+                        >
+                          {category}
+                        </button>
+                      ))}
+                    </div>
+                    <div className="date-filter">
+                      <input
+                        type="date"
+                        value={filterDate}
+                        onChange={(e) => setFilterDate(e.target.value)}
+                      />
+                    </div>
+                    <button
+                      className="clear-filters-btn"
+                      onClick={clearFilters}
+                    >
+                      Clear Filters
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
 
