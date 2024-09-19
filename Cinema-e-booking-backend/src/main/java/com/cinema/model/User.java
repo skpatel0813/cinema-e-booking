@@ -41,29 +41,45 @@ public class User {
     @Column(name = "subscribe_to_promotions")
     private boolean subscribeToPromotions;
 
-    @Column(name = "billing_street")
+    @Column(name = "billingStreet")
     private String billingStreet;
 
-    @Column(name = "billing_city")
+    @Column(name = "billingCity")
     private String billingCity;
 
-    @Column(name = "billing_state")
+    @Column(name = "billingState")
     private String billingState;
 
-    @Column(name = "billing_zip")
+    @Column(name = "billingZip")
     private String billingZip;
 
-    @Column(name = "card_number")
+    @Column(name = "card_number1")
     private String cardNumber;
 
-    @Column(name = "card_type")
+    @Column(name = "cardType1")
     private String cardType;
 
-    @Column(name = "expiration_date")
+    @Column(name = "expirationDate1")
     private String expirationDate;
+
+    @Column(name = "cvv1")
+    private String cvv1;
+
+    private String cvv2;
+
+    private String cvv3;
 
     @Column(name = "role", nullable = false)
     private String role = "user";  // Default role is 'user'
+
+
+    private String cardType2;
+    private String cardNumber2;
+    private String expirationDate2;
+
+    private String cardType3;
+    private String cardNumber3;
+    private String expirationDate3;
 
     // Constructors
     public User() {}
@@ -207,11 +223,11 @@ public class User {
         this.billingZip = billingZip;
     }
 
-    public String getCardNumber() {
+    public String getCardNumber1() {
         return cardNumber;
     }
 
-    public void setCardNumber(String cardNumber) {
+    public void setCardNumber1(String cardNumber) {
         this.cardNumber = cardNumber;
     }
 
@@ -223,11 +239,11 @@ public class User {
         this.cardType = cardType;
     }
 
-    public String getExpirationDate() {
+    public String getExpirationDate1() {
         return expirationDate;
     }
 
-    public void setExpirationDate(String expirationDate) {
+    public void setExpirationDate1(String expirationDate) {
         this.expirationDate = expirationDate;
     }
 
@@ -237,5 +253,86 @@ public class User {
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+
+    public String getCardType1() {
+        return cardType;
+    }
+
+    public void setCardType1(String cardType1) {
+        this.cardType = cardType1;
+    }
+
+    public String getCardType2() {
+        return cardType2;
+    }
+
+    public void setCardType2(String cardType2) {
+        this.cardType2 = cardType2;
+    }
+
+    public String getCardNumber2() {
+        return cardNumber2;
+    }
+
+    public void setCardNumber2(String cardNumber2) {
+        this.cardNumber2 = cardNumber2;
+    }
+
+    public String getExpirationDate2() {
+        return expirationDate2;
+    }
+
+    public void setExpirationDate2(String expirationDate2) {
+        this.expirationDate2 = expirationDate2;
+    }
+
+    public String getCardType3() {
+        return cardType3;
+    }
+
+    public void setCardType3(String cardType3) {
+        this.cardType3 = cardType3;
+    }
+
+    public String getCardNumber3() {
+        return cardNumber3;
+    }
+
+    public void setCardNumber3(String cardNumber3) {
+        this.cardNumber3 = cardNumber3;
+    }
+
+    public String getExpirationDate3() {
+        return expirationDate3;
+    }
+
+    public void setExpirationDate3(String expirationDate3) {
+        this.expirationDate3 = expirationDate3;
+    }
+
+    public String getCvv2() {
+        return cvv2;
+    }
+
+    public void setCvv2(String cvv2) {
+        this.cvv2 = cvv2;
+    }
+
+    public String getCvv3() {
+        return cvv3;
+    }
+
+    public void setCvv3(String cvv3) {
+        this.cvv3 = cvv3;
+    }
+
+    public String getCvv1() {
+        return cvv1;
+    }
+
+    public void setCvv1(String cvv1) {
+        this.cvv1 = cvv1;
     }
 }

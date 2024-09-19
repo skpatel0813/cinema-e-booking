@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -84,9 +85,9 @@ public class UserService {
         existingUser.setBillingCity(updatedUser.getBillingCity());
         existingUser.setBillingState(updatedUser.getBillingState());
         existingUser.setBillingZip(updatedUser.getBillingZip());
-        existingUser.setCardNumber(updatedUser.getCardNumber());
+        existingUser.setCardNumber1(updatedUser.getCardNumber1());
         existingUser.setCardType(updatedUser.getCardType());
-        existingUser.setExpirationDate(updatedUser.getExpirationDate());
+        existingUser.setExpirationDate1(updatedUser.getExpirationDate1());
 
         return userRepository.save(existingUser);
     }
@@ -102,4 +103,28 @@ public class UserService {
         user.setPassword(encodedNewPassword);
         userRepository.save(user);
     }
+
+    public User updateUserCards(String email, Map<String, String> cardData) {
+        User user = userRepository.findByEmail(email);
+        if (user != null) {
+            user.setCardType1(cardData.getOrDefault("cardType1", user.getCardType1()));
+            user.setCardNumber1(cardData.getOrDefault("cardNumber1", user.getCardNumber1()));
+            user.setExpirationDate1(cardData.getOrDefault("expirationDate1", user.getExpirationDate1()));
+            user.setCvv1(cardData.getOrDefault("cvv1", user.getCvv1()));
+
+            user.setCardType2(cardData.getOrDefault("cardType2", user.getCardType2()));
+            user.setCardNumber2(cardData.getOrDefault("cardNumber2", user.getCardNumber2()));
+            user.setExpirationDate2(cardData.getOrDefault("expirationDate2", user.getExpirationDate2()));
+            user.setCvv2(cardData.getOrDefault("cvv2", user.getCvv2()));
+
+            user.setCardType3(cardData.getOrDefault("cardType3", user.getCardType3()));
+            user.setCardNumber3(cardData.getOrDefault("cardNumber3", user.getCardNumber3()));
+            user.setExpirationDate3(cardData.getOrDefault("expirationDate3", user.getExpirationDate3()));
+            user.setCvv3(cardData.getOrDefault("cvv3", user.getCvv3()));
+
+            return userRepository.save(user);
+        }
+        return null;
+    }
+
 }

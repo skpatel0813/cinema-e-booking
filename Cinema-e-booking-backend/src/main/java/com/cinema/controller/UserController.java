@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/user")
 public class UserController {
 
     @Autowired
@@ -77,6 +77,13 @@ public class UserController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
+    @PutMapping("/cards/{email}")
+    public User updateUserCards(@PathVariable String email, @RequestBody Map<String, String> cardData) {
+        return userService.updateUserCards(email, cardData);
+    }
+
+
 }
 
 // DTO for login request
