@@ -7,7 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -21,6 +24,8 @@ public class UserService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    private Map<String, String> resetCodeStore = new HashMap<>();
 
     public User getUserByEmail(String email) {
         return userRepository.findByEmail(email);
@@ -126,5 +131,54 @@ public class UserService {
         }
         return null;
     }
+
+    // Method to generate a password reset token
+    public String generatePasswordResetToken(String email) {
+        User user = userRepository.findByEmail(email);
+        if (user != null) { // Check if user exists
+            String token = UUID.randomUUID().toString(); // Generate a unique token
+            user.setResetToken(token);
+            user.setTokenExpiryTime(LocalDateTime.now().plusHours(1)); // Token is valid for 1 hour
+            userRepository.save(user); // Save the token and expiry time
+            return token;
+        }
+        return null;
+    }
+
+    public boolean resetPassword(String email, String newPassword) {
+        try {
+            User user = userRepository.findByEmail(email); // Find user by email
+            if (user == null) {
+                System.out.println("User not found with email: " + email);
+                return false;
+            }
+
+            String hashedPassword = passwordEncoder.encode(newPassword);
+
+            // Update the user's password (make sure to hash the password before saving)
+            user.setPassword(hashedPassword); // Hashing should be applied here
+            userRepository.save(user); // Save the updated user
+            System.out.println("Password updated successfully for user: " + email);
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+
+    // In-memory store for email-resetCode pairs
+
+
+    // Save the reset code associated with the email
+    public void saveResetCode(String email, String resetCode) {
+        resetCodeStore.put(email, resetCode);
+    }
+
+    // Verify if the provided code matches the stored code for the email
+    public boolean verifyResetCode(String email, String code) {
+        return code.equals(resetCodeStore.get(email));
+    }
+
 
 }

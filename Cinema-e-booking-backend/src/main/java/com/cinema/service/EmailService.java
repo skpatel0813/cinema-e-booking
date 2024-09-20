@@ -1,8 +1,11 @@
 package com.cinema.service;
 
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -10,6 +13,10 @@ public class EmailService {
 
     @Autowired
     private JavaMailSender mailSender;
+
+    public EmailService(JavaMailSender javaMailSender) {
+        this.mailSender = javaMailSender;
+    }
 
     /**
      * Sends a verification email with the provided verification code.
@@ -29,6 +36,22 @@ public class EmailService {
             System.out.println("Email sent successfully to: " + toEmail);
         } catch (Exception e) {
             System.err.println("Error sending email: " + e.getMessage());
+        }
+    }
+
+    public boolean sendEmail(String to, String subject, String body) {
+        try {
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setTo(to);
+            message.setSubject(subject);
+            message.setText(body);
+            mailSender.send(message);
+            System.out.println("Email sent successfully to: " + to);
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Error sending email: " + e.getMessage());
+            return false;
         }
     }
 }

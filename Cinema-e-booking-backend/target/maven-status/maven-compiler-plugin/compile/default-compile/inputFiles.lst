@@ -1,0 +1,14 @@
+C:\Users\skpat\cinema-e-booking\Cinema-e-booking-backend\src\main\java\com\cinema\CinemaApplication.java
+C:\Users\skpat\cinema-e-booking\Cinema-e-booking-backend\src\main\java\com\cinema\config\SecurityConfig.java
+C:\Users\skpat\cinema-e-booking\Cinema-e-booking-backend\src\main\java\com\cinema\config\WebConfig.java
+C:\Users\skpat\cinema-e-booking\Cinema-e-booking-backend\src\main\java\com\cinema\controller\MovieController.java
+C:\Users\skpat\cinema-e-booking\Cinema-e-booking-backend\src\main\java\com\cinema\controller\UserController.java
+C:\Users\skpat\cinema-e-booking\Cinema-e-booking-backend\src\main\java\com\cinema\controller\VerificationRequest.java
+C:\Users\skpat\cinema-e-booking\Cinema-e-booking-backend\src\main\java\com\cinema\dto\PasswordChangeRequest.java
+C:\Users\skpat\cinema-e-booking\Cinema-e-booking-backend\src\main\java\com\cinema\model\Movie.java
+C:\Users\skpat\cinema-e-booking\Cinema-e-booking-backend\src\main\java\com\cinema\model\User.java
+C:\Users\skpat\cinema-e-booking\Cinema-e-booking-backend\src\main\java\com\cinema\repository\MovieRepository.java
+C:\Users\skpat\cinema-e-booking\Cinema-e-booking-backend\src\main\java\com\cinema\repository\UserRepository.java
+C:\Users\skpat\cinema-e-booking\Cinema-e-booking-backend\src\main\java\com\cinema\service\EmailService.java
+C:\Users\skpat\cinema-e-booking\Cinema-e-booking-backend\src\main\java\com\cinema\service\MovieService.java
+C:\Users\skpat\cinema-e-booking\Cinema-e-booking-backend\src\main\java\com\cinema\service\UserService.java

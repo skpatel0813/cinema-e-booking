@@ -2,6 +2,8 @@ package com.cinema.model;
 
 import jakarta.persistence.*;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "user")
 public class User {
@@ -80,6 +82,9 @@ public class User {
     private String cardType3;
     private String cardNumber3;
     private String expirationDate3;
+
+    private String resetToken; // Token for resetting the password
+    private LocalDateTime tokenExpiryTime; // Expiry time for the reset token
 
     // Constructors
     public User() {}
@@ -334,5 +339,21 @@ public class User {
 
     public void setCvv1(String cvv1) {
         this.cvv1 = cvv1;
+    }
+
+    public String getResetToken() {
+        return resetToken;
+    }
+
+    public void setResetToken(String resetToken) {
+        this.resetToken = resetToken;
+    }
+
+    public LocalDateTime getTokenExpiryTime() {
+        return tokenExpiryTime;
+    }
+
+    public void setTokenExpiryTime(LocalDateTime tokenExpiryTime) {
+        this.tokenExpiryTime = tokenExpiryTime;
     }
 }
