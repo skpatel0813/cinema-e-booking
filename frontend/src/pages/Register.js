@@ -43,7 +43,7 @@ const Register = () => {
   const handleRegister = (e) => {
     e.preventDefault();
     
-    axios.post('/api/register', formData)
+    axios.post('http://localhost:8081/user/register', formData)
       .then(response => {
         setGeneratedCode(response.data.verificationCode); // Set the generated code from backend
         setIsRegistered(true); // Move to verification step
@@ -62,7 +62,7 @@ const Register = () => {
     e.preventDefault();
     
     if (verificationCode === generatedCode) {
-      axios.post('/api/verify', { email: formData.email, verificationCode })
+      axios.post('http://localhost:8081/user/verify', { email: formData.email, verificationCode })
         .then(response => {
           // On successful verification, navigate to home page
           navigate('/');

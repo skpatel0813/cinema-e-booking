@@ -1,3 +1,4 @@
+// Updated NavBar Component to include "Edit Users" button for admin
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import '../styles/NavBar.css';
@@ -19,7 +20,6 @@ const NavBar = ({ onLoginClick, userName, onLogout, onEditProfileClick }) => {
   };
 
   const handleLogout = () => {
-    // Clear localStorage and update the parent's state via onLogout prop
     localStorage.removeItem('user');
     localStorage.removeItem('role');
     
@@ -34,7 +34,11 @@ const NavBar = ({ onLoginClick, userName, onLogout, onEditProfileClick }) => {
   };
 
   const handleAddMovieClick = () => {
-    navigate('/add-movie'); // Navigate to the add movie page
+    navigate('/add-movie');
+  };
+
+  const handleEditUsersClick = () => {
+    navigate('/edit-users'); // Navigate to the Edit Users page
   };
 
   return (
@@ -42,7 +46,18 @@ const NavBar = ({ onLoginClick, userName, onLogout, onEditProfileClick }) => {
       <ul className="nav-list">
         <li className="nav-item left"><Link to="/">Home</Link></li>
         {role === 'admin' && (
-          <li className="nav-item left"><button className="add-movie-btn" onClick={handleAddMovieClick}>Add Movie</button></li>
+          <>
+            <li className="nav-item left">
+              <button className="add-movie-btn" onClick={handleAddMovieClick}>
+                Add Movie
+              </button>
+            </li>
+            <li className="nav-item left">
+              <button className="edit-users-btn" onClick={handleEditUsersClick}>
+                Edit Users
+              </button>
+            </li>
+          </>
         )}
         <li className="nav-item right">
           {userName ? (

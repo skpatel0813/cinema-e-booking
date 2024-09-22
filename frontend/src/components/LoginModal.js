@@ -26,18 +26,22 @@ const LoginModal = ({ isOpen, onClose }) => {
 
     axios.post('/user/login', { email, password })
       .then(response => {
-        const { userName, role } = response.data;
+        const { userName, role, status } = response.data;
 
-        // Store the user's name and role in localStorage
-        localStorage.setItem('user', userName);
-        localStorage.setItem('role', role);
+        if (role === 'suspended') {
+          setError('Account has been suspended. Please contact an Administrator.');
+        } else {
+          // Store the user's name and role in localStorage
+          localStorage.setItem('user', userName);
+          localStorage.setItem('role', role);
 
-        // Close the modal on successful login and navigate to homepage
-        onClose();
-        navigate('/');
+          // Close the modal on successful login and navigate to homepage
+          onClose();
+          navigate('/');
 
-        // Optionally reload the page to update the UI
-        window.location.reload();
+          // Optionally reload the page to update the UI
+          window.location.reload();
+        }
       })
       .catch(error => {
         console.error('Error logging in:', error);
