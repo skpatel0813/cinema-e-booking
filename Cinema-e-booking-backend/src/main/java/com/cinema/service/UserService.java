@@ -8,10 +8,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class UserService {
@@ -37,6 +34,7 @@ public class UserService {
             throw new IllegalArgumentException("Email already in use.");
         }
 
+        // Encrypt the password before saving
         String encodedPassword = passwordEncoder.encode(user.getPassword());
         user.setPassword(encodedPassword);
 
@@ -104,6 +102,7 @@ public class UserService {
             throw new IllegalArgumentException("Old password is incorrect.");
         }
 
+        // Encrypt the new password before saving
         String encodedNewPassword = passwordEncoder.encode(newPassword);
         user.setPassword(encodedNewPassword);
         userRepository.save(user);
@@ -132,18 +131,6 @@ public class UserService {
         return null;
     }
 
-    // Method to generate a password reset token
-    public String generatePasswordResetToken(String email) {
-        User user = userRepository.findByEmail(email);
-        if (user != null) { // Check if user exists
-            String token = UUID.randomUUID().toString(); // Generate a unique token
-            user.setResetToken(token);
-            user.setTokenExpiryTime(LocalDateTime.now().plusHours(1)); // Token is valid for 1 hour
-            userRepository.save(user); // Save the token and expiry time
-            return token;
-        }
-        return null;
-    }
 
     public boolean resetPassword(String email, String newPassword) {
         try {
@@ -153,11 +140,12 @@ public class UserService {
                 return false;
             }
 
+            // Encrypt the new password before saving
             String hashedPassword = passwordEncoder.encode(newPassword);
 
             // Update the user's password (make sure to hash the password before saving)
-            user.setPassword(hashedPassword); // Hashing should be applied here
-            userRepository.save(user); // Save the updated user
+            user.setPassword(hashedPassword);
+            userRepository.save(user);
             System.out.println("Password updated successfully for user: " + email);
             return true;
         } catch (Exception e) {
@@ -166,11 +154,7 @@ public class UserService {
         }
     }
 
-
     // In-memory store for email-resetCode pairs
-
-
-    // Save the reset code associated with the email
     public void saveResetCode(String email, String resetCode) {
         resetCodeStore.put(email, resetCode);
     }
@@ -180,5 +164,40 @@ public class UserService {
         return code.equals(resetCodeStore.get(email));
     }
 
+    // Get all users
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
+    }
 
+    // Get user by ID
+    public User getUserById(Long id) {
+        Optional<User> user = userRepository.findById(id);
+        return user.orElse(null);
+    }
+
+    // Update user by ID
+    public User updateUser(Long id, User updatedUser) {
+        Optional<User> existingUserOpt = userRepository.findById(id);
+        if (existingUserOpt.isPresent()) {
+            User existingUser = existingUserOpt.get();
+            existingUser.setName(updatedUser.getName());
+            existingUser.setEmail(updatedUser.getEmail());
+            existingUser.setRole(updatedUser.getRole());
+
+
+            return userRepository.save(existingUser);
+        }
+        return null;
+    }
+
+    // Delete user by ID
+    public boolean deleteUser(Long id) {
+        Optional<User> user = userRepository.findById(id);
+        if (user.isPresent()) {
+            userRepository.delete(user.get());
+            return true;
+        }
+        return false;
+    }
 }
+
