@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
@@ -64,6 +65,34 @@ public class MovieController {
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Error adding movie");
         }
+    }
+
+    // Endpoint to update ticket prices for a movie
+    @PostMapping("/ticket-prices")
+    public ResponseEntity<Movie> updateTicketPrices(
+            @PathVariable int movieId,
+            @RequestParam BigDecimal adultPrice,
+            @RequestParam BigDecimal childrenPrice,
+            @RequestParam BigDecimal seniorPrice) {
+        Movie updatedMovie = movieService.updateTicketPrices(movieId, adultPrice, childrenPrice, seniorPrice);
+        if (updatedMovie != null) {
+            return ResponseEntity.ok(updatedMovie);
+        }
+        return ResponseEntity.notFound().build();
+    }
+
+    // Endpoint to add or update a promotion for a movie
+    @PostMapping("/promotions")
+    public ResponseEntity<Movie> addOrUpdatePromotion(
+            @PathVariable int movieId,
+            @RequestParam String code,
+            @RequestParam String description,
+            @RequestParam BigDecimal discount) {
+        Movie updatedMovie = movieService.addOrUpdatePromotion(movieId, code, description, discount);
+        if (updatedMovie != null) {
+            return ResponseEntity.ok(updatedMovie);
+        }
+        return ResponseEntity.notFound().build();
     }
 
 }

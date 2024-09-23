@@ -44,6 +44,14 @@ public class Movie {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+    private BigDecimal adultTicketPrice;
+    private BigDecimal childrenTicketPrice;
+    private BigDecimal seniorTicketPrice;
+    private String promotionCode;
+    private String promotionDescription;
+    private BigDecimal discountAmount;
+
+
     // Constructor
     public Movie() {}
 
@@ -219,5 +227,53 @@ public class Movie {
 
     public void setOnDemand(boolean onDemand) {
         isOnDemand = onDemand;
+    }
+
+    public BigDecimal getAdultTicketPrice() {
+        return adultTicketPrice;
+    }
+
+    public void setAdultTicketPrice(BigDecimal adultTicketPrice) {
+        this.adultTicketPrice = adultTicketPrice;
+    }
+
+    public BigDecimal getChildrenTicketPrice() {
+        return childrenTicketPrice;
+    }
+
+    public void setChildrenTicketPrice(BigDecimal childrenTicketPrice) {
+        this.childrenTicketPrice = childrenTicketPrice;
+    }
+
+    public BigDecimal getSeniorTicketPrice() {
+        return seniorTicketPrice;
+    }
+
+    public void setSeniorTicketPrice(BigDecimal seniorTicketPrice) {
+        this.seniorTicketPrice = seniorTicketPrice;
+    }
+
+    public String getPromotionCode() {
+        return promotionCode;
+    }
+
+    public void setPromotionCode(String promotionCode) {
+        this.promotionCode = promotionCode;
+    }
+
+    public String getPromotionDescription() {
+        return promotionDescription;
+    }
+
+    public void setPromotionDescription(String promotionDescription) {
+        this.promotionDescription = promotionDescription;
+    }
+
+    public BigDecimal getDiscountAmount() {
+        return discountAmount;
+    }
+
+    public void setDiscountAmount(BigDecimal discountAmount) {
+        this.discountAmount = discountAmount;
     }
 }

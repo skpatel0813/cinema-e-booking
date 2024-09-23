@@ -199,5 +199,9 @@ public class UserService {
         }
         return false;
     }
+
+    public List<String> getSubscribedUserEmails() {
+        return userRepository.findSubscribedUserEmails();
+    }
 }
 

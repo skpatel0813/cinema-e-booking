@@ -5,6 +5,7 @@ import com.cinema.repository.MovieRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -67,6 +68,32 @@ public class MovieService {
     public Movie addMovie(Movie movie) {
         // You can add validation or additional logic here if needed
         return movieRepository.save(movie);  // Save the movie to the database
+    }
+
+    // Update ticket prices for a specific movie
+    public Movie updateTicketPrices(int movieId, BigDecimal adultPrice, BigDecimal childrenPrice, BigDecimal seniorPrice) {
+        Optional<Movie> optionalMovie = movieRepository.findById(movieId);
+        if (optionalMovie.isPresent()) {
+            Movie movie = optionalMovie.get();
+            movie.setAdultTicketPrice(adultPrice);
+            movie.setChildrenTicketPrice(childrenPrice);
+            movie.setSeniorTicketPrice(seniorPrice);
+            return movieRepository.save(movie);
+        }
+        return null;
+    }
+
+    // Add or update a promotion for a specific movie
+    public Movie addOrUpdatePromotion(int movieId, String code, String description, BigDecimal discount) {
+        Optional<Movie> optionalMovie = movieRepository.findById(movieId);
+        if (optionalMovie.isPresent()) {
+            Movie movie = optionalMovie.get();
+            movie.setPromotionCode(code);
+            movie.setPromotionDescription(description);
+            movie.setDiscountAmount(discount);
+            return movieRepository.save(movie);
+        }
+        return null;
     }
 
 }

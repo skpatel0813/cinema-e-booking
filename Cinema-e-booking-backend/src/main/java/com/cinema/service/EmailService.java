@@ -8,6 +8,8 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class EmailService {
 
@@ -52,6 +54,12 @@ public class EmailService {
             e.printStackTrace();
             System.out.println("Error sending email: " + e.getMessage());
             return false;
+        }
+    }
+
+    public void sendPromotionEmails(List<String> recipients, String message) {
+        for (String recipient : recipients) {
+            sendEmail(recipient, "Cinema Promotion", message);
         }
     }
 }

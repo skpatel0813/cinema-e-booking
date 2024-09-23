@@ -65,7 +65,7 @@ public class UserController {
         return ResponseEntity.status(404).body("User not found");
     }
 
-    @PutMapping("/user/profile/{email}")
+    @PutMapping("/profile/{email}")
     public ResponseEntity<?> updateUserProfile(@PathVariable String email, @RequestBody User updatedUser) {
         try {
             User updated = userService.updateUserProfile(email, updatedUser);
