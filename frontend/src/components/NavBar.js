@@ -1,11 +1,12 @@
-// Updated NavBar Component to include "Edit Users" button for admin
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import '../styles/NavBar.css';
 
 const NavBar = ({ onLoginClick, userName, onLogout, onEditProfileClick }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [loginPromptVisible, setLoginPromptVisible] = useState(false);
   const [role, setRole] = useState(null);
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -41,10 +42,25 @@ const NavBar = ({ onLoginClick, userName, onLogout, onEditProfileClick }) => {
     navigate('/edit-users'); // Navigate to the Edit Users page
   };
 
+  const handleGetTicketsClick = () => {
+    if (!userName) {
+      setLoginPromptVisible(true); // Show login prompt if not logged in
+    } else {
+      // Logic for navigating to the ticket booking page
+      navigate('/tickets');
+    }
+  };
+
+  const closeLoginPrompt = () => {
+    setLoginPromptVisible(false);
+  };
+
   return (
     <nav>
       <ul className="nav-list">
         <li className="nav-item left"><Link to="/">Home</Link></li>
+        
+        {/* Render Admin Specific Buttons */}
         {role === 'admin' && (
           <>
             <li className="nav-item left">
@@ -59,6 +75,17 @@ const NavBar = ({ onLoginClick, userName, onLogout, onEditProfileClick }) => {
             </li>
           </>
         )}
+        
+        {/* Render Get Tickets Button Only if User is not Admin */}
+        {role !== 'admin' && (
+          <li className="nav-item right">
+            <button className="get-tickets-btn" onClick={handleGetTicketsClick}>
+              Get Tickets
+            </button>
+          </li>
+        )}
+        
+        {/* User Login/Logout Section */}
         <li className="nav-item right">
           {userName ? (
             <div className="user-section">
@@ -75,6 +102,17 @@ const NavBar = ({ onLoginClick, userName, onLogout, onEditProfileClick }) => {
           )}
         </li>
       </ul>
+
+      {/* Login Prompt Modal */}
+      {loginPromptVisible && (
+        <div className="modal">
+          <div className="modal-content">
+            <span className="close" onClick={closeLoginPrompt}>&times;</span>
+            <p>You need to sign in to get tickets</p>
+            <button className="login-button" onClick={onLoginClick}>Sign In</button>
+          </div>
+        </div>
+      )}
     </nav>
   );
 };

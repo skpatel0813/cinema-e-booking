@@ -1,12 +1,38 @@
-// DetailedModal.js
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import '../styles/modal.css';
+import LoginModal from './LoginModal';
 
-import React from 'react';
-import '../styles/modal.css';  // Import the CSS file
+const DetailedModal = ({ show, onClose, movie, isLoggedIn }) => {
+  const [loginPromptVisible, setLoginPromptVisible] = useState(false);
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const navigate = useNavigate();
 
+  if (!show || !movie) return null;
 
+  const handleGetTicketsClick = () => {
+    console.log("Is user logged in? ", isLoggedIn); // Debugging log
+    if (isLoggedIn) {
+      console.log("Navigating to tickets.js"); // Debugging log
+      navigate('/tickets');
+    } else {
+      console.log("Showing login prompt"); // Debugging log
+      setLoginPromptVisible(true);
+    }
+  };
 
-const DetailedModal = ({ show, onClose, movie }) => {
-  if (!show || !movie) return null; // Render nothing if show is false or movie is null
+  const closeLoginPrompt = () => {
+    setLoginPromptVisible(false);
+  };
+
+  const handleLoginModalOpen = () => {
+    setIsLoginModalOpen(true);
+    setLoginPromptVisible(false);
+  };
+
+  const handleLoginModalClose = () => {
+    setIsLoginModalOpen(false);
+  };
 
   return (
     <div className="modal">
@@ -30,7 +56,7 @@ const DetailedModal = ({ show, onClose, movie }) => {
             ></iframe>
           </div>
         ) : (
-          <p>Trailer not available</p> // Fallback message if trailer is not available
+          <p>Trailer not available</p>
         )}
         
         {/* Movie Details */}
@@ -43,10 +69,24 @@ const DetailedModal = ({ show, onClose, movie }) => {
         </div>
         
         {/* Book Now Button */}
-        <button className="book-now-btn">
+        <button className="book-now-btn" onClick={handleGetTicketsClick}>
           Get Tickets
         </button>
       </div>
+
+      {/* Login Prompt Modal */}
+      {loginPromptVisible && (
+        <div className="modal">
+          <div className="modal-content">
+            <span className="close" onClick={closeLoginPrompt}>&times;</span>
+            <p>You need to sign in to get tickets</p>
+            <button className="login-button" onClick={handleLoginModalOpen}>Sign In</button>
+          </div>
+        </div>
+      )}
+
+      {/* Login Modal */}
+      <LoginModal isOpen={isLoginModalOpen} onClose={handleLoginModalClose} />
     </div>
   );
 };

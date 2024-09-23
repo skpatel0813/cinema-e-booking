@@ -17,6 +17,7 @@ const Home = () => {
   const [selectedCategory, setSelectedCategory] = useState('nowPlaying');
   const [userName, setUserName] = useState('');
   const [userRole, setUserRole] = useState('');
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // New state for tracking login status
   const [showFilterDropdown, setShowFilterDropdown] = useState(false);
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [filterDate, setFilterDate] = useState('');
@@ -36,6 +37,9 @@ const Home = () => {
     if (storedUserRole) {
       setUserRole(storedUserRole);
     }
+
+    // Update login status based on stored values
+    setIsLoggedIn(!!storedUserName); // Set isLoggedIn to true if userName exists
 
     // Fetch movies for the home page
     axios.get('/api/movies/home')
@@ -78,6 +82,7 @@ const Home = () => {
   const handleLogout = () => {
     setUserName('');
     setUserRole('');
+    setIsLoggedIn(false); // Update login status to false
     localStorage.removeItem('user');
     localStorage.removeItem('role');
     navigate('/');
@@ -320,6 +325,7 @@ const Home = () => {
         show={showDetailedModal} 
         onClose={handleCloseDetailedModal} 
         movie={selectedMovie} 
+        isLoggedIn={isLoggedIn} // Pass isLoggedIn to DetailedModal
       />
 
       {/* Login Modal */}
