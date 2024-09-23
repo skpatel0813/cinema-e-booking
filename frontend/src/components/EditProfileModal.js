@@ -40,7 +40,7 @@ const EditProfileModal = ({ isOpen, onClose }) => {
     if (isOpen) {
       const email = localStorage.getItem('userEmail');
       if (email) {
-        axios.get(`http://localhost:8081/api/user/profile?email=${email}`)
+        axios.get(`http://localhost:8081/user/profile?email=${email}`)
           .then(response => {
             setProfileData(response.data);
           })
@@ -65,7 +65,7 @@ const EditProfileModal = ({ isOpen, onClose }) => {
     e.preventDefault();
     const email = localStorage.getItem('userEmail');
     if (email) {
-      axios.put(`http://localhost:8081/api/user/profile/${email}`, profileData)
+      axios.put(`http://localhost:8081/user/profile/${email}`, profileData)
         .then(response => {
           alert('Profile updated successfully');
         })

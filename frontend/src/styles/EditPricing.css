@@ -1,0 +1,89 @@
+/* Container for the Edit Pricing page */
+.edit-pricing-container {
+    max-width: 600px;
+    margin: 50px auto;
+    padding: 20px;
+    border-radius: 8px;
+    background-color: #333333; /* Dark background similar to EditMovie */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    color: #f2f2f2; /* Light text color */
+  }
+  
+  /* Title */
+  .edit-pricing-container h2 {
+    text-align: center;
+    font-size: 28px;
+    margin-bottom: 20px;
+    color: #f2f2f2; /* Light text color */
+  }
+  
+  /* Form Section Headers */
+  .edit-pricing-container .form-section h3 {
+    font-size: 22px;
+    margin-bottom: 10px;
+    color: #cccccc; /* Light gray for section headers */
+  }
+  
+  /* Form Section Styles */
+  .edit-pricing-container .form-section {
+    margin-bottom: 20px;
+  }
+  
+  /* Labels */
+  .edit-pricing-container label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #cccccc; /* Light gray for labels */
+  }
+  
+  /* Input and Textarea Styles */
+  .edit-pricing-container input[type="text"],
+  .edit-pricing-container input[type="number"],
+  .edit-pricing-container textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #555555; /* Darker border color */
+    border-radius: 4px;
+    background-color: #444444; /* Darker background for input fields */
+    color: #f2f2f2; /* Light text color for input */
+    box-sizing: border-box;
+  }
+  
+  /* Textarea Specific Styles */
+  .edit-pricing-container textarea {
+    height: 100px;
+    resize: vertical;
+  }
+  
+  /* Buttons */
+  .edit-pricing-container button {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    color: #f2f2f2; /* Light text color */
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  
+  /* Success Message */
+  .edit-pricing-container .success-message {
+    text-align: center;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  
+  /* Error Message */
+  .edit-pricing-container .error {
+    text-align: center;
+    color: #dc3545; /* Red for error message */
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  

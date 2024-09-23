@@ -42,6 +42,10 @@ const NavBar = ({ onLoginClick, userName, onLogout, onEditProfileClick }) => {
     navigate('/edit-users'); // Navigate to the Edit Users page
   };
 
+  const handleEditPricingClick = () => {
+    navigate('/edit-pricing'); // Navigate to the Edit Pricing page
+  };
+
   const handleGetTicketsClick = () => {
     if (!userName) {
       setLoginPromptVisible(true); // Show login prompt if not logged in
@@ -73,11 +77,16 @@ const NavBar = ({ onLoginClick, userName, onLogout, onEditProfileClick }) => {
                 Edit Users
               </button>
             </li>
+            <li className="nav-item left">
+              <button className="edit-pricing-btn" onClick={handleEditPricingClick}>
+                Pricing / Promotions
+              </button>
+            </li>
           </>
         )}
         
         {/* Render Get Tickets Button Only if User is not Admin */}
-        {role !== 'admin' && (
+        {(
           <li className="nav-item right">
             <button className="get-tickets-btn" onClick={handleGetTicketsClick}>
               Get Tickets
