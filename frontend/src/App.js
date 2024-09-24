@@ -10,6 +10,9 @@ import AddMovie from './pages/AddMovie';
 import UserManagement from './pages/UserManagement'; // Import UserManagement component
 import EditUser from './pages/EditUser';
 import EditPricing from './pages/EditPricing';
+import Showtimes from './pages/Showtimes';
+import Tickets from './pages/Tickets';
+import SelectSeats from './pages/SelectSeats';
 
 const App = () => {
   return (
@@ -25,6 +28,9 @@ const App = () => {
         <Route path="/edit-users" element={<UserManagement />} />
         <Route path="/edit-user/:userId" element={<EditUser />} />
         <Route path="/edit-pricing" element={<EditPricing />} />
+        <Route path="/showtimes" element={<Showtimes />} />
+        <Route path="/tickets" element={<Tickets />} />
+        <Route path="/selectseats" element={<SelectSeats />} />
       </Routes>
     </Router>
   );

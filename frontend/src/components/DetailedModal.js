@@ -13,8 +13,8 @@ const DetailedModal = ({ show, onClose, movie, isLoggedIn }) => {
   const handleGetTicketsClick = () => {
     console.log("Is user logged in? ", isLoggedIn); // Debugging log
     if (isLoggedIn) {
-      console.log("Navigating to tickets.js"); // Debugging log
-      navigate('/tickets');
+      console.log("Navigating to showtimes with movie title:", movie.title); // Debugging log
+      navigate('/showtimes', { state: { movieTitle: movie.title } });
     } else {
       console.log("Showing login prompt"); // Debugging log
       setLoginPromptVisible(true);

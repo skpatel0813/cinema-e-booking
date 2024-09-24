@@ -1,0 +1,84 @@
+.showtimes-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    text-align: center;
+    background-color: #2c2c2c;
+    color: #ffffff;
+    border-radius: 10px;
+  }
+  
+  .showtimes-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  .dropdown {
+    position: relative;
+    display: inline-block;
+  }
+  
+  .dropdown-button {
+    color: white;
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+  }
+  
+  
+  .dropdown-content {
+    display: block;
+    position: absolute;
+    background-color: #f1f1f1;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+    max-height: 200px; /* Limit the height of the dropdown */
+    overflow-y: auto;  /* Add a scrollbar if content overflows */
+  }
+  
+  .dropdown-content button {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    width: 100%;
+    border: none;
+    background: none;
+    cursor: pointer;
+  }
+  
+  .dropdown-content button:hover {
+    background-color: #ddd;
+  }
+  
+  .pill-button {
+    margin: 10px;
+    padding: 10px 20px;
+    border-radius: 20px;
+    background-color: #e74c3c;
+    color: white;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .pill-button:hover {
+    background-color: #c0392b;
+  }
+  
+  .pill-button.disabled {
+    background-color: #555;
+    cursor: not-allowed;
+  }
+  
+  .time-slots {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+  }
+  

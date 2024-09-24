@@ -51,7 +51,7 @@ const NavBar = ({ onLoginClick, userName, onLogout, onEditProfileClick }) => {
       setLoginPromptVisible(true); // Show login prompt if not logged in
     } else {
       // Logic for navigating to the ticket booking page
-      navigate('/tickets');
+      navigate('/showtimes');
     }
   };
 
@@ -85,7 +85,6 @@ const NavBar = ({ onLoginClick, userName, onLogout, onEditProfileClick }) => {
           </>
         )}
         
-        {/* Render Get Tickets Button Only if User is not Admin */}
         {(
           <li className="nav-item right">
             <button className="get-tickets-btn" onClick={handleGetTicketsClick}>
