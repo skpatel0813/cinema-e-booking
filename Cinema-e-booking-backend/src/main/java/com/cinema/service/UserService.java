@@ -203,5 +203,11 @@ public class UserService {
     public List<String> getSubscribedUserEmails() {
         return userRepository.findSubscribedUserEmails();
     }
+
+    public User getUserInfo(Long id) {
+        return userRepository.findById(id).orElse(null);
+    }
+
+
 }
 

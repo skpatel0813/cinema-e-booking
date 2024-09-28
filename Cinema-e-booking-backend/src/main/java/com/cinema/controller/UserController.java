@@ -5,6 +5,7 @@ import com.cinema.model.User;
 import com.cinema.service.EmailService;
 import com.cinema.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -51,6 +52,10 @@ public class UserController {
             Map<String, String> response = new HashMap<>();
             response.put("userName", user.getName());
             response.put("role", user.getRole());
+
+            System.out.println(user.getId());
+            response.put("userID", String.valueOf(user.getId()));
+
             return ResponseEntity.ok(response);
         }
         return ResponseEntity.badRequest().body("Invalid credentials");
@@ -194,6 +199,17 @@ public class UserController {
             code.append(random.nextInt(10)); // Append a random digit (0-9)
         }
         return code.toString();
+    }
+
+    @GetMapping("/getUserInfo/{id}")
+    public User getUserInfo(@PathVariable Long id) {
+        return userService.getUserInfo(id);
+    }
+
+    // New method to get user info by email
+    @GetMapping("/getUserInfoByEmail")
+    public User getUserInfoByEmail(@RequestParam String email) {
+        return userService.getUserByEmail(email);
     }
 }
 
