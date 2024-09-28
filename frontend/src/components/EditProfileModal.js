@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import '../styles/EditProfileModal.css';
 import axios from 'axios';
 
-const EditProfileModal = ({ isOpen, onClose }) => {
+const EditProfileModal = ({ isOpen, onClose, email }) => { // Add email as a prop
   const [profileData, setProfileData] = useState({
     name: '',
     phone: '',
@@ -37,19 +37,17 @@ const EditProfileModal = ({ isOpen, onClose }) => {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    if (isOpen) {
-      const email = localStorage.getItem('userEmail');
-      if (email) {
-        axios.get(`http://localhost:8081/user/profile?email=${email}`)
-          .then(response => {
-            setProfileData(response.data);
-          })
-          .catch(error => console.error('Error fetching profile:', error));
-      } else {
-        console.error('User email not found');
-      }
+    if (isOpen && email) { // Use the email prop instead of localStorage
+      console.log(`Email passed to EditProfileModal: ${email}`);
+      axios.get(`http://localhost:8081/user/profile?email=${email}`)
+        .then(response => {
+          setProfileData(response.data);
+        })
+        .catch(error => console.error('Error fetching profile:', error));
+    } else if (!email) {
+      console.error('User email not found');
     }
-  }, [isOpen]);
+  }, [isOpen, email]); // Dependency array now includes email
 
   const handleProfileChange = (e) => {
     const { name, value } = e.target;
@@ -63,8 +61,7 @@ const EditProfileModal = ({ isOpen, onClose }) => {
 
   const handleProfileSubmit = (e) => {
     e.preventDefault();
-    const email = localStorage.getItem('userEmail');
-    if (email) {
+    if (email) { // Use the email prop
       axios.put(`http://localhost:8081/user/profile/${email}`, profileData)
         .then(response => {
           alert('Profile updated successfully');
@@ -80,8 +77,7 @@ const EditProfileModal = ({ isOpen, onClose }) => {
 
   const handlePasswordSubmit = (e) => {
     e.preventDefault();
-    const email = localStorage.getItem('userEmail');
-    if (email) {
+    if (email) { // Use the email prop
       axios.put(`http://localhost:8081/api/user/change-password/${email}`, passwordData)
         .then(() => alert('Password updated successfully'))
         .catch(error => {
@@ -95,8 +91,7 @@ const EditProfileModal = ({ isOpen, onClose }) => {
 
   const handleCardSubmit = (e) => {
     e.preventDefault();
-    const email = localStorage.getItem('userEmail');
-    if (email) {
+    if (email) { // Use the email prop
       const { cardNumber1, expirationDate1, cvv1, cardNumber2, expirationDate2, cvv2, cardNumber3, expirationDate3, cvv3 } = profileData;
 
       // Basic validation for card details
@@ -131,7 +126,7 @@ const EditProfileModal = ({ isOpen, onClose }) => {
         cvv3: profileData.cvv3
       };
       
-      axios.put(`http://localhost:8081/api/user/cards/${email}`, cardData)
+      axios.put(`http://localhost:8081/user/cards/${email}`, cardData)
         .then(response => {
           alert('Cards updated successfully');
         })

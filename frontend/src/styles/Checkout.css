@@ -1,0 +1,92 @@
+/* Checkout.css */
+
+.checkout-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  h1 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 20px;
+  }
+  
+  .ticket-summary {
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+  }
+  
+  .ticket-summary h3 {
+    color: white;
+    margin-bottom: 15px;
+  }
+  
+  .ticket-summary p {
+    font-size: 16px;
+    color: white;
+    margin: 5px 0;
+  }
+  
+  .promotion-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  .promotion-section input[type="text"] {
+    width: 70%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+  }
+  
+  .promotion-section button {
+    color: #ffffff;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+
+  
+  .payment-button {
+    display: block;
+    width: 100%;
+    color: #ffffff;
+    padding: 15px;
+    border: none;
+    border-radius: 8px;
+    font-size: 18px;
+    text-align: center;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  
+  @media (max-width: 768px) {
+    .checkout-container {
+      padding: 15px;
+    }
+  
+    .promotion-section {
+      flex-direction: column;
+    }
+  
+    .promotion-section input[type="text"] {
+      width: 100%;
+      margin-bottom: 10px;
+    }
+  
+    .promotion-section button {
+      width: 100%;
+    }
+  }
+  

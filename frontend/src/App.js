@@ -13,6 +13,8 @@ import EditPricing from './pages/EditPricing';
 import Showtimes from './pages/Showtimes';
 import Tickets from './pages/Tickets';
 import SelectSeats from './pages/SelectSeats';
+import Checkout from './pages/Checkout';
+import Confirmation from './pages/Confirmation';
 
 const App = () => {
   return (
@@ -31,6 +33,8 @@ const App = () => {
         <Route path="/showtimes" element={<Showtimes />} />
         <Route path="/tickets" element={<Tickets />} />
         <Route path="/selectseats" element={<SelectSeats />} />
+        <Route path="/checkout" element={<Checkout />} />
+        <Route path="/confirmation" element={<Confirmation />} />
       </Routes>
     </Router>
   );

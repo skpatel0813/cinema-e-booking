@@ -62,6 +62,9 @@ const Showtimes = () => {
 
   const handleShowtimeClick = (timeSlot) => {
     if (!isPastShowtime(timeSlot)) {
+      // Store the selected showtime in local storage
+      localStorage.setItem('selectedShowtime', `${selectedDate} ${timeSlot}`);
+
       navigate('/tickets', { state: { movieTitle: selectedMovie, selectedDate, selectedTime: timeSlot } });
     }
   };

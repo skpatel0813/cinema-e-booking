@@ -14,7 +14,6 @@
   
   .seat {
     padding: 10px;
-    background-color: #3498db;
     color: white;
     cursor: pointer;
     border-radius: 5px;
@@ -22,7 +21,7 @@
   }
   
   .seat.selected {
-    background-color: #2ecc71;
+    background-color: #e74c3c;
   }
   
   .seat.reserved {
@@ -32,7 +31,6 @@
   
   .reserve-button {
     padding: 10px 20px;
-    background-color: #2ecc71;
     color: white;
     border: none;
     cursor: pointer;

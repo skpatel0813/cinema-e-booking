@@ -23,6 +23,7 @@ const Home = () => {
   const [filterDate, setFilterDate] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [browseAll, setBrowseAll] = useState(false); // New state to control "Browse All Movies" view
+  const [showTimes, setShowTimes] = useState([]);
   const movieListRef = useRef(null);
   const navigate = useNavigate();
 
@@ -52,6 +53,24 @@ const Home = () => {
       })
       .catch(error => console.error('Error fetching movies:', error));
   }, []);
+
+  useEffect(() => {
+    if (filterDate) {
+      // Set showtimes for the selected date
+      const currentDate = new Date();
+      const selectedDate = new Date(filterDate);
+
+      const times = ['8:00 AM', '11:00 AM', '2:00 PM', '5:00 PM', '8:00 PM', '11:00 PM'];
+      const filteredTimes = times.filter(time => {
+        const [hour, period] = time.split(' ');
+        const hour24 = period === 'PM' ? parseInt(hour) + 12 : parseInt(hour);
+        selectedDate.setHours(hour24, 0, 0, 0);
+        return selectedDate > currentDate;
+      });
+
+      setShowTimes(filteredTimes);
+    }
+  }, [filterDate]);
 
   const handleViewDetails = (movie) => {
     if (movie) {
@@ -110,14 +129,6 @@ const Home = () => {
       filteredMovies = filteredMovies.filter(movie =>
         selectedCategories.includes(movie.category)
       );
-    }
-
-    // Filter by date
-    if (filterDate) {
-      filteredMovies = filteredMovies.filter(movie => {
-        const movieDate = new Date(movie.release_date).toISOString().split('T')[0];
-        return movieDate === filterDate;
-      });
     }
 
     // Filter by search term
@@ -226,6 +237,18 @@ const Home = () => {
     setSelectedCategories([]);
     setFilterDate('');
     setSearchTerm('');
+    setShowTimes([]);
+  };
+
+  const getMaxDate = () => {
+    const today = new Date();
+    today.setDate(today.getDate() + 14); // Show dates for the next two weeks
+    return today.toISOString().split('T')[0];
+  };
+
+  const getMinDate = () => {
+    const today = new Date();
+    return today.toISOString().split('T')[0];
   };
 
   return (
@@ -300,8 +323,24 @@ const Home = () => {
                       <input
                         type="date"
                         value={filterDate}
+                        min={getMinDate()}
+                        max={getMaxDate()}
                         onChange={(e) => setFilterDate(e.target.value)}
                       />
+                    </div>
+                    <div className="showtimes">
+                      {filterDate && showTimes.length > 0 ? (
+                        showTimes.map(time => (
+                          <button
+                            key={time}
+                            className="pill-button"
+                          >
+                            {time}
+                          </button>
+                        ))
+                      ) : (
+                        <p>Select a valid date to see available showtimes.</p>
+                      )}
                     </div>
                     <button
                       className="clear-filters-btn"
