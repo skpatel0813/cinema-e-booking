@@ -17,15 +17,34 @@ const Home = () => {
   const [selectedCategory, setSelectedCategory] = useState('nowPlaying');
   const [userName, setUserName] = useState('');
   const [userRole, setUserRole] = useState('');
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // New state for tracking login status
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [showFilterDropdown, setShowFilterDropdown] = useState(false);
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [filterDate, setFilterDate] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
-  const [browseAll, setBrowseAll] = useState(false); // New state to control "Browse All Movies" view
+  const [browseAll, setBrowseAll] = useState(false);
   const [showTimes, setShowTimes] = useState([]);
+  const [selectedShowTime, setSelectedShowTime] = useState('');
   const movieListRef = useRef(null);
   const navigate = useNavigate();
+
+  // Corrected function to convert 12-hour time to 24-hour time
+  const convertTo24Hour = (time12h) => {
+    const [time, period] = time12h.split(' ');
+    let [hours, minutes] = time.split(':');
+
+    hours = parseInt(hours, 10); // Ensure hours is an integer
+
+    if (period === 'PM' && hours !== 12) {
+      hours = hours + 12; // Convert PM hours except 12 PM to 24-hour format
+    }
+    if (period === 'AM' && hours === 12) {
+      hours = 0; // Convert 12 AM to 00
+    }
+
+    // Return time in HH:mm:ss format
+    return `${hours.toString().padStart(2, '0')}:${minutes}:00`;
+  };
 
   useEffect(() => {
     const storedUserName = localStorage.getItem('user');
@@ -39,8 +58,7 @@ const Home = () => {
       setUserRole(storedUserRole);
     }
 
-    // Update login status based on stored values
-    setIsLoggedIn(!!storedUserName); // Set isLoggedIn to true if userName exists
+    setIsLoggedIn(!!storedUserName);
 
     // Fetch movies for the home page
     axios.get('/api/movies/home')
@@ -56,14 +74,20 @@ const Home = () => {
 
   useEffect(() => {
     if (filterDate) {
-      // Set showtimes for the selected date
       const currentDate = new Date();
       const selectedDate = new Date(filterDate);
 
-      const times = ['8:00 AM', '11:00 AM', '2:00 PM', '5:00 PM', '8:00 PM', '11:00 PM'];
+      const times = ['8:00 AM', '12:00 PM', '2:30 PM', '3:30 PM', '8:00 PM', '11:00 PM'];
       const filteredTimes = times.filter(time => {
         const [hour, period] = time.split(' ');
-        const hour24 = period === 'PM' ? parseInt(hour) + 12 : parseInt(hour);
+        let hour24;
+
+        if (period === 'AM') {
+          hour24 = hour === '12' ? 0 : parseInt(hour);
+        } else {
+          hour24 = hour === '12' ? 12 : parseInt(hour) + 12;
+        }
+
         selectedDate.setHours(hour24, 0, 0, 0);
         return selectedDate > currentDate;
       });
@@ -101,7 +125,7 @@ const Home = () => {
   const handleLogout = () => {
     setUserName('');
     setUserRole('');
-    setIsLoggedIn(false); // Update login status to false
+    setIsLoggedIn(false);
     localStorage.removeItem('user');
     localStorage.removeItem('role');
     navigate('/');
@@ -124,18 +148,25 @@ const Home = () => {
   const getCategoryMovies = () => {
     let filteredMovies = movies;
 
-    // Filter by categories
     if (selectedCategories.length > 0) {
       filteredMovies = filteredMovies.filter(movie =>
         selectedCategories.includes(movie.category)
       );
     }
 
-    // Filter by search term
     if (searchTerm) {
       filteredMovies = filteredMovies.filter(movie =>
         movie.title.toLowerCase().includes(searchTerm.toLowerCase())
       );
+    }
+
+    // Filter by selected showtime (convert selected time to 24-hour format)
+    if (selectedShowTime) {
+      const selectedShowTime24 = convertTo24Hour(selectedShowTime);
+      filteredMovies = filteredMovies.filter(movie => {
+        return [movie.show_time_1, movie.show_time_2, movie.show_time_3, movie.show_time_4, movie.show_time_5]
+          .some(showtime => showtime && showtime.startsWith(selectedShowTime24));
+      });
     }
 
     return filteredMovies;
@@ -166,7 +197,6 @@ const Home = () => {
     );
   };
 
-  // Render movies for the "Browse All" view
   const renderAllMovies = () => {
     const allMovies = getCategoryMovies();
 
@@ -238,11 +268,12 @@ const Home = () => {
     setFilterDate('');
     setSearchTerm('');
     setShowTimes([]);
+    setSelectedShowTime('');
   };
 
   const getMaxDate = () => {
     const today = new Date();
-    today.setDate(today.getDate() + 14); // Show dates for the next two weeks
+    today.setDate(today.getDate() + 14);
     return today.toISOString().split('T')[0];
   };
 
@@ -288,7 +319,7 @@ const Home = () => {
               </span>
               <button 
                 className="browse-all-button"
-                onClick={() => setBrowseAll(!browseAll)} // Toggle Browse All view
+                onClick={() => setBrowseAll(!browseAll)}
               >
                 {browseAll ? 'Back to Carousel' : 'Browse All Movies'}
               </button>
@@ -328,18 +359,18 @@ const Home = () => {
                         onChange={(e) => setFilterDate(e.target.value)}
                       />
                     </div>
-                    <div className="showtimes">
-                      {filterDate && showTimes.length > 0 ? (
-                        showTimes.map(time => (
-                          <button
-                            key={time}
-                            className="pill-button"
-                          >
-                            {time}
-                          </button>
-                        ))
-                      ) : (
-                        <p>Select a valid date to see available showtimes.</p>
+                    {/* Dropdown for selecting showtime */}
+                    <div className="showtime-filter">
+                      {showTimes.length > 0 && (
+                        <select
+                          value={selectedShowTime}
+                          onChange={(e) => setSelectedShowTime(e.target.value)}
+                        >
+                          <option value="">Select Showtime</option>
+                          {showTimes.map((time, index) => (
+                            <option key={index} value={time}>{time}</option>
+                          ))}
+                        </select>
                       )}
                     </div>
                     <button
@@ -364,7 +395,7 @@ const Home = () => {
         show={showDetailedModal} 
         onClose={handleCloseDetailedModal} 
         movie={selectedMovie} 
-        isLoggedIn={isLoggedIn} // Pass isLoggedIn to DetailedModal
+        isLoggedIn={isLoggedIn}
       />
 
       {/* Login Modal */}
