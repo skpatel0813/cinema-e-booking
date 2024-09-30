@@ -95,4 +95,11 @@ public class MovieController {
         return ResponseEntity.notFound().build();
     }
 
+    // Endpoint to get showtimes for a specific movie by ID
+    @GetMapping("/{movieId}/showtimes")
+    public ResponseEntity<List<String>> getShowtimes(@PathVariable int movieId) {
+        List<String> showtimes = movieService.getShowtimesByMovieId(movieId);
+        return ResponseEntity.ok(showtimes);
+    }
+
 }

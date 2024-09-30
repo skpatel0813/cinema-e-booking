@@ -16,37 +16,30 @@ public class SeatController {
     @Autowired
     private SeatService seatService;
 
-    @GetMapping("/getSeats")
-    public ResponseEntity<List<Seat>> getAllSeats() {
-        List<Seat> seats = seatService.getAllSeats();
-        return ResponseEntity.ok(seats);
-    }
-
+    // Endpoint to get reserved seats for a specific movie and showtime
     @GetMapping("/getReservedSeats")
-    public ResponseEntity<List<Seat>> getReservedSeats(@RequestParam Long movieId, @RequestParam String showtime) {
+    public ResponseEntity<List<Seat>> getReservedSeats(@RequestParam int movieId, @RequestParam String showtime) {
         List<Seat> reservedSeats = seatService.getReservedSeats(movieId, showtime);
         return ResponseEntity.ok(reservedSeats);
     }
 
-    @PostMapping("/reserve")
-    public ResponseEntity<?> reserveSeats(@RequestBody Map<String, Object> request) {
-        List<Integer> seatIds = (List<Integer>) request.get("seats");
-        Long movieId = Long.valueOf(request.get("movieId").toString());
-        String showtime = (String) request.get("showtime");
+    // Endpoint to reserve a seat for a specific movie and showtime
+    @PostMapping("/reserveSeat")
+    public ResponseEntity<String> reserveSeat(@RequestParam int seatId, @RequestParam int movieId, @RequestParam String showtime) {
+        try {
+            seatService.reserveSeat(seatId, movieId, showtime);
+            System.out.println("Showtime value: " + showtime);
 
-        if (seatIds == null || seatIds.isEmpty() || movieId == null || showtime == null) {
-            return ResponseEntity.badRequest().body("Invalid request data");
+            return ResponseEntity.ok("Seat reserved successfully");
+        } catch (IllegalStateException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
+    }
 
-        // Debugging: Log the incoming payload
-        System.out.println("Received reservation request for seats: " + seatIds + ", movieId: " + movieId + ", showtime: " + showtime);
-
-        boolean success = seatService.reserveSeats(seatIds, movieId, showtime);
-
-        if (success) {
-            return ResponseEntity.ok("Seats reserved successfully");
-        } else {
-            return ResponseEntity.status(500).body("Failed to reserve seats");
-        }
+    // Endpoint to get all seats (available, reserved, etc.)
+    @GetMapping("/getSeats")
+    public ResponseEntity<List<Seat>> getSeats() {
+        List<Seat> seats = seatService.getAllSeats();
+        return ResponseEntity.ok(seats);
     }
 }

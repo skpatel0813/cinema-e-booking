@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -46,8 +47,17 @@ public class MovieService {
             existingMovie.setTrailer_url(updatedMovie.getTrailer_url());
             existingMovie.setPoster_url(updatedMovie.getPoster_url());
             existingMovie.setRatingCode(updatedMovie.getRatingCode());
-            existingMovie.setShowTime(updatedMovie.getShowTime());
+            existingMovie.setShow_time_1(updatedMovie.getShow_time_1());
+            existingMovie.setShow_time_2(updatedMovie.getShow_time_2());
+            existingMovie.setShow_time_3(updatedMovie.getShow_time_3());
+            existingMovie.setShow_time_4(updatedMovie.getShow_time_4());
+            existingMovie.setShow_time_5(updatedMovie.getShow_time_5());
             existingMovie.setPrice(updatedMovie.getPrice());
+
+            System.out.println("Showtimes being updated: " + updatedMovie.getShow_time_1() + ", " +
+                    updatedMovie.getShow_time_2() + ", " + updatedMovie.getShow_time_3() + ", " +
+                    updatedMovie.getShow_time_4() + ", " + updatedMovie.getShow_time_5());
+
 
             return movieRepository.save(existingMovie); // Save the updated movie
         } else {
@@ -94,6 +104,22 @@ public class MovieService {
             return movieRepository.save(movie);
         }
         return null;
+    }
+
+    // Fetch showtimes for a specific movie by ID
+    public List<String> getShowtimesByMovieId(int movieId) {
+        Movie movie = movieRepository.findById(movieId)
+                .orElseThrow(() -> new RuntimeException("Movie not found"));
+
+        // Collect all non-null showtimes into a list
+        List<String> showtimes = new ArrayList<>();
+        if (movie.getShow_time_1() != null) showtimes.add(movie.getShow_time_1().toString());
+        if (movie.getShow_time_2() != null) showtimes.add(movie.getShow_time_2().toString());
+        if (movie.getShow_time_3() != null) showtimes.add(movie.getShow_time_3().toString());
+        if (movie.getShow_time_4() != null) showtimes.add(movie.getShow_time_4().toString());
+        if (movie.getShow_time_5() != null) showtimes.add(movie.getShow_time_5().toString());
+
+        return showtimes;
     }
 
 }

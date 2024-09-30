@@ -3,6 +3,7 @@ package com.cinema.model;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Entity
 @Table(name = "movies")
@@ -50,6 +51,22 @@ public class Movie {
     private String promotionCode;
     private String promotionDescription;
     private BigDecimal discountAmount;
+
+    @Column(name = "show_time_1")
+    private LocalTime show_time_1;
+
+    @Column(name = "show_time_2")
+    private LocalTime show_time_2;
+
+    @Column(name = "show_time_3")
+    private LocalTime show_time_3;
+
+    @Column(name = "show_time_4")
+    private LocalTime show_time_4;
+
+    @Column(name = "show_time_5")
+    private LocalTime show_time_5;
+
 
 
     // Constructor
@@ -276,4 +293,66 @@ public class Movie {
     public void setDiscountAmount(BigDecimal discountAmount) {
         this.discountAmount = discountAmount;
     }
+
+    public LocalTime getShow_time_1() {
+
+        return  show_time_1;
+
+    }
+
+    public void setShow_time_1(LocalTime show_time_1) {
+
+        this.show_time_1 = show_time_1;
+
+    }
+
+    public LocalTime getShow_time_2() {
+
+        return  show_time_2;
+
+    }
+
+    public void setShow_time_2(LocalTime show_time_2) {
+
+        this.show_time_2 = show_time_2;
+
+    }
+
+
+    public LocalTime getShow_time_3() {
+
+        return  show_time_3;
+
+    }
+
+    public void setShow_time_3(LocalTime show_time_3) {
+
+        this.show_time_3 = show_time_3;
+
+    }
+
+    public LocalTime getShow_time_4() {
+
+        return  show_time_4;
+
+    }
+
+    public void setShow_time_4(LocalTime show_time_4) {
+
+        this.show_time_4 = show_time_4;
+
+    }
+
+    public LocalTime getShow_time_5() {
+
+        return  show_time_5;
+
+    }
+
+    public void setShow_time_5(LocalTime show_time_5) {
+
+        this.show_time_5 = show_time_5;
+
+    }
+
 }
