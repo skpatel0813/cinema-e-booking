@@ -21,6 +21,12 @@ const EditMovie = () => {
     isNowPlaying: false,
     isComingSoon: false,
     isOnDemand: false,
+    show_time_1: '', // Individual showtime fields
+    show_time_2: '',
+    show_time_3: '',
+    show_time_4: '',
+    show_time_5: '',
+    status: 'Coming Soon', // Dropdown for movie status
   });
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -46,6 +52,12 @@ const EditMovie = () => {
             isNowPlaying: response.data.isNowPlaying || false,
             isComingSoon: response.data.isComingSoon || false,
             isOnDemand: response.data.isOnDemand || false,
+            show_time_1: response.data.show_time_1 || '',
+            show_time_2: response.data.show_time_2 || '',
+            show_time_3: response.data.show_time_3 || '',
+            show_time_4: response.data.show_time_4 || '',
+            show_time_5: response.data.show_time_5 || '',
+            status: response.data.status || 'Coming Soon',
           });
         })
         .catch(error => {
@@ -216,6 +228,76 @@ const EditMovie = () => {
               value={movieDetails.ratingCode}
               onChange={handleChange}
             />
+          </div>
+          <div>
+            <label>Price:</label>
+            <input
+              type="text"
+              name="price"
+              value={movieDetails.price}
+              onChange={handleChange}
+            />
+          </div>
+
+          {/* Five showtimes with time input type */}
+          <div>
+            <label>Showtime 1:</label>
+            <input
+              type="time"
+              name="show_time_1"
+              value={movieDetails.show_time_1}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div>
+            <label>Showtime 2:</label>
+            <input
+              type="time"
+              name="show_time_2"
+              value={movieDetails.show_time_2}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div>
+            <label>Showtime 3:</label>
+            <input
+              type="time"
+              name="show_time_3"
+              value={movieDetails.show_time_3}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div>
+            <label>Showtime 4:</label>
+            <input
+              type="time"
+              name="show_time_4"
+              value={movieDetails.show_time_4}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div>
+            <label>Showtime 5:</label>
+            <input
+              type="time"
+              name="show_time_5"
+              value={movieDetails.show_time_5}
+              onChange={handleChange}
+              required
+            />
+          </div>
+
+          {/* Dropdown for movie status */}
+          <div>
+            <label>Status:</label>
+            <select name="status" value={movieDetails.status} onChange={handleChange}>
+              <option value="Coming Soon">Coming Soon</option>
+              <option value="Now Playing">Now Playing</option>
+            </select>
           </div>
 
           <button type="submit" disabled={isSubmitting}>

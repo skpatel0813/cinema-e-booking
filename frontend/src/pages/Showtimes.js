@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import '../styles/Showtimes.css';
 
 const Showtimes = () => {
@@ -9,16 +10,27 @@ const Showtimes = () => {
   const [selectedDate, setSelectedDate] = useState('');
   const [dates, setDates] = useState([]);
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const timeSlots = [
-    '8:00 AM', '11:00 AM', '2:00 PM', '5:00 PM', '8:00 PM', '11:00 PM'
-  ];
+  const [showtimes, setShowtimes] = useState([]); // Array to store fetched showtimes
 
   // Get movie title from location state
   useEffect(() => {
     if (location.state && location.state.movieTitle) {
       setSelectedMovie(location.state.movieTitle);
+      fetchShowtimes(location.state.movieId); // Assuming movieId is also passed in location.state
     }
   }, [location.state]);
+
+  // Fetch showtimes for the selected movie from the database
+  const fetchShowtimes = async (movieId) => {
+
+    movieId = localStorage.getItem('selectedMovieId');
+    try {
+      const response = await axios.get(`/api/movies/${movieId}/showtimes`); // Fetch showtimes by movie ID
+      setShowtimes(response.data); // Assuming the API returns an array of showtimes
+    } catch (error) {
+      console.error('Error fetching showtimes:', error);
+    }
+  };
 
   // Generate dates for 2 weeks
   useEffect(() => {
@@ -44,28 +56,19 @@ const Showtimes = () => {
     setDropdownOpen(false); // Close the dropdown after selecting a date
   };
 
-  const isPastShowtime = (timeSlot) => {
+  const isPastShowtime = (showtime) => {
     const currentDateTime = new Date();
-    const [hours, minutes, period] = timeSlot.match(/(\d+):(\d+)\s(AM|PM)/).slice(1);
+    const showtimeDateTime = new Date(`${selectedDate}T${showtime}`); // Assuming showtime is in 'HH:mm' format
 
-    let slotHours = parseInt(hours);
-    if (period === 'PM' && slotHours !== 12) slotHours += 12;
-    if (period === 'AM' && slotHours === 12) slotHours = 0;
-
-    const showtimeDate = new Date(selectedDate);
-    showtimeDate.setHours(slotHours);
-    showtimeDate.setMinutes(parseInt(minutes));
-    showtimeDate.setSeconds(0);
-
-    return showtimeDate < currentDateTime;
+    return showtimeDateTime < currentDateTime;
   };
 
-  const handleShowtimeClick = (timeSlot) => {
-    if (!isPastShowtime(timeSlot)) {
+  const handleShowtimeClick = (showtime) => {
+    if (!isPastShowtime(showtime)) {
       // Store the selected showtime in local storage
-      localStorage.setItem('selectedShowtime', `${selectedDate} ${timeSlot}`);
+      localStorage.setItem('selectedShowtime', `${selectedDate} ${showtime}`);
 
-      navigate('/tickets', { state: { movieTitle: selectedMovie, selectedDate, selectedTime: timeSlot } });
+      navigate('/tickets', { state: { movieTitle: selectedMovie, selectedDate, selectedTime: showtime } });
     }
   };
 
@@ -91,14 +94,14 @@ const Showtimes = () => {
       <div className="showtimes-body">
         <h3>Select a Time</h3>
         <div className="time-slots">
-          {timeSlots.map((slot, index) => (
+          {showtimes.map((showtime, index) => (
             <button
               key={index}
-              className={`pill-button ${isPastShowtime(slot) ? 'disabled' : ''}`}
-              onClick={() => handleShowtimeClick(slot)}
-              disabled={isPastShowtime(slot)}
+              className={`pill-button ${isPastShowtime(showtime) ? 'disabled' : ''}`}
+              onClick={() => handleShowtimeClick(showtime)}
+              disabled={isPastShowtime(showtime)}
             >
-              {slot}
+              {showtime}
             </button>
           ))}
         </div>

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import NavBar from '../components/NavBar';  // Import the NavBar component
+import NavBar from '../components/NavBar';
 import '../styles/AddMovie.css';
 
 const AddMovie = () => {
@@ -16,7 +16,12 @@ const AddMovie = () => {
     trailerVideo: '',
     ratingCode: '',
     showDates: '',
-    showTimes: '',
+    show_time_1: '', // Individual showtime fields
+    show_time_2: '',
+    show_time_3: '',
+    show_time_4: '',
+    show_time_5: '',
+    status: 'Coming Soon', // Dropdown menu value
   });
 
   const navigate = useNavigate();
@@ -31,7 +36,7 @@ const AddMovie = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Example API call to submit movie data
+    // Submit movie data
     fetch('http://localhost:8081/api/movies', {
       method: 'POST',
       headers: {
@@ -42,7 +47,7 @@ const AddMovie = () => {
     .then(response => response.json())
     .then(() => {
       alert('Movie added successfully!');
-      navigate('/'); // Redirect to home after successful movie addition
+      navigate('/');
     })
     .catch(error => {
       console.error('Error adding movie:', error);
@@ -59,10 +64,9 @@ const AddMovie = () => {
 
   return (
     <div>
-      {/* Include NavBar without the search bar */}
       <NavBar
         onLoginClick={() => navigate('/login')}
-        userName={localStorage.getItem('user')} // Pass userName from localStorage
+        userName={localStorage.getItem('user')}
         onLogout={handleLogout}
         onEditProfileClick={() => navigate('/edit-profile')}
       />
@@ -81,7 +85,35 @@ const AddMovie = () => {
           <input type="text" name="trailerVideo" placeholder="Trailer Video URL" value={movieData.trailerVideo} onChange={handleChange} required />
           <input type="text" name="ratingCode" placeholder="MPAA-US Film Rating Code" value={movieData.ratingCode} onChange={handleChange} required />
           <input type="text" name="showDates" placeholder="Show Dates" value={movieData.showDates} onChange={handleChange} required />
-          <input type="text" name="showTimes" placeholder="Show Times" value={movieData.showTimes} onChange={handleChange} required />
+
+          {/* Five showtimes with time input type */}
+          <div>
+            <label>Showtime 1:</label>
+            <input type="time" name="show_time_1" value={movieData.show_time_1} onChange={handleChange} required />
+          </div>
+          <div>
+            <label>Showtime 2:</label>
+            <input type="time" name="show_time_2" value={movieData.show_time_2} onChange={handleChange} required />
+          </div>
+          <div>
+            <label>Showtime 3:</label>
+            <input type="time" name="show_time_3" value={movieData.show_time_3} onChange={handleChange} required />
+          </div>
+          <div>
+            <label>Showtime 4:</label>
+            <input type="time" name="show_time_4" value={movieData.show_time_4} onChange={handleChange} required />
+          </div>
+          <div>
+            <label>Showtime 5:</label>
+            <input type="time" name="show_time_5" value={movieData.show_time_5} onChange={handleChange} required />
+          </div>
+
+          {/* Dropdown for movie status */}
+          <select name="status" value={movieData.status} onChange={handleChange}>
+            <option value="Coming Soon">Coming Soon</option>
+            <option value="Now Playing">Now Playing</option>
+          </select>
+
           <button type="submit">Add Movie</button>
         </form>
       </div>

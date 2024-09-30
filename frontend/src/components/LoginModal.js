@@ -3,7 +3,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import '../styles/LoginModal.css'; // Ensure you have the CSS for styling
 
-const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
+const LoginModal = ({ isOpen, onClose }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState(''); // State to track login errors
@@ -24,26 +24,24 @@ const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
     setError(''); // Reset the error message
     setIsLoading(true); // Start loading
 
-    axios.post('http://localhost:8081/user/login', { email, password })
+    axios.post('/user/login', { email, password })
       .then(response => {
-        const { userName, role, status, id } = response.data; // Destructure the user id
+        const { userName, role, status } = response.data;
 
         if (role === 'suspended') {
           setError('Account has been suspended. Please contact an Administrator.');
         } else {
-          // Store user data in localStorage
+          // Store the user's name and role in localStorage
           localStorage.setItem('user', userName);
           localStorage.setItem('role', role);
           localStorage.setItem('email', email);
 
-          console.log(email)
-
-          // Trigger onLoginSuccess with the user data
-          onLoginSuccess(response.data);
-
           // Close the modal on successful login and navigate to homepage
           onClose();
-          navigate('/', { state: {email}});
+          navigate('/');
+
+          // Optionally reload the page to update the UI
+          window.location.reload();
         }
       })
       .catch(error => {

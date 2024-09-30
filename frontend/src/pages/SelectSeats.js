@@ -14,7 +14,7 @@ const SelectSeats = () => {
   // Retrieve movieId and showtime from local storage
   const movieId = localStorage.getItem('selectedMovieId');
   const showtime = localStorage.getItem('selectedShowtime');
-  
+
   // Calculate total tickets selected
   const totalTickets = (ticketCounts.adult || 0) + (ticketCounts.child || 0) + (ticketCounts.senior || 0);
 
@@ -26,7 +26,7 @@ const SelectSeats = () => {
         showtime,
       }
     }).then(response => {
-      setReservedSeats(response.data.map(seat => seat.id));
+      setReservedSeats(response.data.map(seat => seat.id));  // Store reserved seat IDs
     }).catch(error => {
       console.error('Error fetching reserved seats:', error);
     });
@@ -57,7 +57,7 @@ const SelectSeats = () => {
     }
   };
 
-  const handleReserveSeats = () => {
+  const handleReserveSeats = async () => {
     if (selectedSeats.length !== totalTickets) {
       alert(`You must select ${totalTickets} seats.`);
       return;
@@ -69,18 +69,31 @@ const SelectSeats = () => {
       return;
     }
 
-    // Find detailed information about selected seats
-    const selectedSeatDetails = seats.filter(seat => selectedSeats.includes(seat.id));
-
-    // Navigate to checkout with necessary details
-    navigate('/checkout', {
-      state: {
-        movieId,      // Make sure movieId is passed
-        showtime,     // Make sure showtime is passed
-        selectedSeats: selectedSeatDetails,  // Pass seat details to the checkout
-        ticketCounts
+    try {
+      // Loop through each selected seat and make individual API calls
+      for (let seatId of selectedSeats) {
+        await axios.post('http://localhost:8081/api/seats/reserveSeat', null, {
+          params: {
+            movieId: movieId,
+            showtime: showtime,
+            seatId: seatId // Send individual seatId for each request
+          }
+        });
       }
-    });
+
+      // Navigate to checkout with necessary details after all seats are reserved
+      navigate('/checkout', {
+        state: {
+          movieId,      // Pass movieId to the checkout
+          showtime,     // Pass showtime to the checkout
+          selectedSeats: seats.filter(seat => selectedSeats.includes(seat.id)),  // Pass seat details to the checkout
+          ticketCounts
+        }
+      });
+    } catch (error) {
+      console.error('Error reserving seats:', error);
+      alert('Failed to reserve seats. Please try again.');
+    }
   };
 
   return (
