@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import NavBar from '../components/NavBar'; // Import NavBar component
 import '../styles/Tickets.css'; // Create this CSS file based on the provided screenshot
 
 const Tickets = () => {
@@ -46,48 +47,58 @@ const Tickets = () => {
   const nonChildTicketsSelected = ticketCounts.adult > 0 || ticketCounts.senior > 0;
 
   return (
-    <div className="tickets-container">
-      <h1>Select Your Tickets</h1>
-      <div className="ticket-type">
-        <div className="ticket-info">
-          <h2>Adult</h2>
-          <p>${prices.adultPrice ? prices.adultPrice.toFixed(2) : 'Loading...'}</p> {/* Updated key */}
+    <div>
+      {/* Include NavBar at the top */}
+      <NavBar 
+        onLoginClick={() => console.log('Login')} 
+        userName="User" 
+        onLogout={() => console.log('Logout')} 
+        onEditProfileClick={() => console.log('Edit Profile')}
+      />
+
+      <div className="tickets-container">
+        <h1>Select Your Tickets</h1>
+        <div className="ticket-type">
+          <div className="ticket-info">
+            <h2>Adult</h2>
+            <p>${prices.adultPrice ? prices.adultPrice.toFixed(2) : 'Loading...'}</p> {/* Updated key */}
+          </div>
+          <div className="ticket-controls">
+            <button onClick={() => decrementTicket('adult')}>-</button>
+            <span>{ticketCounts.adult}</span>
+            <button onClick={() => incrementTicket('adult')}>+</button>
+          </div>
         </div>
-        <div className="ticket-controls">
-          <button onClick={() => decrementTicket('adult')}>-</button>
-          <span>{ticketCounts.adult}</span>
-          <button onClick={() => incrementTicket('adult')}>+</button>
+        <div className="ticket-type">
+          <div className="ticket-info">
+            <h2>Child <span>Age 2-12</span></h2>
+            <p>${prices.childrenPrice ? prices.childrenPrice.toFixed(2) : 'Loading...'}</p> {/* Updated key */}
+          </div>
+          <div className="ticket-controls">
+            <button onClick={() => decrementTicket('child')}>-</button>
+            <span>{ticketCounts.child}</span>
+            <button onClick={() => incrementTicket('child')}>+</button>
+          </div>
         </div>
+        <div className="ticket-type">
+          <div className="ticket-info">
+            <h2>Senior <span>Age 60+</span></h2>
+            <p>${prices.seniorPrice ? prices.seniorPrice.toFixed(2) : 'Loading...'}</p> {/* Updated key */}
+          </div>
+          <div className="ticket-controls">
+            <button onClick={() => decrementTicket('senior')}>-</button>
+            <span>{ticketCounts.senior}</span>
+            <button onClick={() => incrementTicket('senior')}>+</button>
+          </div>
+        </div>
+        {nonChildTicketsSelected && (
+          <div className="continue-button-container">
+            <button className="continue-button" onClick={handleContinue}>
+              Continue
+            </button>
+          </div>
+        )}
       </div>
-      <div className="ticket-type">
-        <div className="ticket-info">
-          <h2>Child <span>Age 2-12</span></h2>
-          <p>${prices.childrenPrice ? prices.childrenPrice.toFixed(2) : 'Loading...'}</p> {/* Updated key */}
-        </div>
-        <div className="ticket-controls">
-          <button onClick={() => decrementTicket('child')}>-</button>
-          <span>{ticketCounts.child}</span>
-          <button onClick={() => incrementTicket('child')}>+</button>
-        </div>
-      </div>
-      <div className="ticket-type">
-        <div className="ticket-info">
-          <h2>Senior <span>Age 60+</span></h2>
-          <p>${prices.seniorPrice ? prices.seniorPrice.toFixed(2) : 'Loading...'}</p> {/* Updated key */}
-        </div>
-        <div className="ticket-controls">
-          <button onClick={() => decrementTicket('senior')}>-</button>
-          <span>{ticketCounts.senior}</span>
-          <button onClick={() => incrementTicket('senior')}>+</button>
-        </div>
-      </div>
-      {nonChildTicketsSelected && (
-        <div className="continue-button-container">
-          <button className="continue-button" onClick={handleContinue}>
-            Continue
-          </button>
-        </div>
-      )}
     </div>
   );
 };

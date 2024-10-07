@@ -85,13 +85,6 @@ const NavBar = ({ onLoginClick, userName, onLogout, onEditProfileClick }) => {
           </>
         )}
         
-        {(
-          <li className="nav-item right">
-            <button className="get-tickets-btn" onClick={handleGetTicketsClick}>
-              Get Tickets
-            </button>
-          </li>
-        )}
         
         {/* User Login/Logout Section */}
         <li className="nav-item right">

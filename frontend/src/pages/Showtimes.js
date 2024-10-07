@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import NavBar from '../components/NavBar'; // Import NavBar component
 import '../styles/Showtimes.css';
 
 const Showtimes = () => {
@@ -22,7 +23,6 @@ const Showtimes = () => {
 
   // Fetch showtimes for the selected movie from the database
   const fetchShowtimes = async (movieId) => {
-
     movieId = localStorage.getItem('selectedMovieId');
     try {
       const response = await axios.get(`/api/movies/${movieId}/showtimes`); // Fetch showtimes by movie ID
@@ -73,37 +73,47 @@ const Showtimes = () => {
   };
 
   return (
-    <div className="showtimes-container">
-      <div className="showtimes-header">
-        <h2>{selectedMovie || 'Select a Movie'}</h2>
-        <div className="dropdown">
-          <button className="dropdown-button" onClick={toggleDropdown}>
-            {selectedDate} &#9660; {/* Downward arrow */}
-          </button>
-          {dropdownOpen && (
-            <div className="dropdown-content">
-              {dates.map((date, index) => (
-                <button key={index} onClick={() => handleDateChange(date)}>
-                  {date}
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
-      </div>
-      <div className="showtimes-body">
-        <h3>Select a Time</h3>
-        <div className="time-slots">
-          {showtimes.map((showtime, index) => (
-            <button
-              key={index}
-              className={`pill-button ${isPastShowtime(showtime) ? 'disabled' : ''}`}
-              onClick={() => handleShowtimeClick(showtime)}
-              disabled={isPastShowtime(showtime)}
-            >
-              {showtime}
+    <div>
+      {/* Include NavBar at the top */}
+      <NavBar 
+        onLoginClick={() => console.log('Login')} 
+        userName="User" 
+        onLogout={() => console.log('Logout')} 
+        onEditProfileClick={() => console.log('Edit Profile')}
+      />
+      
+      <div className="showtimes-container">
+        <div className="showtimes-header">
+          <h2>{selectedMovie || 'Select a Movie'}</h2>
+          <div className="dropdown">
+            <button className="dropdown-button" onClick={toggleDropdown}>
+              {selectedDate} &#9660; {/* Downward arrow */}
             </button>
-          ))}
+            {dropdownOpen && (
+              <div className="dropdown-content">
+                {dates.map((date, index) => (
+                  <button key={index} onClick={() => handleDateChange(date)}>
+                    {date}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+        <div className="showtimes-body">
+          <h3>Select a Time</h3>
+          <div className="time-slots">
+            {showtimes.map((showtime, index) => (
+              <button
+                key={index}
+                className={`pill-button ${isPastShowtime(showtime) ? 'disabled' : ''}`}
+                onClick={() => handleShowtimeClick(showtime)}
+                disabled={isPastShowtime(showtime)}
+              >
+                {showtime}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
     </div>

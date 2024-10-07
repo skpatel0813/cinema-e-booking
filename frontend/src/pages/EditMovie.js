@@ -5,7 +5,7 @@ import NavBar from '../components/NavBar';
 import '../styles/EditMovie.css';
 
 const EditMovie = () => {
-  const { id } = useParams(); 
+  const { id } = useParams();
   const [movieDetails, setMovieDetails] = useState({
     title: '',
     category: '',
@@ -21,12 +21,12 @@ const EditMovie = () => {
     isNowPlaying: false,
     isComingSoon: false,
     isOnDemand: false,
-    show_time_1: '', // Individual showtime fields
+    show_time_1: '',
     show_time_2: '',
     show_time_3: '',
     show_time_4: '',
     show_time_5: '',
-    status: 'Coming Soon', // Dropdown for movie status
+    status: '' // Default to an empty string
   });
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -37,27 +37,10 @@ const EditMovie = () => {
     if (id) {
       axios.get(`/api/movies/${id}`)
         .then(response => {
+          const status = response.data.isNowPlaying ? 'Now Playing' : response.data.isComingSoon ? 'Coming Soon' : '';
           setMovieDetails({
-            title: response.data.title || '',
-            category: response.data.category || '',
-            cast: response.data.cast || '',
-            director: response.data.director || '',
-            producer: response.data.producer || '',
-            synopsis: response.data.synopsis || '',
-            reviews: response.data.reviews || '',
-            trailer_url: response.data.trailer_url || '',
-            poster_url: response.data.poster_url || '',
-            ratingCode: response.data.ratingCode || '',
-            price: response.data.price || '',
-            isNowPlaying: response.data.isNowPlaying || false,
-            isComingSoon: response.data.isComingSoon || false,
-            isOnDemand: response.data.isOnDemand || false,
-            show_time_1: response.data.show_time_1 || '',
-            show_time_2: response.data.show_time_2 || '',
-            show_time_3: response.data.show_time_3 || '',
-            show_time_4: response.data.show_time_4 || '',
-            show_time_5: response.data.show_time_5 || '',
-            status: response.data.status || 'Coming Soon',
+            ...response.data,
+            status: status // Set the status based on current data
           });
         })
         .catch(error => {
@@ -73,11 +56,18 @@ const EditMovie = () => {
   // Handle input changes
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    
-    if (type === 'checkbox') {
+
+    if (name === 'status') {
       setMovieDetails(prevState => ({
         ...prevState,
-        [name]: checked === true // Explicitly set the value to true if checked, otherwise false
+        status: value,
+        isNowPlaying: value === 'Now Playing',
+        isComingSoon: value === 'Coming Soon',
+      }));
+    } else if (type === 'checkbox') {
+      setMovieDetails(prevState => ({
+        ...prevState,
+        [name]: checked
       }));
     } else {
       setMovieDetails(prevState => ({
@@ -92,8 +82,13 @@ const EditMovie = () => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    // Update movie details via a PUT request
-    axios.put(`/api/movies/${id}`, movieDetails)
+    const updatedMovieDetails = {
+      ...movieDetails,
+      isNowPlaying: movieDetails.status === 'Now Playing',
+      isComingSoon: movieDetails.status === 'Coming Soon',
+    };
+
+    axios.put(`/api/movies/${id}`, updatedMovieDetails)
       .then(() => {
         alert('Movie updated successfully!');
         setIsSubmitting(false);
@@ -124,11 +119,11 @@ const EditMovie = () => {
   return (
     <div>
       <NavBar 
-        onLoginClick={() => console.log('Login')} 
-        userName="Admin" 
-        onLogout={() => console.log('Logout')} 
+        onLoginClick={() => console.log('Login')}
+        userName="Admin"
+        onLogout={() => console.log('Logout')}
         onEditProfileClick={() => console.log('Edit Profile')}
-        userType="admin" 
+        userType="admin"
       />
 
       <div className="edit-movie-container">
@@ -295,6 +290,7 @@ const EditMovie = () => {
           <div>
             <label>Status:</label>
             <select name="status" value={movieDetails.status} onChange={handleChange}>
+              <option value="">Select Status</option>
               <option value="Coming Soon">Coming Soon</option>
               <option value="Now Playing">Now Playing</option>
             </select>

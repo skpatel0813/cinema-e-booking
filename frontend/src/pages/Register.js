@@ -77,8 +77,16 @@ const Register = () => {
     }
   };
 
+  const handleClose = () => {
+    // Optionally, reset the form or navigate to another page
+    navigate('/'); // Redirecting to home page
+  };
+
   return (
     <div className="register-container">
+      {/* Close "X" Button */}
+      <button className="close-button" onClick={handleClose}>X</button>
+
       {!isRegistered ? (
         <form onSubmit={handleRegister} className="register-form">
           <h2>Register</h2>

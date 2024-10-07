@@ -28,7 +28,7 @@ const Home = () => {
   const movieListRef = useRef(null);
   const navigate = useNavigate();
 
-  // Corrected function to convert 12-hour time to 24-hour time
+  // Function to convert 12-hour time to 24-hour time
   const convertTo24Hour = (time12h) => {
     const [time, period] = time12h.split(' ');
     let [hours, minutes] = time.split(':');
@@ -197,29 +197,74 @@ const Home = () => {
     );
   };
 
-  const renderAllMovies = () => {
-    const allMovies = getCategoryMovies();
+  // New function to render Now Playing movies, limiting to 5 if not admin
+  const renderNowPlayingMovies = () => {
+    let nowPlayingMovies = movies.filter(movie => movie.isNowPlaying);
 
-    if (allMovies.length === 0) {
-      return <p>No movies available with the selected filters.</p>;
+    if (userRole !== 'admin' && !browseAll) {
+      nowPlayingMovies = nowPlayingMovies.slice(0, 5); // Show only 5 if not an admin and not browsing all
+    }
+
+    if (nowPlayingMovies.length === 0) {
+      return <p>No movies currently playing.</p>;
     }
 
     return (
-      <div className="all-movies-container">
-        {allMovies.map(movie => (
-          <div key={movie.movie_id || movie.title} className="movie-card">
-            <img 
-              src={movie.poster_url} 
-              alt={movie.title} 
-              className="movie-poster"
-              onError={(e) => e.target.style.display = 'none'}
-            />
-            <h2>{movie.title}</h2>
-            <button className="book-now-btn" onClick={() => handleViewDetails(movie)}>
-              Get Tickets
-            </button>
-          </div>
-        ))}
+      <div className="carousel-container">
+        <button className="scroll-arrow left" onClick={scrollLeft}>&lt;</button>
+        <div className="movie-list" ref={movieListRef}>
+          {nowPlayingMovies.map(movie => (
+            <div key={movie.movie_id || movie.title} className="movie-card">
+              <img 
+                src={movie.poster_url} 
+                alt={movie.title} 
+                className="movie-poster"
+                onError={(e) => e.target.style.display = 'none'}
+              />
+              <h2>{movie.title}</h2>
+              <button className="book-now-btn" onClick={() => handleViewDetails(movie)}>
+                Book Now
+              </button>
+            </div>
+          ))}
+        </div>
+        <button className="scroll-arrow right" onClick={scrollRight}>&gt;</button>
+      </div>
+    );
+  };
+
+  // New function to render Coming Soon movies, limiting to 5 if not admin
+  const renderComingSoonMovies = () => {
+    let comingSoonMovies = movies.filter(movie => movie.isComingSoon);
+
+    if (userRole !== 'admin' && !browseAll) {
+      comingSoonMovies = comingSoonMovies.slice(0, 5); // Show only 5 if not an admin and not browsing all
+    }
+
+    if (comingSoonMovies.length === 0) {
+      return <p>No upcoming movies available.</p>;
+    }
+
+    return (
+      <div className="carousel-container">
+        <button className="scroll-arrow left" onClick={scrollLeft}>&lt;</button>
+        <div className="movie-list" ref={movieListRef}>
+          {comingSoonMovies.map(movie => (
+            <div key={movie.movie_id || movie.title} className="movie-card">
+              <img 
+                src={movie.poster_url} 
+                alt={movie.title} 
+                className="movie-poster"
+                onError={(e) => e.target.style.display = 'none'}
+              />
+              <h2>{movie.title}</h2>
+              <button className="book-now-btn" onClick={() => handleViewDetails(movie)}>
+                Book Now
+              </button>
+            </div>
+          ))}
+        </div>
+        <button className="scroll-arrow right" onClick={scrollRight}>&gt;</button>
       </div>
     );
   };
@@ -245,7 +290,7 @@ const Home = () => {
               />
               <h2>{movie.title}</h2>
               <button className="book-now-btn" onClick={() => handleViewDetails(movie)}>
-                Get Tickets
+                Book Now
               </button>
             </div>
           ))}
@@ -310,12 +355,6 @@ const Home = () => {
                 onClick={() => setSelectedCategory('comingSoon')}
               >
                 Coming Soon
-              </span>
-              <span 
-                className={selectedCategory === 'onDemand' ? 'active-link' : ''} 
-                onClick={() => setSelectedCategory('onDemand')}
-              >
-                On Demand
               </span>
               <button 
                 className="browse-all-button"
@@ -386,7 +425,11 @@ const Home = () => {
           </div>
 
           {/* Render movies based on the selected view */}
-          {browseAll ? renderAllMovies() : renderMovies()}
+          {browseAll ? (
+            selectedCategory === 'nowPlaying' ? renderNowPlayingMovies() : renderComingSoonMovies()
+          ) : (
+            selectedCategory === 'nowPlaying' ? renderNowPlayingMovies() : renderComingSoonMovies()
+          )}
         </>
       )}
 
