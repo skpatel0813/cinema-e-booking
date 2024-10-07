@@ -49,6 +49,32 @@ public class SeatService {
             throw new IllegalStateException("Seat is already reserved for this showtime.");
         }
     }
+
+    /**
+     * Release seats by removing or updating the reservation status.
+     * This method uses ReservationRepository to locate and cancel the reservations.
+     */
+    @Transactional
+    public void releaseSeats(int movieId, String showtime, List<Integer> seatIds) {
+        for (Integer seatId : seatIds) {
+            // Find the reservation by seat ID, movie ID, and showtime
+            reservationRepository.findBySeatIdAndMovieIdAndShowtime(seatId, movieId, showtime)
+                    .ifPresent(reservation -> {
+                        reservation.setReserved(false); // Update reservation status
+                        reservationRepository.save(reservation); // Save changes to the reservation
+                    });
+        }
+    }
+
+
+    @Autowired
+    public SeatService(ReservationRepository reservationRepository) {
+        this.reservationRepository = reservationRepository;
+    }
+
+
+
+
 }
 
 

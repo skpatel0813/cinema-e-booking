@@ -19,4 +19,5 @@ public interface SeatRepository extends JpaRepository<Seat, Integer> {
     @Modifying
     @Query("UPDATE Seat s SET s.reserved = true WHERE s.id IN :seatIds AND s.movieId = :movieId AND s.showtime = :showtime AND s.reserved = false")
     int reserveSeats(@Param("seatIds") List<Integer> seatIds, @Param("movieId") Long movieId, @Param("showtime") String showtime);
+
 }

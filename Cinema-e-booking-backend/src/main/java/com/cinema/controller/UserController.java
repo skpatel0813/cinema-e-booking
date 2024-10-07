@@ -211,6 +211,69 @@ public class UserController {
     public User getUserInfoByEmail(@RequestParam String email) {
         return userService.getUserByEmail(email);
     }
+
+    @PutMapping("/updatePaymentCards")
+    public User updatePaymentCards(@RequestBody UpdateCardsRequest updateRequest) {
+        return userService.updateUserPaymentCards(updateRequest);
+    }
+
+    // Inner class to hold the update request data
+    public static class UpdateCardsRequest {
+        private String email;
+        private String cardType1;
+        private String cardNumber1;
+        private String expirationDate1;
+        private String cvv1;
+        private String cardType2;
+        private String cardNumber2;
+        private String expirationDate2;
+        private String cvv2;
+        private String cardType3;
+        private String cardNumber3;
+        private String expirationDate3;
+        private String cvv3;
+
+        // Getters and Setters for all fields
+        public String getEmail() { return email; }
+        public void setEmail(String email) { this.email = email; }
+
+        public String getCardType1() { return cardType1; }
+        public void setCardType1(String cardType1) { this.cardType1 = cardType1; }
+
+        public String getCardNumber1() { return cardNumber1; }
+        public void setCardNumber1(String cardNumber1) { this.cardNumber1 = cardNumber1; }
+
+        public String getExpirationDate1() { return expirationDate1; }
+        public void setExpirationDate1(String expirationDate1) { this.expirationDate1 = expirationDate1; }
+
+        public String getCvv1() { return cvv1; }
+        public void setCvv1(String cvv1) { this.cvv1 = cvv1; }
+
+        public String getCardType2() { return cardType2; }
+        public void setCardType2(String cardType2) { this.cardType2 = cardType2; }
+
+        public String getCardNumber2() { return cardNumber2; }
+        public void setCardNumber2(String cardNumber2) { this.cardNumber2 = cardNumber2; }
+
+        public String getExpirationDate2() { return expirationDate2; }
+        public void setExpirationDate2(String expirationDate2) { this.expirationDate2 = expirationDate2; }
+
+        public String getCvv2() { return cvv2; }
+        public void setCvv2(String cvv2) { this.cvv2 = cvv2; }
+
+        public String getCardType3() { return cardType3; }
+        public void setCardType3(String cardType3) { this.cardType3 = cardType3; }
+
+        public String getCardNumber3() { return cardNumber3; }
+        public void setCardNumber3(String cardNumber3) { this.cardNumber3 = cardNumber3; }
+
+        public String getExpirationDate3() { return expirationDate3; }
+        public void setExpirationDate3(String expirationDate3) { this.expirationDate3 = expirationDate3; }
+
+        public String getCvv3() { return cvv3; }
+        public void setCvv3(String cvv3) { this.cvv3 = cvv3; }
+    }
+
 }
 
 // DTO for login request

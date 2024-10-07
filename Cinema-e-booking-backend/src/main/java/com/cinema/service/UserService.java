@@ -1,8 +1,10 @@
 package com.cinema.service;
 
+import com.cinema.controller.UserController;
 import com.cinema.model.User;
 import com.cinema.repository.UserRepository;
 import com.cinema.service.EmailService;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -208,6 +210,30 @@ public class UserService {
         return userRepository.findById(id).orElse(null);
     }
 
+    @Transactional
+    public User updateUserPaymentCards(UserController.UpdateCardsRequest updateRequest) {
+        User user = getUserByEmail(updateRequest.getEmail());
+
+        // Update card 1 details
+        user.setCardType1(updateRequest.getCardType1());
+        user.setCardNumber1(updateRequest.getCardNumber1());
+        user.setExpirationDate1(updateRequest.getExpirationDate1());
+        user.setCvv1(updateRequest.getCvv1());
+
+        // Update card 2 details
+        user.setCardType2(updateRequest.getCardType2());
+        user.setCardNumber2(updateRequest.getCardNumber2());
+        user.setExpirationDate2(updateRequest.getExpirationDate2());
+        user.setCvv2(updateRequest.getCvv2());
+
+        // Update card 3 details
+        user.setCardType3(updateRequest.getCardType3());
+        user.setCardNumber3(updateRequest.getCardNumber3());
+        user.setExpirationDate3(updateRequest.getExpirationDate3());
+        user.setCvv3(updateRequest.getCvv3());
+
+        return userRepository.save(user);  // Save the updated user to the database
+    }
 
 }
 

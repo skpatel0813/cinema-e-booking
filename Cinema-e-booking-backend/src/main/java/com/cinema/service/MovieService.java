@@ -26,15 +26,15 @@ public class MovieService {
         return movieRepository.findById(id).orElse(null);
     }
 
-    public Movie updateMovie(int id, Movie updatedMovie) { // id is int
+    public Movie updateMovie(int id, Movie updatedMovie) {
         Optional<Movie> existingMovieOpt = movieRepository.findById(id);
+
         if (existingMovieOpt.isPresent()) {
             Movie existingMovie = existingMovieOpt.get();
 
-
+            // Update the boolean values
             existingMovie.setNowPlaying(updatedMovie.isNowPlaying());
             existingMovie.setComingSoon(updatedMovie.isComingSoon());
-            existingMovie.setOnDemand(updatedMovie.isOnDemand());
 
             // Update the movie fields with the new details
             existingMovie.setTitle(updatedMovie.getTitle());
@@ -44,26 +44,27 @@ public class MovieService {
             existingMovie.setProducer(updatedMovie.getProducer());
             existingMovie.setSynopsis(updatedMovie.getSynopsis());
             existingMovie.setReviews(updatedMovie.getReviews());
-            existingMovie.setTrailer_url(updatedMovie.getTrailer_url());
-            existingMovie.setPoster_url(updatedMovie.getPoster_url());
+            existingMovie.setTrailer_url(updatedMovie.getTrailer_url());  // Use consistent naming
+            existingMovie.setPoster_url(updatedMovie.getPoster_url());    // Use consistent naming
             existingMovie.setRatingCode(updatedMovie.getRatingCode());
-            existingMovie.setShow_time_1(updatedMovie.getShow_time_1());
+            existingMovie.setShow_time_1(updatedMovie.getShow_time_1());    // Use consistent naming for showtime fields
             existingMovie.setShow_time_2(updatedMovie.getShow_time_2());
             existingMovie.setShow_time_3(updatedMovie.getShow_time_3());
             existingMovie.setShow_time_4(updatedMovie.getShow_time_4());
             existingMovie.setShow_time_5(updatedMovie.getShow_time_5());
             existingMovie.setPrice(updatedMovie.getPrice());
 
-            System.out.println("Showtimes being updated: " + updatedMovie.getShow_time_1() + ", " +
-                    updatedMovie.getShow_time_2() + ", " + updatedMovie.getShow_time_3() + ", " +
-                    updatedMovie.getShow_time_4() + ", " + updatedMovie.getShow_time_5());
+            // Debugging: Print the boolean values to verify
+            System.out.println("isNowPlaying: " + existingMovie.isNowPlaying());
+            System.out.println("isComingSoon: " + existingMovie.isComingSoon());
 
-
-            return movieRepository.save(existingMovie); // Save the updated movie
+            // Save the updated movie
+            return movieRepository.save(existingMovie);
         } else {
             throw new IllegalArgumentException("Movie with ID " + id + " not found.");
         }
     }
+
 
     public void deleteMovie(int id) {
         movieRepository.deleteById(id);

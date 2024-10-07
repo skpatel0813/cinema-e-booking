@@ -1,5 +1,6 @@
 package com.cinema.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -25,13 +26,14 @@ public class Movie {
     private String poster_url;  // Poster URL for the movie
     private String ratingCode;
 
-    @Column(name = "is_now_playing")
+    // Booleans for movie status
+    @JsonProperty("isNowPlaying")
     private boolean isNowPlaying;
 
-    @Column(name = "is_coming_soon")
+    @JsonProperty("isComingSoon")
     private boolean isComingSoon;
 
-    @Column(name = "is_on_demand")
+    @JsonProperty("isOnDemand")
     private boolean isOnDemand;
 
     @Column(name = "show_time")
@@ -71,22 +73,6 @@ public class Movie {
 
     // Constructor
     public Movie() {}
-
-    public Movie(int id, String title, String category, String cast, String director, String producer, String synopsis, String reviews, String trailer_url, String poster_url, String ratingCode, LocalDateTime showTime, BigDecimal price) {
-        this.id = id;
-        this.title = title;
-        this.category = category;
-        this.cast = cast;
-        this.director = director;
-        this.producer = producer;
-        this.synopsis = synopsis;
-        this.reviews = reviews;
-        this.trailer_url = trailer_url;
-        this.poster_url = poster_url;
-        this.ratingCode = ratingCode;
-        this.showTime = showTime;
-        this.price = price;
-    }
 
     // Getters and Setters for all fields
 
@@ -352,6 +338,30 @@ public class Movie {
     public void setShow_time_5(LocalTime show_time_5) {
 
         this.show_time_5 = show_time_5;
+
+    }
+
+    public void setIsPlaying(boolean isPlaying) {
+
+        this.isNowPlaying = isPlaying;
+
+    }
+
+    public Boolean getIsPlaying() {
+
+        return isNowPlaying;
+
+    }
+
+    public void setComingSoon(Boolean comingSoon) {
+
+        this.isComingSoon = comingSoon;
+
+    }
+
+    public Boolean getComingSoon() {
+
+        return isComingSoon;
 
     }
 

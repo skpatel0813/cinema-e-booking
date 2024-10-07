@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/seats")
@@ -42,4 +43,23 @@ public class SeatController {
         List<Seat> seats = seatService.getAllSeats();
         return ResponseEntity.ok(seats);
     }
+
+    /**
+     * Endpoint to release seats for a specific movie and showtime.
+     */
+    @PostMapping("/releaseSeats")
+    public void releaseSeats(@RequestBody Map<String, Object> payload) {
+        int movieId = Integer.parseInt(payload.get("movieId").toString());  // Convert movieId to int
+        String showtime = (String) payload.get("showtime");
+
+        // Extract seat IDs from a list of seat maps
+        List<Map<String, Object>> seatMaps = (List<Map<String, Object>>) payload.get("seats");
+        List<Integer> seatIds = seatMaps.stream()
+                .map(seat -> Integer.parseInt(seat.get("id").toString()))  // Extract id field
+                .collect(Collectors.toList());
+
+        seatService.releaseSeats(movieId, showtime, seatIds);
+    }
+
+
 }

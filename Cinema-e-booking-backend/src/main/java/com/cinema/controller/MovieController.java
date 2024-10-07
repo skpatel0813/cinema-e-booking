@@ -35,16 +35,64 @@ public class MovieController {
         }
     }
 
+    /*
     // Update movie details
     @PutMapping("/{id}")
     public ResponseEntity<Movie> updateMovie(@PathVariable int id, @RequestBody Movie updatedMovie) {
         try {
             Movie movie = movieService.updateMovie(id, updatedMovie);
+            movie.getIsPlaying();
+            movie.getComingSoon();
             return new ResponseEntity<>(movie, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+     */
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Movie> updateMovie(@PathVariable int id, @RequestBody Movie movieDetails) {
+        Movie movie = movieService.getMovieById(id); // Fetch movie without Optional
+
+        if (movie != null) {
+            // Log received values for debugging
+            System.out.println("isNowPlaying received: " + movieDetails.isNowPlaying());
+            System.out.println("isComingSoon received: " + movieDetails.isComingSoon());
+
+            // Update the movie details
+            movie.setTitle(movieDetails.getTitle());
+            movie.setCategory(movieDetails.getCategory());
+            movie.setCast(movieDetails.getCast());
+            movie.setDirector(movieDetails.getDirector());
+            movie.setProducer(movieDetails.getProducer());
+            movie.setSynopsis(movieDetails.getSynopsis());
+            movie.setReviews(movieDetails.getReviews());
+            movie.setTrailer_url(movieDetails.getTrailer_url());
+            movie.setPoster_url(movieDetails.getPoster_url());
+            movie.setRatingCode(movieDetails.getRatingCode());
+            movie.setPrice(movieDetails.getPrice());
+
+            // Update the status fields
+            movie.setNowPlaying(movieDetails.isNowPlaying());
+            movie.setComingSoon(movieDetails.isComingSoon());
+
+            // Update show times if available
+            movie.setShow_time_1(movieDetails.getShow_time_1());
+            movie.setShow_time_2(movieDetails.getShow_time_2());
+            movie.setShow_time_3(movieDetails.getShow_time_3());
+            movie.setShow_time_4(movieDetails.getShow_time_4());
+            movie.setShow_time_5(movieDetails.getShow_time_5());
+
+
+            // Save updated movie
+            Movie updatedMovie = movieService.save(movie);
+            return ResponseEntity.ok(updatedMovie);
+        } else {
+            return ResponseEntity.notFound().build(); // Return 404 if movie not found
+        }
+    }
+
 
     // Delete movie by id
     @DeleteMapping("/{id}")
