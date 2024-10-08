@@ -15,6 +15,7 @@ import Tickets from './pages/Tickets';
 import SelectSeats from './pages/SelectSeats';
 import Checkout from './pages/Checkout';
 import Confirmation from './pages/Confirmation';
+import OrderHistory from './pages/OrderHistory';
 
 const App = () => {
   return (
@@ -35,6 +36,7 @@ const App = () => {
         <Route path="/selectseats" element={<SelectSeats />} />
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/confirmation" element={<Confirmation />} />
+        <Route path="/order-history" element={<OrderHistory />} />
       </Routes>
     </Router>
   );

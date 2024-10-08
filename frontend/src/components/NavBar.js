@@ -59,6 +59,10 @@ const NavBar = ({ onLoginClick, userName, onLogout, onEditProfileClick }) => {
     setLoginPromptVisible(false);
   };
 
+  const handleOrderHistoryClick = () => {
+    navigate('/order-history'); // Navigate to the Order History page
+  };
+
   return (
     <nav>
       <ul className="nav-list">
@@ -85,7 +89,6 @@ const NavBar = ({ onLoginClick, userName, onLogout, onEditProfileClick }) => {
           </>
         )}
         
-        
         {/* User Login/Logout Section */}
         <li className="nav-item right">
           {userName ? (
@@ -94,6 +97,10 @@ const NavBar = ({ onLoginClick, userName, onLogout, onEditProfileClick }) => {
               {dropdownOpen && (
                 <div className="dropdown">
                   <button className="dropdown-btn" onClick={onEditProfileClick}>Edit Profile</button>
+                  {/* Show Order History button for non-admin users */}
+                  {role !== 'admin' && (
+                    <button className="dropdown-btn" onClick={handleOrderHistoryClick}>Order History</button>
+                  )}
                   <button className="dropdown-btn" onClick={handleLogout}>Logout</button>
                 </div>
               )}

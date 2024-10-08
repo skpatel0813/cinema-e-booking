@@ -36,6 +36,8 @@ const EditProfileModal = ({ isOpen, onClose, email }) => { // Add email as a pro
 
   const [error, setError] = useState('');
 
+  email = localStorage.getItem('email');
+
   useEffect(() => {
     if (isOpen && email) { // Use the email prop instead of localStorage
       console.log(`Email passed to EditProfileModal: ${email}`);

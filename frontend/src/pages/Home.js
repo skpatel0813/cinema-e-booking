@@ -28,46 +28,25 @@ const Home = () => {
   const movieListRef = useRef(null);
   const navigate = useNavigate();
 
-  // Function to convert 12-hour time to 24-hour time
   const convertTo24Hour = (time12h) => {
     const [time, period] = time12h.split(' ');
     let [hours, minutes] = time.split(':');
-
-    hours = parseInt(hours, 10); // Ensure hours is an integer
-
-    if (period === 'PM' && hours !== 12) {
-      hours = hours + 12; // Convert PM hours except 12 PM to 24-hour format
-    }
-    if (period === 'AM' && hours === 12) {
-      hours = 0; // Convert 12 AM to 00
-    }
-
-    // Return time in HH:mm:ss format
+    hours = parseInt(hours, 10);
+    if (period === 'PM' && hours !== 12) hours = hours + 12;
+    if (period === 'AM' && hours === 12) hours = 0;
     return `${hours.toString().padStart(2, '0')}:${minutes}:00`;
   };
 
   useEffect(() => {
     const storedUserName = localStorage.getItem('user');
     const storedUserRole = localStorage.getItem('role');
-
-    if (storedUserName) {
-      setUserName(storedUserName);
-    }
-
-    if (storedUserRole) {
-      setUserRole(storedUserRole);
-    }
-
+    if (storedUserName) setUserName(storedUserName);
+    if (storedUserRole) setUserRole(storedUserRole);
     setIsLoggedIn(!!storedUserName);
-
-    // Fetch movies for the home page
     axios.get('/api/movies/home')
       .then(response => {
-        if (Array.isArray(response.data)) {
-          setMovies(response.data);
-        } else {
-          console.error('Expected an array but got:', response.data);
-        }
+        if (Array.isArray(response.data)) setMovies(response.data);
+        else console.error('Expected an array but got:', response.data);
       })
       .catch(error => console.error('Error fetching movies:', error));
   }, []);
@@ -76,22 +55,13 @@ const Home = () => {
     if (filterDate) {
       const currentDate = new Date();
       const selectedDate = new Date(filterDate);
-
       const times = ['8:00 AM', '12:00 PM', '2:30 PM', '3:30 PM', '8:00 PM', '11:00 PM'];
       const filteredTimes = times.filter(time => {
         const [hour, period] = time.split(' ');
-        let hour24;
-
-        if (period === 'AM') {
-          hour24 = hour === '12' ? 0 : parseInt(hour);
-        } else {
-          hour24 = hour === '12' ? 12 : parseInt(hour) + 12;
-        }
-
+        let hour24 = period === 'AM' ? (hour === '12' ? 0 : parseInt(hour)) : (hour === '12' ? 12 : parseInt(hour) + 12);
         selectedDate.setHours(hour24, 0, 0, 0);
         return selectedDate > currentDate;
       });
-
       setShowTimes(filteredTimes);
     }
   }, [filterDate]);
@@ -106,11 +76,8 @@ const Home = () => {
   };
 
   const handleEditMovie = (movie) => {
-    if (movie) {
-      navigate(`/edit-movie/${movie.id}`);
-    } else {
-      console.error('Movie or movie_id is undefined');
-    }
+    if (movie) navigate(`/edit-movie/${movie.id}`);
+    else console.error('Movie or movie_id is undefined');
   };
 
   const handleCloseDetailedModal = () => {
@@ -118,9 +85,7 @@ const Home = () => {
     setSelectedMovie(null);
   };
 
-  const handleCloseEditProfileModal = () => {
-    setShowEditProfileModal(false);
-  };
+  const handleCloseEditProfileModal = () => setShowEditProfileModal(false);
 
   const handleLogout = () => {
     setUserName('');
@@ -131,41 +96,35 @@ const Home = () => {
     navigate('/');
   };
 
-  const scrollLeft = () => {
-    movieListRef.current.scrollBy({
-      left: -500,
-      behavior: 'smooth'
-    });
-  };
+  const scrollLeft = () => movieListRef.current.scrollBy({ left: -500, behavior: 'smooth' });
 
-  const scrollRight = () => {
-    movieListRef.current.scrollBy({
-      left: 500,
-      behavior: 'smooth'
-    });
-  };
+  const scrollRight = () => movieListRef.current.scrollBy({ left: 500, behavior: 'smooth' });
 
   const getCategoryMovies = () => {
-    let filteredMovies = movies;
+    let filteredMovies = movies.filter(movie => {
+      if (selectedCategory === 'nowPlaying') return movie.isNowPlaying;
+      if (selectedCategory === 'comingSoon') return movie.isComingSoon;
+      return false;
+    });
 
     if (selectedCategories.length > 0) {
-      filteredMovies = filteredMovies.filter(movie =>
-        selectedCategories.includes(movie.category)
-      );
+      filteredMovies = filteredMovies.filter(movie => selectedCategories.includes(movie.category));
     }
-
     if (searchTerm) {
-      filteredMovies = filteredMovies.filter(movie =>
-        movie.title.toLowerCase().includes(searchTerm.toLowerCase())
-      );
+      filteredMovies = filteredMovies.filter(movie => movie.title.toLowerCase().includes(searchTerm.toLowerCase()));
     }
-
-    // Filter by selected showtime (convert selected time to 24-hour format)
     if (selectedShowTime) {
       const selectedShowTime24 = convertTo24Hour(selectedShowTime);
+      filteredMovies = filteredMovies.filter(movie => 
+        [movie.show_time_1, movie.show_time_2, movie.show_time_3, movie.show_time_4, movie.show_time_5]
+          .some(showtime => showtime && showtime.startsWith(selectedShowTime24))
+      );
+    }
+    if (filterDate) {
+      const selectedDate = new Date(filterDate);
       filteredMovies = filteredMovies.filter(movie => {
-        return [movie.show_time_1, movie.show_time_2, movie.show_time_3, movie.show_time_4, movie.show_time_5]
-          .some(showtime => showtime && showtime.startsWith(selectedShowTime24));
+        const movieDate = new Date(movie.show_date);
+        return movieDate.toDateString() === selectedDate.toDateString();
       });
     }
 
@@ -173,10 +132,7 @@ const Home = () => {
   };
 
   const renderAdminMovies = () => {
-    if (movies.length === 0) {
-      return <p>No movies available.</p>;
-    }
-
+    if (movies.length === 0) return <p>No movies available.</p>;
     return (
       <div className="admin-movie-list">
         {movies.map(movie => (
@@ -197,12 +153,11 @@ const Home = () => {
     );
   };
 
-  // New function to render Now Playing movies, limiting to 5 if not admin
   const renderNowPlayingMovies = () => {
-    let nowPlayingMovies = movies.filter(movie => movie.isNowPlaying);
+    let nowPlayingMovies = getCategoryMovies().filter(movie => movie.isNowPlaying);
 
     if (userRole !== 'admin' && !browseAll) {
-      nowPlayingMovies = nowPlayingMovies.slice(0, 5); // Show only 5 if not an admin and not browsing all
+      nowPlayingMovies = nowPlayingMovies.slice(0, 5);
     }
 
     if (nowPlayingMovies.length === 0) {
@@ -210,9 +165,9 @@ const Home = () => {
     }
 
     return (
-      <div className="carousel-container">
-        <button className="scroll-arrow left" onClick={scrollLeft}>&lt;</button>
-        <div className="movie-list" ref={movieListRef}>
+      <div className={browseAll ? "movie-grid" : "carousel-container"}>
+        {!browseAll && <button className="scroll-arrow left" onClick={scrollLeft}>&lt;</button>}
+        <div className={browseAll ? "movie-list-grid" : "movie-list"} ref={movieListRef}>
           {nowPlayingMovies.map(movie => (
             <div key={movie.movie_id || movie.title} className="movie-card">
               <img 
@@ -228,17 +183,16 @@ const Home = () => {
             </div>
           ))}
         </div>
-        <button className="scroll-arrow right" onClick={scrollRight}>&gt;</button>
+        {!browseAll && <button className="scroll-arrow right" onClick={scrollRight}>&gt;</button>}
       </div>
     );
   };
 
-  // New function to render Coming Soon movies, limiting to 5 if not admin
   const renderComingSoonMovies = () => {
-    let comingSoonMovies = movies.filter(movie => movie.isComingSoon);
+    let comingSoonMovies = getCategoryMovies().filter(movie => movie.isComingSoon);
 
     if (userRole !== 'admin' && !browseAll) {
-      comingSoonMovies = comingSoonMovies.slice(0, 5); // Show only 5 if not an admin and not browsing all
+      comingSoonMovies = comingSoonMovies.slice(0, 5);
     }
 
     if (comingSoonMovies.length === 0) {
@@ -246,9 +200,9 @@ const Home = () => {
     }
 
     return (
-      <div className="carousel-container">
-        <button className="scroll-arrow left" onClick={scrollLeft}>&lt;</button>
-        <div className="movie-list" ref={movieListRef}>
+      <div className={browseAll ? "movie-grid" : "carousel-container"}>
+        {!browseAll && <button className="scroll-arrow left" onClick={scrollLeft}>&lt;</button>}
+        <div className={browseAll ? "movie-list-grid" : "movie-list"} ref={movieListRef}>
           {comingSoonMovies.map(movie => (
             <div key={movie.movie_id || movie.title} className="movie-card">
               <img 
@@ -264,38 +218,7 @@ const Home = () => {
             </div>
           ))}
         </div>
-        <button className="scroll-arrow right" onClick={scrollRight}>&gt;</button>
-      </div>
-    );
-  };
-
-  const renderMovies = () => {
-    const categoryMovies = getCategoryMovies();
-
-    if (categoryMovies.length === 0) {
-      return <p>No movies available with the selected filters.</p>;
-    }
-
-    return (
-      <div className="carousel-container">
-        <button className="scroll-arrow left" onClick={scrollLeft}>&lt;</button>
-        <div className="movie-list" ref={movieListRef}>
-          {categoryMovies.map(movie => (
-            <div key={movie.movie_id || movie.title} className="movie-card">
-              <img 
-                src={movie.poster_url} 
-                alt={movie.title} 
-                className="movie-poster"
-                onError={(e) => e.target.style.display = 'none'}
-              />
-              <h2>{movie.title}</h2>
-              <button className="book-now-btn" onClick={() => handleViewDetails(movie)}>
-                Book Now
-              </button>
-            </div>
-          ))}
-        </div>
-        <button className="scroll-arrow right" onClick={scrollRight}>&gt;</button>
+        {!browseAll && <button className="scroll-arrow right" onClick={scrollRight}>&gt;</button>}
       </div>
     );
   };
@@ -336,7 +259,6 @@ const Home = () => {
         onEditProfileClick={() => setShowEditProfileModal(true)}
       />
 
-      {/* Admins see all movies without carousel */}
       {userRole === 'admin' ? (
         renderAdminMovies()
       ) : (
@@ -398,7 +320,6 @@ const Home = () => {
                         onChange={(e) => setFilterDate(e.target.value)}
                       />
                     </div>
-                    {/* Dropdown for selecting showtime */}
                     <div className="showtime-filter">
                       {showTimes.length > 0 && (
                         <select
@@ -424,16 +345,10 @@ const Home = () => {
             </div>
           </div>
 
-          {/* Render movies based on the selected view */}
-          {browseAll ? (
-            selectedCategory === 'nowPlaying' ? renderNowPlayingMovies() : renderComingSoonMovies()
-          ) : (
-            selectedCategory === 'nowPlaying' ? renderNowPlayingMovies() : renderComingSoonMovies()
-          )}
+          {selectedCategory === 'nowPlaying' ? renderNowPlayingMovies() : renderComingSoonMovies()}
         </>
       )}
 
-      {/* Detailed Movie Modal */}
       <DetailedModal 
         show={showDetailedModal} 
         onClose={handleCloseDetailedModal} 
@@ -441,7 +356,6 @@ const Home = () => {
         isLoggedIn={isLoggedIn}
       />
 
-      {/* Login Modal */}
       <LoginModal 
         isOpen={showLoginModal} 
         onClose={() => setShowLoginModal(false)}
@@ -451,7 +365,6 @@ const Home = () => {
         }}
       />
 
-      {/* Edit Profile Modal */}
       <EditProfileModal 
         isOpen={showEditProfileModal} 
         onClose={handleCloseEditProfileModal}

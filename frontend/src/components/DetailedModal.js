@@ -9,6 +9,7 @@ const DetailedModal = ({ show, onClose, movie, isLoggedIn, response }) => {
   const [userId, setUserId] = useState(null); // State to store userId
   const navigate = useNavigate();
 
+  
   useEffect(() => {
     // Retrieve userId from local storage
     const storedUserId = localStorage.getItem('userId');

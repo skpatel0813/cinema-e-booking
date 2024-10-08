@@ -151,6 +151,26 @@ const Checkout = () => {
       alert('Payment Successful!');
       const ticketNumber = response.data.ticketNumber;
 
+      // Save order to backend
+      const orderDetails = {
+        userName: user.name,
+        userEmail: user.email,
+        movieTitle,
+        showtime,
+        selectedSeats: selectedSeats.map(seat => `${seat.row}${seat.number}`),
+        cardUsed: selectedCard,
+        adultTickets: ticketCounts.adult || 0,
+        childTickets: ticketCounts.child || 0,
+        seniorTickets: ticketCounts.senior || 0,
+        ticketPrice: totalPrice,
+        salesTax,
+        fee,
+        promotionDiscount,
+        totalCost: finalPrice,
+      };
+
+      await axios.post('http://localhost:8081/api/orders/save', orderDetails);
+      
       navigate('/confirmation', {
         state: {
           booking: response.data.booking,
@@ -204,7 +224,7 @@ const Checkout = () => {
     <div>
       <NavBar 
         onLoginClick={() => console.log('Login')} 
-        userName="User" 
+        userName={user.name || "Guest"} 
         onLogout={() => console.log('Logout')} 
         onEditProfileClick={() => console.log('Edit Profile')}
       />
