@@ -300,6 +300,12 @@ const Home = () => {
                 </button>
                 {showFilterDropdown && (
                   <div className="filter-dropdown">
+                    <button 
+                      className="filter-close-btn" 
+                      onClick={() => setShowFilterDropdown(false)}
+                    >
+                      &times;
+                    </button>
                     <div className="categories">
                       {['Adventure', 'Comedy', 'Horror', 'Thriller', 'Drama', 'Action'].map(category => (
                         <button
