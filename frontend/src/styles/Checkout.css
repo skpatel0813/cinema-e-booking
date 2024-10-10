@@ -1,92 +1,151 @@
 /* Checkout.css */
 
 .checkout-container {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  }
-  
-  h1 {
-    text-align: center;
-    color: #333;
-    margin-bottom: 20px;
-  }
-  
-  .ticket-summary {
-    padding: 15px;
-    border-radius: 8px;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-    margin-bottom: 20px;
-  }
-  
-  .ticket-summary h3 {
-    color: white;
-    margin-bottom: 15px;
-  }
-  
-  .ticket-summary p {
-    font-size: 16px;
-    color: white;
-    margin: 5px 0;
-  }
-  
-  .promotion-section {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-  }
-  
-  .promotion-section input[type="text"] {
-    width: 70%;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    font-size: 16px;
-  }
-  
-  .promotion-section button {
-    color: #ffffff;
-    padding: 10px 15px;
-    border: none;
-    border-radius: 5px;
-    font-size: 16px;
-    cursor: pointer;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  border-radius: 10px;
+  background-color: #141414; /* Netflix dark background */
+  color: #ffffff; /* Netflix text color */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
+}
+
+h1 {
+  text-align: center;
+  color: #e50914; /* Netflix red */
+  margin-bottom: 20px;
+  font-size: 2em;
+  font-weight: bold;
+}
+
+.ticket-summary {
+  padding: 15px;
+  border-radius: 8px;
+  background-color: #222222; /* Slightly lighter dark for contrast */
+  margin-bottom: 20px;
+  color: #ffffff;
+}
+
+.ticket-summary h3 {
+  color: #e50914; /* Netflix red for headings */
+  margin-bottom: 15px;
+  font-weight: bold;
+}
+
+.ticket-summary p {
+  font-size: 16px;
+  color: #ffffff;
+  margin: 5px 0;
+}
+
+.promotion-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.promotion-section input[type="text"] {
+  width: 70%;
+  padding: 10px;
+  border: 1px solid #333;
+  border-radius: 5px;
+  font-size: 16px;
+  background-color: #333; /* Dark input background */
+  color: #ffffff;
+}
+
+.promotion-section button {
+  background-color: #e50914; /* Netflix red button */
+  color: #ffffff;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.promotion-section button:hover {
+  background-color: #b20710; /* Darken on hover */
+}
+
+.payment-button {
+  display: block;
+  width: 100%;
+  background-color: #e50914; /* Netflix red */
+  color: #ffffff;
+  padding: 15px;
+  border: none;
+  border-radius: 8px;
+  font-size: 18px;
+  text-align: center;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  font-weight: bold;
+  margin-top: 20px;
+}
+
+.payment-button:hover {
+  background-color: #b20710; /* Darker red on hover */
+}
+
+.edit-cards-button,
+.cancel-button {
+  background-color: #333; /* Dark background for secondary buttons */
+  color: #ffffff;
+  padding: 10px 15px;
+  border: 1px solid #e50914; /* Red border for contrast */
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  margin: 10px 0;
+  width: 100%;
+}
+
+.edit-cards-button:hover,
+.cancel-button:hover {
+  background-color: #e50914;
+  color: #ffffff;
+}
+
+.ticket-count-edit button {
+  background-color: #e50914;
+  color: #ffffff;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin: 0 5px;
+}
+
+.ticket-count-edit button:hover {
+  background-color: #b20710;
+}
+
+.ticket-count-edit label {
+  color: #e50914; /* Red for labels */
+  font-weight: bold;
+}
+
+@media (max-width: 768px) {
+  .checkout-container {
+      padding: 15px;
   }
 
-  
-  .payment-button {
-    display: block;
-    width: 100%;
-    color: #ffffff;
-    padding: 15px;
-    border: none;
-    border-radius: 8px;
-    font-size: 18px;
-    text-align: center;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-  
-  
-  @media (max-width: 768px) {
-    .checkout-container {
-      padding: 15px;
-    }
-  
-    .promotion-section {
+  .promotion-section {
       flex-direction: column;
-    }
-  
-    .promotion-section input[type="text"] {
+  }
+
+  .promotion-section input[type="text"] {
       width: 100%;
       margin-bottom: 10px;
-    }
-  
-    .promotion-section button {
-      width: 100%;
-    }
   }
-  
+
+  .promotion-section button {
+      width: 100%;
+  }
+}

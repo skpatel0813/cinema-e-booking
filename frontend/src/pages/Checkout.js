@@ -22,6 +22,7 @@ const Checkout = () => {
   const [promotionError, setPromotionError] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editableCards, setEditableCards] = useState([]);
+  const [currentTicketCounts, setCurrentTicketCounts] = useState(ticketCounts);
 
   const email = localStorage.getItem('email');
 
@@ -82,13 +83,13 @@ const Checkout = () => {
         calculateTotalPrice(pricing);
       })
       .catch(error => console.error('Error fetching prices:', error));
-  }, [ticketCounts]);
+  }, [currentTicketCounts]);
 
   const calculateTotalPrice = (pricing) => {
     const { adultPrice = 0, childrenPrice = 0, seniorPrice = 0 } = pricing;
-    const ticketPrice = (ticketCounts.adult || 0) * adultPrice + 
-                        (ticketCounts.child || 0) * childrenPrice + 
-                        (ticketCounts.senior || 0) * seniorPrice;
+    const ticketPrice = (currentTicketCounts.adult || 0) * adultPrice + 
+                        (currentTicketCounts.child || 0) * childrenPrice + 
+                        (currentTicketCounts.senior || 0) * seniorPrice;
 
     const tax = ticketPrice * 0.07; // Sales tax of 7%
     setSalesTax(tax);
@@ -129,18 +130,16 @@ const Checkout = () => {
     }
 
     try {
-      // Reserve selected seats before proceeding to payment
       for (let seat of selectedSeats) {
         await axios.post('http://localhost:8081/api/seats/reserveSeat', null, {
           params: {
             movieId,
             showtime,
-            seatId: seat.id // Send each seat ID for reservation
+            seatId: seat.id
           }
         });
       }
 
-      // Process payment after reserving seats
       const paymentDetails = {
         userId: user.id,
         cardId: selectedCard,
@@ -151,7 +150,6 @@ const Checkout = () => {
       alert('Payment Successful!');
       const ticketNumber = response.data.ticketNumber;
 
-      // Save order to backend
       const orderDetails = {
         userName: user.name,
         userEmail: user.email,
@@ -159,9 +157,9 @@ const Checkout = () => {
         showtime,
         selectedSeats: selectedSeats.map(seat => `${seat.row}${seat.number}`),
         cardUsed: selectedCard,
-        adultTickets: ticketCounts.adult || 0,
-        childTickets: ticketCounts.child || 0,
-        seniorTickets: ticketCounts.senior || 0,
+        adultTickets: currentTicketCounts.adult || 0,
+        childTickets: currentTicketCounts.child || 0,
+        seniorTickets: currentTicketCounts.senior || 0,
         ticketPrice: totalPrice,
         salesTax,
         fee,
@@ -177,7 +175,7 @@ const Checkout = () => {
           selectedSeats,
           movieTitle,
           showtime,
-          ticketCounts,
+          ticketCounts: currentTicketCounts,
           ticketNumber
         }
       });
@@ -266,17 +264,45 @@ const Checkout = () => {
             Edit Payment Cards
           </button>
         </div>
+
+        {/* New Section for Editing Ticket Counts, now above Ticket Summary */}
+        <div className="ticket-count-edit">
+          <h3>Edit Ticket Counts</h3>
+          <div>
+            <label>Adult:</label>
+            <button onClick={() => setCurrentTicketCounts(prev => ({ ...prev, adult: (prev.adult || 0) + 1 }))}>+</button>
+            <span>{currentTicketCounts.adult || 0}</span>
+            <button onClick={() => setCurrentTicketCounts(prev => ({ ...prev, adult: Math.max((prev.adult || 0) - 1, 0) }))}>-</button>
+          </div>
+          <div>
+            <label>Child:</label>
+            <button onClick={() => setCurrentTicketCounts(prev => ({ ...prev, child: (prev.child || 0) + 1 }))}>+</button>
+            <span>{currentTicketCounts.child || 0}</span>
+            <button onClick={() => setCurrentTicketCounts(prev => ({ ...prev, child: Math.max((prev.child || 0) - 1, 0) }))}>-</button>
+          </div>
+          <div>
+            <label>Senior:</label>
+            <button onClick={() => setCurrentTicketCounts(prev => ({ ...prev, senior: (prev.senior || 0) + 1 }))}>+</button>
+            <span>{currentTicketCounts.senior || 0}</span>
+            <button onClick={() => setCurrentTicketCounts(prev => ({ ...prev, senior: Math.max((prev.senior || 0) - 1, 0) }))}>-</button>
+          </div>
+          <button onClick={() => navigate('/selectseats', { state: { movieId, showtime, ticketCounts: currentTicketCounts } })}>
+            Update Seats
+          </button>
+        </div>
+
         <div className="ticket-summary">
           <h3>Ticket Summary</h3>
-          <p>Adult Tickets: {ticketCounts.adult || 0}</p>
-          <p>Child Tickets: {ticketCounts.child || 0}</p>
-          <p>Senior Tickets: {ticketCounts.senior || 0}</p>
+          <p>Adult Tickets: {currentTicketCounts.adult || 0}</p>
+          <p>Child Tickets: {currentTicketCounts.child || 0}</p>
+          <p>Senior Tickets: {currentTicketCounts.senior || 0}</p>
           <p>Total Ticket Price: ${totalPrice.toFixed(2)}</p>
           <p>Sales Tax (7%): ${salesTax.toFixed(2)}</p>
           <p>Online Fee: ${fee.toFixed(2)}</p>
           <p>Promotion Discount: ${promotionDiscount.toFixed(2)}</p>
           <h3>Total: ${finalPrice.toFixed(2)}</h3>
         </div>
+        
         <div className="promotion-section">
           <input
             type="text"

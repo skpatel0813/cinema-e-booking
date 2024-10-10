@@ -1,196 +1,83 @@
-/* Navigation Bar */
-.nav-list {
-  display: flex;
-  align-items: center; /* Align all items to the center vertically */
-  justify-content: space-between;
-  padding: 10px;
+/* Reset default margin and set font */
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+}
+
+/* Main navbar styling */
+.navbar {
   background-color: #111;
+  padding: 10px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
-.nav-item {
-  list-style: none;
+/* Left side navigation */
+.nav-left {
+  display: flex;
+  align-items: center;
 }
 
-.nav-item a {
+.nav-left a {
   color: white;
   text-decoration: none;
   margin-right: 20px;
 }
 
-.filter-search-container {
-  display: flex;
-  align-items: center; /* Ensure filter button and search bar are aligned horizontally */
-}
-
-.filter-btn {
-  background-color: #e50914;
-  color: white;
-  padding: 10px;
-  border-radius: 5px;
-  border: none;
-  cursor: pointer;
-}
-
-.search-bar {
-  margin-left: 10px; /* Space between filter and search bar */
-  padding: 10px;
-  border-radius: 5px;
-  border: none;
-  background-color: #333;
-  color: white;
-}
-
-.search-bar::placeholder {
-  color: #bbb;
-}
-
+/* Right side user section */
 .user-section {
   display: flex;
-  align-items: center; /* Align the login/logout button with the rest of the items */
+  align-items: center;
 }
 
 .user-name {
   color: white;
-  cursor: pointer;
+  margin-right: 20px;
 }
 
+/* Dropdown styling */
 .dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-content {
+  display: none;
   position: absolute;
-  top: 30px;
   right: 0;
-  background-color: #333;
-  padding: 10px;
-  border-radius: 5px;
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
+  background-color: #e50914;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
 }
 
-.dropdown-btn {
+.dropdown-content a {
+  color: white;
+  padding: 12px 16px;
+  text-decoration: none;
   display: block;
-  background-color: #e50914;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 5px;
-  margin-bottom: 5px;
-  cursor: pointer;
-  width: 100%;
+  text-align: left;
 }
 
-.dropdown-btn:hover {
-  background-color: #ff1c1c;
+.dropdown-content a:hover {
+  background-color: #ff3e3e;
 }
 
-.login-button {
-  background-color: #e50914;
-  color: white;
-  padding: 10px;
-  border-radius: 5px;
-  border: none;
-  cursor: pointer;
-}
-
-/* Close dropdown on clicking outside */
-.user-section:hover .dropdown {
+.dropdown:hover .dropdown-content {
   display: block;
 }
 
-/* Filter dropdown styles */
-.filter-dropdown {
-  position: absolute;
-  top: 40px;
-  left: 50%;
-  transform: translateX(-50%);
-  background-color: #222;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
-  z-index: 999;
-  width: 300px;
-}
-
-.filter-section {
-  margin-bottom: 20px;
-}
-
-.filter-section h4 {
-  margin-bottom: 10px;
-  color: white;
-}
-
-/* Pill buttons */
-.pill-btn {
-  background-color: #333;
-  color: white;
-  border: none;
-  padding: 8px 15px;
-  border-radius: 20px;
-  margin: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.pill-btn.active {
-  background-color: #e50914;
-}
-
-.pill-btn:hover {
-  background-color: #444;
-}
-
-/* Date input */
-.date-input {
-  background-color: #333;
-  color: white;
-  border: none;
-  padding: 8px;
-  border-radius: 5px;
-  width: 100%;
-}
-
-/* Apply filter button */
-.apply-filter-btn {
-  background-color: #e50914;
-  color: white;
-  padding: 10px;
-  border-radius: 5px;
-  border: none;
-  cursor: pointer;
-  width: 100%;
-  margin-top: 20px;
-}
-
-.apply-filter-btn:hover {
-  background-color: #ff1c1c;
-}
-
-/* Close filter button */
-.close-filter-btn {
+/* Button styling */
+.btn {
   background-color: #e50914;
   color: white;
   border: none;
-  padding: 5px 10px;
+  padding: 10px 15px;
   cursor: pointer;
-  float: right;
-  border-radius: 50%;
-  font-size: 16px;
-  margin-top: -10px;
+  margin-left: 10px;
 }
 
-.close-filter-btn:hover {
-  background-color: #ff1c1c;
-}
-
-/* Clear filter button */
-.clear-filter-btn {
-  background-color: #999;
-  color: white;
-  padding: 10px;
-  border-radius: 5px;
-  border: none;
-  cursor: pointer;
-  margin-top: 10px;
-}
-
-.clear-filter-btn:hover {
-  background-color: #666;
+.btn:hover {
+  background-color: #ff3e3e;
 }

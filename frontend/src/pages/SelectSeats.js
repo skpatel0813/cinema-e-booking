@@ -7,7 +7,10 @@ import '../styles/SelectSeats.css';
 const SelectSeats = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { ticketCounts } = location.state || {};
+
+  // Destructure ticketCounts with default values
+  const { ticketCounts = { adult: 0, child: 0, senior: 0 } } = location.state || {};
+  
   const [seats, setSeats] = useState([]);
   const [selectedSeats, setSelectedSeats] = useState([]);
   const [reservedSeats, setReservedSeats] = useState([]);
@@ -16,7 +19,7 @@ const SelectSeats = () => {
   const movieId = localStorage.getItem('selectedMovieId');
   const showtime = localStorage.getItem('selectedShowtime');
 
-  // Calculate total tickets selected
+  // Calculate total tickets selected with default values
   const totalTickets = (ticketCounts.adult || 0) + (ticketCounts.child || 0) + (ticketCounts.senior || 0);
 
   useEffect(() => {

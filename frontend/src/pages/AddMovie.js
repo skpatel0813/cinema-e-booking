@@ -22,27 +22,44 @@ const AddMovie = () => {
     show_time_4: '',
     show_time_5: '',
     status: 'Coming Soon', // Dropdown menu value
+    isNowPlaying: false, // Boolean for Now Playing status
+    isComingSoon: true,  // Boolean for Coming Soon status
   });
 
   const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setMovieData({
-      ...movieData,
-      [name]: value
-    });
+    if (name === 'status') {
+      setMovieData({
+        ...movieData,
+        status: value,
+        isNowPlaying: value === 'Now Playing',
+        isComingSoon: value === 'Coming Soon',
+      });
+    } else {
+      setMovieData({
+        ...movieData,
+        [name]: value
+      });
+    }
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Submit movie data
+    // Submit movie data with status booleans
+    const moviePayload = {
+      ...movieData,
+      isNowPlaying: movieData.status === 'Now Playing',
+      isComingSoon: movieData.status === 'Coming Soon',
+    };
+
     fetch('http://localhost:8081/api/movies', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(movieData),
+      body: JSON.stringify(moviePayload),
     })
     .then(response => response.json())
     .then(() => {
@@ -84,7 +101,6 @@ const AddMovie = () => {
           <input type="text" name="trailerPicture" placeholder="Trailer Picture URL" value={movieData.trailerPicture} onChange={handleChange} required />
           <input type="text" name="trailerVideo" placeholder="Trailer Video URL" value={movieData.trailerVideo} onChange={handleChange} required />
           <input type="text" name="ratingCode" placeholder="MPAA-US Film Rating Code" value={movieData.ratingCode} onChange={handleChange} required />
-          <input type="text" name="showDates" placeholder="Show Dates" value={movieData.showDates} onChange={handleChange} required />
 
           {/* Five showtimes with time input type */}
           <div>
