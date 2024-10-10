@@ -26,7 +26,7 @@ const LoginModal = ({ isOpen, onClose }) => {
 
     axios.post('/user/login', { email, password })
       .then(response => {
-        const { userName, role, status } = response.data;
+        const { userName, role } = response.data;
 
         if (role === 'suspended') {
           setError('Account has been suspended. Please contact an Administrator.');
@@ -175,7 +175,7 @@ const LoginModal = ({ isOpen, onClose }) => {
       
       {/* Forgot Password Modal */}
       {showForgotPasswordModal && (
-        <div className="forgot-password-modal">
+        <div className="forgot-password-modal modal-content-overlay">
           <div className="modal-content">
             <button className="close-button" onClick={() => setShowForgotPasswordModal(false)}>X</button>
             <h3>Forgot Password</h3>

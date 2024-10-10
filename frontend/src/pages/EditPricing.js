@@ -24,7 +24,6 @@ const EditPricing = () => {
     // Fetch current pricing, promotions, and subscribers data from the backend
     fetchPricingData();
     fetchPromotions();
-    fetchSubscribers();
   }, []);
 
   const fetchPricingData = async () => {
@@ -45,14 +44,6 @@ const EditPricing = () => {
     }
   };
 
-  const fetchSubscribers = async () => {
-    try {
-      const response = await axios.get('http://localhost:8081/api/subscribers');
-      setEmailSubscribers(response.data);
-    } catch (error) {
-      console.error('Error fetching subscribers', error);
-    }
-  };
 
   const handleSavePricing = async () => {
     if (ticketPrices.adult === '' || ticketPrices.children === '' || ticketPrices.senior === '' || ticketPrices.fee === '') {
