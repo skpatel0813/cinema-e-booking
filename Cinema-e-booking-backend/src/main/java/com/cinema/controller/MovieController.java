@@ -1,6 +1,8 @@
 package com.cinema.controller;
 
 import com.cinema.model.Movie;
+import com.cinema.model.MovieShowtime;
+import com.cinema.model.Promotion;
 import com.cinema.service.MovieService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -8,7 +10,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/movies")
@@ -18,13 +22,11 @@ public class MovieController {
     @Autowired
     private MovieService movieService;
 
-    // Fetch random movies for the home page
     @GetMapping("/home")
     public List<Movie> getHomeMovies() {
         return movieService.getRandomMovies();
     }
 
-    // Fetch movie details by movie_id
     @GetMapping("/{id}")
     public ResponseEntity<Movie> getMovieDetails(@PathVariable int id) {
         Movie movie = movieService.getMovieById(id);
@@ -35,32 +37,11 @@ public class MovieController {
         }
     }
 
-    /*
-    // Update movie details
-    @PutMapping("/{id}")
-    public ResponseEntity<Movie> updateMovie(@PathVariable int id, @RequestBody Movie updatedMovie) {
-        try {
-            Movie movie = movieService.updateMovie(id, updatedMovie);
-            movie.getIsPlaying();
-            movie.getComingSoon();
-            return new ResponseEntity<>(movie, HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-     */
-
     @PutMapping("/{id}")
     public ResponseEntity<Movie> updateMovie(@PathVariable int id, @RequestBody Movie movieDetails) {
-        Movie movie = movieService.getMovieById(id); // Fetch movie without Optional
+        Movie movie = movieService.getMovieById(id);
 
         if (movie != null) {
-            // Log received values for debugging
-            System.out.println("isNowPlaying received: " + movieDetails.isNowPlaying());
-            System.out.println("isComingSoon received: " + movieDetails.isComingSoon());
-
-            // Update the movie details
             movie.setTitle(movieDetails.getTitle());
             movie.setCategory(movieDetails.getCategory());
             movie.setCast(movieDetails.getCast());
@@ -68,33 +49,20 @@ public class MovieController {
             movie.setProducer(movieDetails.getProducer());
             movie.setSynopsis(movieDetails.getSynopsis());
             movie.setReviews(movieDetails.getReviews());
-            movie.setTrailer_url(movieDetails.getTrailer_url());
-            movie.setPoster_url(movieDetails.getPoster_url());
+            movie.setTrailerUrl(movieDetails.getTrailerUrl());
+            movie.setPosterUrl(movieDetails.getPosterUrl());
             movie.setRatingCode(movieDetails.getRatingCode());
             movie.setPrice(movieDetails.getPrice());
+            movie.setIsNowPlaying(movieDetails.getIsNowPlaying());
+            movie.setIsComingSoon(movieDetails.getIsComingSoon());
 
-            // Update the status fields
-            movie.setNowPlaying(movieDetails.isNowPlaying());
-            movie.setComingSoon(movieDetails.isComingSoon());
-
-            // Update show times if available
-            movie.setShow_time_1(movieDetails.getShow_time_1());
-            movie.setShow_time_2(movieDetails.getShow_time_2());
-            movie.setShow_time_3(movieDetails.getShow_time_3());
-            movie.setShow_time_4(movieDetails.getShow_time_4());
-            movie.setShow_time_5(movieDetails.getShow_time_5());
-
-
-            // Save updated movie
-            Movie updatedMovie = movieService.save(movie);
+            Movie updatedMovie = movieService.updateMovie(id, movieDetails);
             return ResponseEntity.ok(updatedMovie);
         } else {
-            return ResponseEntity.notFound().build(); // Return 404 if movie not found
+            return ResponseEntity.notFound().build();
         }
     }
 
-
-    // Delete movie by id
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteMovie(@PathVariable int id) {
         try {
@@ -108,46 +76,35 @@ public class MovieController {
     @PostMapping
     public ResponseEntity<?> addMovie(@RequestBody Movie movie) {
         try {
-            Movie savedMovie = movieService.addMovie(movie);  // Call the addMovie method
-            return ResponseEntity.ok(savedMovie);
+            Movie savedMovie = movieService .saveMovie(movie); // Save the movie
+            return ResponseEntity.ok(savedMovie); // Return saved movie as JSON
         } catch (Exception e) {
-            return ResponseEntity.status(500).body("Error adding movie");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error adding movie: " + e.getMessage());
         }
     }
 
-    // Endpoint to update ticket prices for a movie
-    @PostMapping("/ticket-prices")
-    public ResponseEntity<Movie> updateTicketPrices(
-            @PathVariable int movieId,
-            @RequestParam BigDecimal adultPrice,
-            @RequestParam BigDecimal childrenPrice,
-            @RequestParam BigDecimal seniorPrice) {
-        Movie updatedMovie = movieService.updateTicketPrices(movieId, adultPrice, childrenPrice, seniorPrice);
-        if (updatedMovie != null) {
-            return ResponseEntity.ok(updatedMovie);
+
+
+    // Add this new method to handle the POST request for showtimes
+    @PostMapping("/{id}/showtimes")
+    public ResponseEntity<?> addShowtimes(@PathVariable("id") Long movieId, @RequestBody List<String> showtimes) {
+        try {
+            List<MovieShowtime> savedShowtimes = movieService.addShowtimes(movieId, showtimes);
+            return ResponseEntity.ok(savedShowtimes);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error adding showtimes: " + e.getMessage());
         }
-        return ResponseEntity.notFound().build();
     }
 
-    // Endpoint to add or update a promotion for a movie
-    @PostMapping("/promotions")
-    public ResponseEntity<Movie> addOrUpdatePromotion(
-            @PathVariable int movieId,
-            @RequestParam String code,
-            @RequestParam String description,
-            @RequestParam BigDecimal discount) {
-        Movie updatedMovie = movieService.addOrUpdatePromotion(movieId, code, description, discount);
-        if (updatedMovie != null) {
-            return ResponseEntity.ok(updatedMovie);
-        }
-        return ResponseEntity.notFound().build();
+    // In MovieController.java
+    @GetMapping("/{id}/getShowtimes")
+    public ResponseEntity<List<String>> getShowtimes(@PathVariable("id") Long movieId) {
+        List<String> showtimeStrings = movieService.getShowtimesByMovieId(movieId); // Returns List<String>
+        return ResponseEntity.ok(showtimeStrings);
     }
 
-    // Endpoint to get showtimes for a specific movie by ID
-    @GetMapping("/{movieId}/showtimes")
-    public ResponseEntity<List<String>> getShowtimes(@PathVariable int movieId) {
-        List<String> showtimes = movieService.getShowtimesByMovieId(movieId);
-        return ResponseEntity.ok(showtimes);
-    }
+
+
+
 
 }

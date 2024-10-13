@@ -18,15 +18,10 @@ public class Order {
     private String movieTitle;
     private String showtime;
 
-    // Store selectedSeats as a JSON string
     @Column(columnDefinition = "TEXT")
     private String selectedSeats;
 
     private String cardUsed;
-    private int adultTickets;
-    private int childTickets;
-    private int seniorTickets;
-    private double ticketPrice;
     private double salesTax;
     private double fee;
     private double promotionDiscount;
@@ -50,7 +45,6 @@ public class Order {
 
     public String getSelectedSeats() { return selectedSeats; }
 
-    // Setter to convert List<String> to JSON string
     public void setSelectedSeats(List<String> seats) {
         try {
             ObjectMapper mapper = new ObjectMapper();
@@ -60,31 +54,8 @@ public class Order {
         }
     }
 
-    // Getter to convert JSON string back to List<String>
-    public List<String> getSelectedSeatsAsList() {
-        try {
-            ObjectMapper mapper = new ObjectMapper();
-            return mapper.readValue(this.selectedSeats, List.class);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
     public String getCardUsed() { return cardUsed; }
     public void setCardUsed(String cardUsed) { this.cardUsed = cardUsed; }
-
-    public int getAdultTickets() { return adultTickets; }
-    public void setAdultTickets(int adultTickets) { this.adultTickets = adultTickets; }
-
-    public int getChildTickets() { return childTickets; }
-    public void setChildTickets(int childTickets) { this.childTickets = childTickets; }
-
-    public int getSeniorTickets() { return seniorTickets; }
-    public void setSeniorTickets(int seniorTickets) { this.seniorTickets = seniorTickets; }
-
-    public double getTicketPrice() { return ticketPrice; }
-    public void setTicketPrice(double ticketPrice) { this.ticketPrice = ticketPrice; }
 
     public double getSalesTax() { return salesTax; }
     public void setSalesTax(double salesTax) { this.salesTax = salesTax; }

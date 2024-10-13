@@ -1,8 +1,9 @@
 package com.cinema.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
-
-import java.sql.Timestamp;
+import java.math.BigDecimal;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "promotions")
@@ -10,33 +11,34 @@ public class Promotion {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "promotion_id")
-    private Long id;
+    private Long promotionId;
 
-    @Column(name = "promotion_code", nullable = false)
+    @Column(name = "promotion_code")
     private String code;
 
-    @Column(name = "description", nullable = false)
     private String description;
 
-    @Column(name = "discount", nullable = false)
-    private Double discount;
+    @Column(name = "discount_amount")
+    private BigDecimal discountAmount;
+
+    private LocalDate startDate;
+    private LocalDate endDate;
 
     // Getters and Setters
-    public Long getId() {
-        return id;
+    public Long getPromotionId() {
+        return promotionId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setPromotionId(Long promotionId) {
+        this.promotionId = promotionId;
     }
 
-    public String getCode() {
+    public String getPromotionCode() {
         return code;
     }
 
-    public void setCode(String code) {
-        this.code = code;
+    public void setPromotionCode(String promotionCode) {
+        this.code = promotionCode;
     }
 
     public String getDescription() {
@@ -47,11 +49,27 @@ public class Promotion {
         this.description = description;
     }
 
-    public Double getDiscount() {
-        return discount;
+    public BigDecimal getDiscountAmount() {
+        return discountAmount;
     }
 
-    public void setDiscount(Double discount) {
-        this.discount = discount;
+    public void setDiscountAmount(BigDecimal discountAmount) {
+        this.discountAmount = discountAmount;
+    }
+
+    public LocalDate getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(LocalDate startDate) {
+        this.startDate = startDate;
+    }
+
+    public LocalDate getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(LocalDate endDate) {
+        this.endDate = endDate;
     }
 }

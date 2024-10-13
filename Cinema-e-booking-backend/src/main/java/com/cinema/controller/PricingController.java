@@ -15,6 +15,9 @@ public class PricingController {
 
     @GetMapping("/getPrices")
     public Pricing getPricing() {
+
+        System.out.println("Fetched Pricing: " + pricingService.getPricing());
+
         return pricingService.getPricing();
     }
 

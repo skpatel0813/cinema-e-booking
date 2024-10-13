@@ -63,12 +63,14 @@ public class UserController {
 
     @GetMapping("/profile")
     public ResponseEntity<?> getUserProfile(@RequestParam String email) {
+        System.out.println("Fetching profile for email: " + email);
         User user = userService.getUserByEmail(email);
         if (user != null) {
             return ResponseEntity.ok(user);
         }
         return ResponseEntity.status(404).body("User not found");
     }
+
 
     @PutMapping("/profile/{email}")
     public ResponseEntity<?> updateUserProfile(@PathVariable String email, @RequestBody User updatedUser) {
@@ -88,11 +90,6 @@ public class UserController {
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
-    }
-
-    @PutMapping("/cards/{email}")
-    public User updateUserCards(@PathVariable String email, @RequestBody Map<String, String> cardData) {
-        return userService.updateUserCards(email, cardData);
     }
 
     // Endpoint to request password reset
@@ -212,10 +209,13 @@ public class UserController {
         return userService.getUserByEmail(email);
     }
 
+    /*
     @PutMapping("/updatePaymentCards")
     public User updatePaymentCards(@RequestBody UpdateCardsRequest updateRequest) {
         return userService.updateUserPaymentCards(updateRequest);
     }
+
+     */
 
     // Inner class to hold the update request data
     public static class UpdateCardsRequest {
@@ -276,7 +276,6 @@ public class UserController {
 
 }
 
-// DTO for login request
 class LoginRequest {
     private String email;
     private String password;

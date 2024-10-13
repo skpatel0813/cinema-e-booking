@@ -26,7 +26,7 @@ public class CinemaApplication implements CommandLineRunner {
 
         // Print the movie details to the console
         for (Movie movie : homeMovies) {
-            System.out.println(movie.getId() + " Title: " + movie.getTitle() + ", Poster URL: ");
+            System.out.println(movie.getMovieId() + " Title: " + movie.getTitle() + ", Poster URL: " + movie.getPosterUrl());
         }
     }
 }

@@ -5,6 +5,7 @@ import com.cinema.repository.PromotionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -13,19 +14,34 @@ public class PromotionService {
     @Autowired
     private PromotionRepository promotionRepository;
 
+    // Get all promotions
     public List<Promotion> getAllPromotions() {
         return promotionRepository.findAll();
     }
 
-    public Promotion addPromotion(Promotion promotion) {
+    public Promotion createPromotion(String code, String description, BigDecimal discountAmount) {
+        Promotion promotion = new Promotion();
+        promotion.setPromotionCode(code);
+        promotion.setDescription(description);
+        promotion.setDiscountAmount(discountAmount);
         return promotionRepository.save(promotion);
     }
 
+
+
+    public Promotion updatePromotion(String code, String description, BigDecimal discountAmount) {
+        Promotion promotion = promotionRepository.findByCode(code)
+                .orElseThrow(() -> new RuntimeException("Promotion not found with id " + code));
+
+        promotion.setDescription(description);
+        promotion.setDiscountAmount(discountAmount);
+
+        return promotionRepository.save(promotion);
+    }
+
+
+    // Delete a promotion by ID
     public void deletePromotion(Long id) {
         promotionRepository.deleteById(id);
-    }
-
-    public Promotion updatePromotion(Promotion promotion) {
-        return promotionRepository.save(promotion);
     }
 }

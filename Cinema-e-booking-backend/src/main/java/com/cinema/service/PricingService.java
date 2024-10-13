@@ -11,11 +11,12 @@ public class PricingService {
     @Autowired
     private PricingRepository pricingRepository;
 
-    // Method to get pricing information
     public Pricing getPricing() {
-        // Fetch the pricing entry with ID 1 (assuming this is the only record)
-        return pricingRepository.findById(1L).orElse(new Pricing());
+        Pricing pricing = pricingRepository.findById(1L).orElse(new Pricing());
+        System.out.println("Fetched Pricing: " + pricing.toString());
+        return pricing;
     }
+
 
     // Method to update pricing information
     public Pricing updatePricing(Pricing pricing) {
