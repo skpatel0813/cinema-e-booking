@@ -45,6 +45,7 @@ const Home = () => {
     setIsLoggedIn(!!storedUserName);
     axios.get('/api/movies/home')
       .then(response => {
+        console.log("Movies data:", response.data);
         if (Array.isArray(response.data)) setMovies(response.data);
         else console.error('Expected an array but got:', response.data);
       })
@@ -76,7 +77,11 @@ const Home = () => {
   };
 
   const handleEditMovie = (movie) => {
-    if (movie) navigate(`/edit-movie/${movie.id}`);
+    if (movie) {
+
+      navigate(`/edit-movie/${movie.movieId}`);
+      
+    } 
     else console.error('Movie or movie_id is undefined');
   };
 
@@ -138,7 +143,7 @@ const Home = () => {
         {movies.map(movie => (
           <div key={movie.movie_id || movie.title} className="movie-card">
             <img 
-              src={movie.poster_url} 
+              src={movie.posterUrl} 
               alt={movie.title} 
               className="movie-poster"
               onError={(e) => e.target.style.display = 'none'}
@@ -171,7 +176,7 @@ const Home = () => {
           {nowPlayingMovies.map(movie => (
             <div key={movie.movie_id || movie.title} className="movie-card">
               <img 
-                src={movie.poster_url} 
+                src={movie.posterUrl} 
                 alt={movie.title} 
                 className="movie-poster"
                 onError={(e) => e.target.style.display = 'none'}
@@ -206,7 +211,7 @@ const Home = () => {
           {comingSoonMovies.map(movie => (
             <div key={movie.movie_id || movie.title} className="movie-card">
               <img 
-                src={movie.poster_url} 
+                src={movie.posterUrl} 
                 alt={movie.title} 
                 className="movie-poster"
                 onError={(e) => e.target.style.display = 'none'}

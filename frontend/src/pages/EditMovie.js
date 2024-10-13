@@ -14,8 +14,8 @@ const EditMovie = () => {
     producer: '',
     synopsis: '',
     reviews: '',
-    trailer_url: '',
-    poster_url: '',
+    trailerUrl: '',
+    posterUrl: '',
     ratingCode: '',
     price: '',
     isNowPlaying: false,
@@ -40,13 +40,32 @@ const EditMovie = () => {
           const status = response.data.isNowPlaying ? 'Now Playing' : response.data.isComingSoon ? 'Coming Soon' : '';
           setMovieDetails({
             ...response.data,
-            status: status // Set the status based on current data
+            status: status, // Set the status based on current data
           });
         })
         .catch(error => {
           console.error('Error fetching movie details:', error);
           setError('Error fetching movie details');
         });
+
+      // Fetch showtimes
+    axios.get(`/api/movies/${id}/getShowtimes`)
+    .then(response => {
+      setMovieDetails(prevDetails => ({
+        ...prevDetails,
+        show_time_1: response.data[0] || '',
+        show_time_2: response.data[1] || '',
+        show_time_3: response.data[2] || '',
+        show_time_4: response.data[3] || '',
+        show_time_5: response.data[4] || ''
+      }));
+    })
+    .catch(error => {
+      console.error('Error fetching showtimes:', error);
+      setError('Error fetching showtimes');
+    });
+
+        
     } else {
       console.error('Movie ID is undefined');
       setError('Invalid movie ID');
@@ -90,13 +109,34 @@ const EditMovie = () => {
 
     axios.put(`/api/movies/${id}`, updatedMovieDetails)
       .then(() => {
-        alert('Movie updated successfully!');
-        setIsSubmitting(false);
-        navigate('/');
+        updateShowtimes();
       })
       .catch(error => {
         console.error('Error updating movie:', error);
         setError('Error updating movie');
+        setIsSubmitting(false);
+      });
+  };
+
+  // New function to update showtimes
+  const updateShowtimes = () => {
+    const showtimes = [
+      movieDetails.show_time_1,
+      movieDetails.show_time_2,
+      movieDetails.show_time_3,
+      movieDetails.show_time_4,
+      movieDetails.show_time_5
+    ].filter(time => time && time !== ''); // Remove empty or null showtimes
+
+    axios.post(`/api/movies/${id}/showtimes`, showtimes)
+      .then(() => {
+        alert('Movie and showtimes updated successfully!');
+        setIsSubmitting(false);
+        navigate('/');
+      })
+      .catch(error => {
+        console.error('Error updating showtimes:', error);
+        setError('Error updating showtimes');
         setIsSubmitting(false);
       });
   };
@@ -202,7 +242,7 @@ const EditMovie = () => {
             <input
               type="text"
               name="trailer_url"
-              value={movieDetails.trailer_url}
+              value={movieDetails.trailerUrl}
               onChange={handleChange}
             />
           </div>
@@ -211,7 +251,7 @@ const EditMovie = () => {
             <input
               type="text"
               name="poster_url"
-              value={movieDetails.poster_url}
+              value={movieDetails.posterUrl}
               onChange={handleChange}
             />
           </div>
@@ -252,7 +292,6 @@ const EditMovie = () => {
               name="show_time_2"
               value={movieDetails.show_time_2}
               onChange={handleChange}
-              required
             />
           </div>
           <div>
@@ -262,7 +301,6 @@ const EditMovie = () => {
               name="show_time_3"
               value={movieDetails.show_time_3}
               onChange={handleChange}
-              required
             />
           </div>
           <div>
@@ -272,7 +310,6 @@ const EditMovie = () => {
               name="show_time_4"
               value={movieDetails.show_time_4}
               onChange={handleChange}
-              required
             />
           </div>
           <div>
@@ -282,7 +319,6 @@ const EditMovie = () => {
               name="show_time_5"
               value={movieDetails.show_time_5}
               onChange={handleChange}
-              required
             />
           </div>
 

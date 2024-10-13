@@ -24,7 +24,7 @@ const LoginModal = ({ isOpen, onClose }) => {
     setError(''); // Reset the error message
     setIsLoading(true); // Start loading
 
-    axios.post('/user/login', { email, password })
+    axios.post('http://localhost:8081/user/login', { email, password })
       .then(response => {
         const { userName, role } = response.data;
 

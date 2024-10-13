@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import NavBar from '../components/NavBar'; // Import the NavBar component
+import NavBar from '../components/NavBar';
 import '../styles/EditPricing.css';
 
 const EditPricing = () => {
   const [ticketPrices, setTicketPrices] = useState({
-    adult: '',
-    children: '',
-    senior: '',
-    fee: '',
+    adult: '0',
+    children: '0',
+    senior: '0',
+    fee: '0',
   });
   const [promotions, setPromotions] = useState([]);
   const [promotionCode, setPromotionCode] = useState('');
@@ -21,7 +21,6 @@ const EditPricing = () => {
   const [currentPromotion, setCurrentPromotion] = useState({});
 
   useEffect(() => {
-    // Fetch current pricing, promotions, and subscribers data from the backend
     fetchPricingData();
     fetchPromotions();
   }, []);
@@ -29,7 +28,12 @@ const EditPricing = () => {
   const fetchPricingData = async () => {
     try {
       const response = await axios.get('http://localhost:8081/api/pricing/getPrices');
-      setTicketPrices(response.data);
+      setTicketPrices({
+        adult: response.data.adultPrice,
+        children: response.data.childrenPrice,
+        senior: response.data.seniorPrice,
+        fee: response.data.fee,
+      });
     } catch (error) {
       console.error('Error fetching pricing data', error);
     }
@@ -38,12 +42,16 @@ const EditPricing = () => {
   const fetchPromotions = async () => {
     try {
       const response = await axios.get('http://localhost:8081/api/promotions/getPromotions');
-      setPromotions(response.data);
+      setPromotions(response.data.map((promotion) => ({
+        code: promotion.promotionCode,
+        description: promotion.description,
+        discountAmount: promotion.discountAmount
+      })));
     } catch (error) {
-      console.error('Error fetching promotions', error);
+      console.error('Error fetching promotions:', error);
+      alert("Failed to load promotions. Please try again later.");
     }
   };
-
 
   const handleSavePricing = async () => {
     if (ticketPrices.adult === '' || ticketPrices.children === '' || ticketPrices.senior === '' || ticketPrices.fee === '') {
@@ -69,9 +77,13 @@ const EditPricing = () => {
       const newPromotion = {
         code: promotionCode,
         description: promotionDescription,
-        discount: discountAmount
+        discountAmount: discountAmount,
       };
+
+      console.log("Sending promotion data:", newPromotion);
+
       await axios.post('http://localhost:8081/api/promotions/addPromotions', newPromotion);
+      
       setPromotions([...promotions, newPromotion]);
       setPromotionCode('');
       setPromotionDescription('');
@@ -79,7 +91,7 @@ const EditPricing = () => {
       setSuccessMessage('Promotion added successfully');
       setTimeout(() => setSuccessMessage(''), 3000);
     } catch (error) {
-      console.error('Error adding promotion', error);
+      console.error('Error adding promotion:', error);
     }
   };
 
@@ -92,7 +104,7 @@ const EditPricing = () => {
   const handleSendPromotion = async (promotion) => {
     try {
       await axios.post('http://localhost:8081/api/promotions/send', {
-        message: `${promotion.description} - Use Code: ${promotion.code} for a ${promotion.discount}% discount!`,
+        message: `${promotion.description} - Use Code: ${promotion.code} for a ${promotion.discountAmount}% discount!`,
         subscribers: emailSubscribers
       });
       setSuccessMessage('Promotion sent successfully');
@@ -105,12 +117,15 @@ const EditPricing = () => {
   const handleSaveEditedPromotion = async () => {
     try {
       const updatedPromotion = {
-        id: currentPromotion.id,
         code: currentPromotion.code,
         description: currentPromotion.description,
-        discount: currentPromotion.discount
+        discountAmount: currentPromotion.discountAmount // Ensure we use discountAmount here
       };
+
+      console.log("Updated promotion data:", updatedPromotion);
+
       await axios.put('http://localhost:8081/api/promotions/updatePromotion', updatedPromotion);
+      
       const updatedPromotions = [...promotions];
       updatedPromotions[currentPromotion.index] = updatedPromotion;
       setPromotions(updatedPromotions);
@@ -118,13 +133,12 @@ const EditPricing = () => {
       setSuccessMessage('Promotion updated successfully');
       setTimeout(() => setSuccessMessage(''), 3000);
     } catch (error) {
-      console.error('Error updating promotion', error);
+      console.error('Error updating promotion:', error);
     }
   };
 
   return (
     <div>
-      {/* Include NavBar at the top */}
       <NavBar 
         onLoginClick={() => console.log('Login')} 
         userName="Admin" 
@@ -221,7 +235,7 @@ const EditPricing = () => {
                 <tr key={index}>
                   <td>{promotion.code}</td>
                   <td>{promotion.description}</td>
-                  <td>{promotion.discount}</td>
+                  <td>{promotion.discountAmount}</td>
                   <td>
                     <button className="edit-button" onClick={() => handleEditPromotion(index)}>
                       Edit
@@ -236,7 +250,6 @@ const EditPricing = () => {
           </table>
         </div>
 
-        {/* Modal for editing promotions */}
         {isEditModalOpen && (
           <div className="modal">
             <div className="modal-content">
@@ -261,8 +274,8 @@ const EditPricing = () => {
                 Discount Amount (%):
                 <input
                   type="number"
-                  value={currentPromotion.discount}
-                  onChange={(e) => setCurrentPromotion({ ...currentPromotion, discount: e.target.value })}
+                  value={currentPromotion.discountAmount || ''}
+                  onChange={(e) => setCurrentPromotion({ ...currentPromotion, discountAmount: e.target.value })}
                 />
               </label>
               <button className="save-button" onClick={handleSaveEditedPromotion}>

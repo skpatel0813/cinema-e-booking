@@ -59,12 +59,12 @@ const DetailedModal = ({ show, onClose, movie, isLoggedIn, response }) => {
         <h2>{movie.title}</h2>
 
         {/* Movie Trailer */}
-        {movie.trailer_url ? (
+        {movie.trailerUrl ? (
           <div className="trailer-container">
             <iframe 
               width="100%" 
               height="400px" 
-              src={movie.trailer_url} 
+              src={movie.trailerUrl} 
               title="Movie Trailer" 
               frameBorder="0" 
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
