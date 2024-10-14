@@ -4,6 +4,8 @@ import '../styles/modal.css';
 import LoginModal from './LoginModal';
 
 const DetailedModal = ({ show, onClose, movie, isLoggedIn, response }) => {
+  console.log("Movie prop in DetailedModal:", movie); // Check the movie object structure
+
   const [loginPromptVisible, setLoginPromptVisible] = useState(false);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [userId, setUserId] = useState(null); // State to store userId
@@ -23,14 +25,15 @@ const DetailedModal = ({ show, onClose, movie, isLoggedIn, response }) => {
   const handleGetTicketsClick = () => {
     console.log("Is user logged in? ", isLoggedIn); // Debugging log
     console.log("User ID:", userId); // Log the user ID
+    console.log("Movie ID:", movie.movieId);
 
     if (isLoggedIn) {
       console.log("Navigating to showtimes with movie title:", movie.title); // Debugging log
 
       // Store the movie ID in local storage
-      localStorage.setItem('selectedMovieId', movie.id);
+      localStorage.setItem('selectedMovieId', movie.movieId);
 
-      navigate('/showtimes', { state: { movieTitle: movie.title } });
+      navigate('/showtimes', { state: { movieTitle: movie.title, movieId: movie.id } });
     } else {
       console.log("Showing login prompt"); // Debugging log
       setLoginPromptVisible(true);

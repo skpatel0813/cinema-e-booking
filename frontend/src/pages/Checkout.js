@@ -41,37 +41,16 @@ const Checkout = () => {
       axios.get(`http://localhost:8081/user/getUserInfoByEmail?email=${email}`)
         .then(response => {
           const userData = response.data;
-          const cards = [];
-
-          if (userData.cardNumber1) {
-            cards.push({
-              id: 'card1',
-              cardNumber: userData.cardNumber1,
-              cardType: userData.cardType1,
-              expirationDate: userData.expirationDate1
-            });
-          }
-          if (userData.cardNumber2) {
-            cards.push({
-              id: 'card2',
-              cardNumber: userData.cardNumber2,
-              cardType: userData.cardType2,
-              expirationDate: userData.expirationDate2
-            });
-          }
-          if (userData.cardNumber3) {
-            cards.push({
-              id: 'card3',
-              cardNumber: userData.cardNumber3,
-              cardType: userData.cardType3,
-              expirationDate: userData.expirationDate3
-            });
-          }
-
-          setUser({ ...userData, cards });
-          setEditableCards([...cards]);
+          setUser(prevUser => ({ ...prevUser, id: userData.id, name: userData.name, email: userData.email }));
         })
         .catch(error => console.error('Error fetching user info:', error));
+      
+      axios.get(`http://localhost:8081/user/getPaymentMethodsByEmail?email=${email}`)
+        .then(response => {
+          const cards = response.data; // Array of card details
+          setUser(prevUser => ({ ...prevUser, cards: cards }));
+        })
+        .catch(error => console.error('Error fetching payment methods:', error));
     }
   }, [email]);
 
@@ -99,17 +78,18 @@ const Checkout = () => {
     setFinalPrice(initialTotal);
   };
 
+  // Updated applyPromotion function
   const applyPromotion = () => {
     if (promotionCode.trim() === '') {
       setPromotionError('Please enter a promotion code.');
       return;
     }
 
-    axios.get(`http://localhost:8081/api/promotions/getPromotions`)
+    axios.get(`http://localhost:8081/api/promotions/getPromotionByCode?code=${promotionCode}`)
       .then(response => {
-        const promo = response.data.find(promo => promo.code === promotionCode);
+        const promo = response.data;
         if (promo) {
-          const discountAmount = totalPrice * (promo.discount / 100);
+          const discountAmount = totalPrice * (promo.discountAmount / 100);
           setPromotionDiscount(discountAmount);
           setFinalPrice((totalPrice - discountAmount) + fee + salesTax);
           setPromotionError('');
@@ -130,58 +110,62 @@ const Checkout = () => {
     }
 
     try {
-      for (let seat of selectedSeats) {
-        await axios.post('http://localhost:8081/api/seats/reserveSeat', null, {
-          params: {
-            movieId,
-            showtime,
-            seatId: seat.id
-          }
-        });
-      }
-
       const paymentDetails = {
         userId: user.id,
         cardId: selectedCard,
         totalAmount: finalPrice,
+        bookingNumber: movieId + showtime,
       };
 
-      const response = await axios.post('http://localhost:8081/api/checkout/processPayment', paymentDetails);
-      alert('Payment Successful!');
-      const ticketNumber = response.data.ticketNumber;
+      const paymentResponse = await axios.post('http://localhost:8081/api/checkout/processPayment', paymentDetails);
 
-      const orderDetails = {
-        userName: user.name,
-        userEmail: user.email,
-        movieTitle,
-        showtime,
-        selectedSeats: selectedSeats.map(seat => `${seat.row}${seat.number}`),
-        cardUsed: selectedCard,
-        adultTickets: currentTicketCounts.adult || 0,
-        childTickets: currentTicketCounts.child || 0,
-        seniorTickets: currentTicketCounts.senior || 0,
-        ticketPrice: totalPrice,
-        salesTax,
-        fee,
-        promotionDiscount,
-        totalCost: finalPrice,
-      };
+      if (paymentResponse.status === 200) {
+        alert('Payment Successful!');
+        const ticketNumber = paymentResponse.data.ticketNumber;
 
-      await axios.post('http://localhost:8081/api/orders/save', orderDetails);
-      
-      navigate('/confirmation', {
-        state: {
-          booking: response.data.booking,
-          selectedSeats,
+        for (let seat of selectedSeats) {
+          await axios.post('http://localhost:8081/api/seats/reserveSeat', null, {
+            params: {
+              movieId,
+              showtime,
+              seatId: seat.id,
+            },
+          });
+        }
+
+        const orderDetails = {
+          userName: user.name,
+          userEmail: user.email,
           movieTitle,
           showtime,
-          ticketCounts: currentTicketCounts,
-          ticketNumber
-        }
-      });
+          selectedSeats: selectedSeats.map(seat => `${seat.row}${seat.number}`),
+          cardUsed: selectedCard,
+          adultTickets: currentTicketCounts.adult || 0,
+          childTickets: currentTicketCounts.child || 0,
+          seniorTickets: currentTicketCounts.senior || 0,
+          ticketPrice: totalPrice,
+          salesTax,
+          fee,
+          promotionDiscount,
+          totalCost: finalPrice,
+        };
+
+        await axios.post('http://localhost:8081/api/orders/save', orderDetails);
+
+        navigate('/confirmation', {
+          state: {
+            booking: paymentResponse.data.booking,
+            selectedSeats,
+            movieTitle,
+            showtime,
+            ticketCounts: currentTicketCounts,
+            ticketNumber,
+          },
+        });
+      }
     } catch (error) {
-      console.error('Error reserving seats or processing payment:', error);
-      alert('Failed to reserve seats or process payment. Please try again.');
+      console.error('Error processing payment or reserving seats:', error);
+      alert('Failed to process payment or reserve seats. Please try again.');
     }
   };
 
@@ -248,12 +232,14 @@ const Checkout = () => {
                 <div key={index} className="card-option">
                   <input
                     type="radio"
-                    id={card.id}
+                    id={card.cardNumber}
                     name="card"
-                    value={card.id}
-                    onChange={() => setSelectedCard(card.id)}
+                    value={card.cardNumber}
+                    onChange={() => setSelectedCard(card.cardNumber)}
                   />
-                  <label htmlFor={card.id}>{`${card.cardType} ending in ${card.cardNumber.slice(-4)}`}</label>
+                  <label htmlFor={card.cardNumber}>
+                    {`${card.cardType} ending in ${card.cardNumber.slice(-4)} - Exp: ${card.expirationDate}`}
+                  </label>
                 </div>
               ))}
             </div>
@@ -265,7 +251,6 @@ const Checkout = () => {
           </button>
         </div>
 
-        {/* New Section for Editing Ticket Counts, now above Ticket Summary */}
         <div className="ticket-count-edit">
           <h3>Edit Ticket Counts</h3>
           <div>
@@ -325,7 +310,6 @@ const Checkout = () => {
         </div>
       </div>
 
-      {/* Modal for editing payment cards */}
       {isModalOpen && (
         <div className="modal">
           <div className="modal-content">

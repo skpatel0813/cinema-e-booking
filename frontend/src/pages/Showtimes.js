@@ -17,7 +17,12 @@ const Showtimes = () => {
   useEffect(() => {
     if (location.state && location.state.movieTitle) {
       setSelectedMovie(location.state.movieTitle);
-      fetchShowtimes(location.state.movieId); // Assuming movieId is also passed in location.state
+
+      // Retrieve movieId from location state or fallback to localStorage
+    const movieId = location.state.movieId || localStorage.getItem('selectedMovieId');
+    if (movieId) {
+      fetchShowtimes(movieId);
+    }
     }
   }, [location.state]);
 
@@ -25,7 +30,7 @@ const Showtimes = () => {
   const fetchShowtimes = async (movieId) => {
     movieId = localStorage.getItem('selectedMovieId');
     try {
-      const response = await axios.get(`/api/movies/${movieId}/showtimes`); // Fetch showtimes by movie ID
+      const response = await axios.get(`/api/movies/${movieId}/getShowtimes`); // Fetch showtimes by movie ID
       setShowtimes(response.data); // Assuming the API returns an array of showtimes
     } catch (error) {
       console.error('Error fetching showtimes:', error);
