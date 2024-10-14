@@ -29,6 +29,13 @@ public class CheckoutController {
 
     @PostMapping("/processPayment")
     public ResponseEntity<Map<String, Object>> processPayment(@RequestBody PaymentRequest paymentRequest) {
+
+        System.out.println("Received payment request: " + paymentRequest);
+
+        if (paymentRequest.getUserId() == null) {
+            return ResponseEntity.badRequest().body(Map.of("error", "User ID must not be null"));
+        }
+
         // Create booking details
         Booking booking = bookingService.createBooking(paymentRequest);
 
@@ -43,6 +50,8 @@ public class CheckoutController {
         // Retrieve user info
         User user = userService.getUserById(paymentRequest.getUserId());
 
+        System.out.println(paymentRequest.getUserId());
+
         // Send confirmation email
         String subject = "Booking Confirmation";
         String body = "Dear " + user.getName() + ",\n\n" +
@@ -55,6 +64,7 @@ public class CheckoutController {
         // Return booking details and ticket number to frontend
         return ResponseEntity.ok(response);
     }
+
 
 
 

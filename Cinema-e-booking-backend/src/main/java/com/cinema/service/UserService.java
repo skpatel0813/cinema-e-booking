@@ -97,6 +97,8 @@ public class UserService {
         existingUser.setCity(updatedUser.getCity());
         existingUser.setState(updatedUser.getState());
         existingUser.setZip(updatedUser.getZip());
+        existingUser.setSubscribeToPromotions(updatedUser.getSubscribeToPromotions());
+
 
         return userRepository.save(existingUser);
     }
@@ -223,4 +225,47 @@ public class UserService {
             paymentMethodRepository.save(newPaymentMethod);
         }
     }
+
+    @Transactional
+    public void updateBillingAddress(String email, UserBillingAddress updatedAddress) {
+        User user = userRepository.findByEmail(email);
+        if (user == null) {
+            throw new IllegalArgumentException("User not found.");
+        }
+
+        Optional<UserBillingAddress> existingAddressOpt = billingAddressRepository.findByUserId(user.getId()).stream().findFirst();
+
+        UserBillingAddress billingAddress = existingAddressOpt.orElse(new UserBillingAddress());
+        billingAddress.setUserId(user.getId());
+        billingAddress.setBillingStreet(updatedAddress.getBillingStreet());
+        billingAddress.setBillingCity(updatedAddress.getBillingCity());
+        billingAddress.setBillingState(updatedAddress.getBillingState());
+        billingAddress.setBillingZip(updatedAddress.getBillingZip());
+
+        billingAddressRepository.save(billingAddress);
+    }
+
+    public void updateUserPaymentMethods(String email, List<UserPaymentMethod> paymentMethods) {
+        User user = userRepository.findByEmail(email);
+        if (user == null) {
+            throw new IllegalArgumentException("User not found.");
+        }
+
+        // Delete existing payment methods and replace them
+        paymentMethodRepository.deleteByUserId(user.getId());
+
+        for (UserPaymentMethod paymentMethod : paymentMethods) {
+            paymentMethod.setUserId(user.getId()); // Set the user ID
+            paymentMethodRepository.save(paymentMethod); // Save each new payment method
+        }
+    }
+
+    public UserBillingAddress getBillingAddress(Long userId) {
+        return billingAddressRepository.findByUserId(userId).stream().findFirst().orElse(null);
+    }
+
+    public List<UserPaymentMethod> getPaymentMethods(Long userId) {
+        return paymentMethodRepository.findByUserId(userId);
+    }
+
 }

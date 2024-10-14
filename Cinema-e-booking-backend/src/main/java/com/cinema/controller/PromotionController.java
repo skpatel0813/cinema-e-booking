@@ -81,4 +81,15 @@ public class PromotionController {
         List<String> subscribedEmails = userService.getSubscribedUserEmails();
         emailService.sendPromotionEmails(subscribedEmails, promotionMessage);
     }
+
+    @GetMapping("/getPromotionByCode")
+    public ResponseEntity<Promotion> getPromotionByCode(@RequestParam String code) {
+        Promotion promotion = promotionService.getPromotionByCode(code);
+        if (promotion != null) {
+            return ResponseEntity.ok(promotion);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+    }
+
 }

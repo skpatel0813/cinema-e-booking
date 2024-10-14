@@ -44,4 +44,9 @@ public class PromotionService {
     public void deletePromotion(Long id) {
         promotionRepository.deleteById(id);
     }
+
+    public Promotion getPromotionByCode(String code) {
+        return promotionRepository.findByCode(code).orElse(null);
+    }
+
 }

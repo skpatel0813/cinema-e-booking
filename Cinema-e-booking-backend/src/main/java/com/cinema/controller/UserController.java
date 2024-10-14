@@ -2,6 +2,8 @@ package com.cinema.controller;
 
 import com.cinema.dto.PasswordChangeRequest;
 import com.cinema.model.User;
+import com.cinema.model.UserBillingAddress;
+import com.cinema.model.UserPaymentMethod;
 import com.cinema.service.EmailService;
 import com.cinema.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,10 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
@@ -61,17 +60,6 @@ public class UserController {
         return ResponseEntity.badRequest().body("Invalid credentials");
     }
 
-    @GetMapping("/profile")
-    public ResponseEntity<?> getUserProfile(@RequestParam String email) {
-        System.out.println("Fetching profile for email: " + email);
-        User user = userService.getUserByEmail(email);
-        if (user != null) {
-            return ResponseEntity.ok(user);
-        }
-        return ResponseEntity.status(404).body("User not found");
-    }
-
-
     @PutMapping("/profile/{email}")
     public ResponseEntity<?> updateUserProfile(@PathVariable String email, @RequestBody User updatedUser) {
         try {
@@ -82,7 +70,7 @@ public class UserController {
         }
     }
 
-    @PutMapping("/user/change-password/{email}")
+    @PutMapping("/change-password/{email}")
     public ResponseEntity<?> changeUserPassword(@PathVariable String email, @RequestBody PasswordChangeRequest request) {
         try {
             userService.changeUserPassword(email, request.getOldPassword(), request.getNewPassword());
@@ -209,69 +197,92 @@ public class UserController {
         return userService.getUserByEmail(email);
     }
 
-    /*
-    @PutMapping("/updatePaymentCards")
-    public User updatePaymentCards(@RequestBody UpdateCardsRequest updateRequest) {
-        return userService.updateUserPaymentCards(updateRequest);
+    @PutMapping("/profile/{email}/billing-address")
+    public ResponseEntity<?> updateBillingAddress(@PathVariable String email, @RequestBody UserBillingAddress updatedAddress) {
+        try {
+            userService.updateBillingAddress(email, updatedAddress);
+            return ResponseEntity.ok("Billing address updated successfully.");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
-     */
+    @PutMapping("/profile/{email}/payment-methods")
+    public ResponseEntity<?> updatePaymentMethods(@PathVariable String email, @RequestBody List<UserPaymentMethod> paymentMethods) {
+        try {
+            userService.updateUserPaymentMethods(email, paymentMethods);
+            return ResponseEntity.ok("Payment methods updated successfully.");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 
-    // Inner class to hold the update request data
-    public static class UpdateCardsRequest {
-        private String email;
-        private String cardType1;
-        private String cardNumber1;
-        private String expirationDate1;
-        private String cvv1;
-        private String cardType2;
-        private String cardNumber2;
-        private String expirationDate2;
-        private String cvv2;
-        private String cardType3;
-        private String cardNumber3;
-        private String expirationDate3;
-        private String cvv3;
+    // Endpoint to retrieve user profile data
+    @GetMapping("/profile")
+    public ResponseEntity<?> getUserProfile(@RequestParam String email) {
+        User user = userService.getUserByEmail(email);
 
-        // Getters and Setters for all fields
-        public String getEmail() { return email; }
-        public void setEmail(String email) { this.email = email; }
+        if (user == null) {
+            return ResponseEntity.status(404).body("User not found");
+        }
 
-        public String getCardType1() { return cardType1; }
-        public void setCardType1(String cardType1) { this.cardType1 = cardType1; }
+        // Retrieve associated billing address and payment methods
+        UserBillingAddress billingAddress = userService.getBillingAddress(user.getId());
+        List<UserPaymentMethod> paymentMethods = userService.getPaymentMethods(user.getId());
 
-        public String getCardNumber1() { return cardNumber1; }
-        public void setCardNumber1(String cardNumber1) { this.cardNumber1 = cardNumber1; }
+        // Prepare response data
+        Map<String, Object> responseData = new HashMap<>();
+        responseData.put("name", user.getName());
+        responseData.put("phone", user.getPhone());
+        responseData.put("street", user.getStreet());
+        responseData.put("city", user.getCity());
+        responseData.put("state", user.getState());
+        responseData.put("zip", user.getZip());
+        responseData.put("subscribeToPromotions", user.getSubscribeToPromotions());
 
-        public String getExpirationDate1() { return expirationDate1; }
-        public void setExpirationDate1(String expirationDate1) { this.expirationDate1 = expirationDate1; }
+        // Populate billing address
+        if (billingAddress != null) {
+            responseData.put("billingStreet", billingAddress.getBillingStreet());
+            responseData.put("billingCity", billingAddress.getBillingCity());
+            responseData.put("billingState", billingAddress.getBillingState());
+            responseData.put("billingZip", billingAddress.getBillingZip());
+        }
 
-        public String getCvv1() { return cvv1; }
-        public void setCvv1(String cvv1) { this.cvv1 = cvv1; }
+        // Populate payment methods
+        for (int i = 0; i < paymentMethods.size(); i++) {
+            UserPaymentMethod card = paymentMethods.get(i);
+            responseData.put("cardType" + (i + 1), card.getCardType());
+            responseData.put("cardNumber" + (i + 1), card.getCardNumber());
+            responseData.put("expirationDate" + (i + 1), card.getExpirationDate());
+            responseData.put("cvv" + (i + 1), card.getCvv());
+        }
 
-        public String getCardType2() { return cardType2; }
-        public void setCardType2(String cardType2) { this.cardType2 = cardType2; }
+        return ResponseEntity.ok(responseData);
+    }
 
-        public String getCardNumber2() { return cardNumber2; }
-        public void setCardNumber2(String cardNumber2) { this.cardNumber2 = cardNumber2; }
+    @GetMapping("/getPaymentMethodsByEmail")
+    public ResponseEntity<?> getPaymentMethodsByEmail(@RequestParam String email) {
+        User user = userService.getUserByEmail(email);
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+        }
 
-        public String getExpirationDate2() { return expirationDate2; }
-        public void setExpirationDate2(String expirationDate2) { this.expirationDate2 = expirationDate2; }
+        List<UserPaymentMethod> paymentMethods = userService.getUserPaymentMethods(user.getId());
 
-        public String getCvv2() { return cvv2; }
-        public void setCvv2(String cvv2) { this.cvv2 = cvv2; }
+        // Filter out payment methods with null card numbers and format the response
+        List<Map<String, String>> formattedMethods = new ArrayList<>();
+        for (UserPaymentMethod card : paymentMethods) {
+            String cardNumber = card.getCardNumber();
+            if (cardNumber != null && cardNumber.length() >= 4) {
+                Map<String, String> cardInfo = new HashMap<>();
+                cardInfo.put("cardType", card.getCardType());
+                cardInfo.put("cardNumber", "**** **** **** " + cardNumber.substring(cardNumber.length() - 4));
+                cardInfo.put("expirationDate", card.getExpirationDate());
+                formattedMethods.add(cardInfo);
+            }
+        }
 
-        public String getCardType3() { return cardType3; }
-        public void setCardType3(String cardType3) { this.cardType3 = cardType3; }
-
-        public String getCardNumber3() { return cardNumber3; }
-        public void setCardNumber3(String cardNumber3) { this.cardNumber3 = cardNumber3; }
-
-        public String getExpirationDate3() { return expirationDate3; }
-        public void setExpirationDate3(String expirationDate3) { this.expirationDate3 = expirationDate3; }
-
-        public String getCvv3() { return cvv3; }
-        public void setCvv3(String cvv3) { this.cvv3 = cvv3; }
+        return ResponseEntity.ok(formattedMethods);
     }
 
 }

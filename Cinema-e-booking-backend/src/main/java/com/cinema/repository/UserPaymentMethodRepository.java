@@ -9,4 +9,6 @@ import java.util.List;
 @Repository
 public interface UserPaymentMethodRepository extends JpaRepository<UserPaymentMethod, Long> {
     List<UserPaymentMethod> findByUserId(Long userId);
+
+    void deleteByUserId(Long userId);
 }

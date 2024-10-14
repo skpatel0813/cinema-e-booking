@@ -38,4 +38,14 @@ public class PaymentRequest {
     public void setBookingNumber(String bookingNumber) {
         this.bookingNumber = bookingNumber;
     }
+
+    @Override
+    public String toString() {
+        return "PaymentRequest{" +
+                "userId=" + userId +
+                ", cardId='" + cardId + '\'' +
+                ", totalAmount=" + totalAmount +
+                ", bookingNumber='" + bookingNumber + '\'' +
+                '}';
+    }
 }
