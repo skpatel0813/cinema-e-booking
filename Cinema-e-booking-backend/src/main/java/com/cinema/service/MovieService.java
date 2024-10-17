@@ -70,7 +70,7 @@ public class MovieService {
         promotionRepository.deleteById(promotionId);
     }
 
-    public List<MovieShowtime> addShowtimes(Long movieId, List<String> showtimes) {
+    public List<MovieShowtime> addShowtimes(int movieId, List<String> showtimes) {
         List<MovieShowtime> savedShowtimes = new ArrayList<>();
         for (String time : showtimes) {
             MovieShowtime showtime = new MovieShowtime();
@@ -83,7 +83,7 @@ public class MovieService {
 
 
     // Modify the existing addOrUpdateShowtime method to use LocalTime
-    public MovieShowtime addOrUpdateShowtime(Long movieId, LocalTime showTime, BigDecimal adultPrice, BigDecimal childrenPrice, BigDecimal seniorPrice) {
+    public MovieShowtime addOrUpdateShowtime(int movieId, LocalTime showTime, BigDecimal adultPrice, BigDecimal childrenPrice, BigDecimal seniorPrice) {
         MovieShowtime movieShowtime = new MovieShowtime();
         movieShowtime.setMovieId(movieId);
         movieShowtime.setShowTime(showTime);

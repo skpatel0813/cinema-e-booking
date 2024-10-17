@@ -19,7 +19,7 @@ public class PromotionService {
         return promotionRepository.findAll();
     }
 
-    public Promotion createPromotion(String code, String description, BigDecimal discountAmount) {
+    public Promotion createPromotion(String code, String description, float discountAmount) {
         Promotion promotion = new Promotion();
         promotion.setPromotionCode(code);
         promotion.setDescription(description);
@@ -29,7 +29,7 @@ public class PromotionService {
 
 
 
-    public Promotion updatePromotion(String code, String description, BigDecimal discountAmount) {
+    public Promotion updatePromotion(String code, String description, float discountAmount) {
         Promotion promotion = promotionRepository.findByCode(code)
                 .orElseThrow(() -> new RuntimeException("Promotion not found with id " + code));
 

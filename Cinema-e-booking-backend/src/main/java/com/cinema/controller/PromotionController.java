@@ -36,7 +36,10 @@ public class PromotionController {
     public ResponseEntity<Promotion> createPromotion(@RequestBody Map<String, Object> payload) {
         String code = (String) payload.get("code");
         String description = (String) payload.get("description");
-        BigDecimal discountAmount = new BigDecimal((String) payload.get("discountAmount"));
+
+        String discountAmountString = (String) payload.get("discountAmount");
+        float discountAmount = Float.parseFloat(discountAmountString);
+
 
         Promotion promotion = promotionService.createPromotion(code, description, discountAmount);
         return ResponseEntity.ok(promotion);
@@ -55,10 +58,10 @@ public class PromotionController {
         }
 
         // Attempt to parse discount amount
-        BigDecimal discountAmount;
+        float discountAmount;
         try {
-            discountAmount = new BigDecimal(discountStr);
-        } catch (NumberFormatException e) {
+            discountAmount = new BigDecimal(discountStr).floatValue(); // Convert BigDecimal to float
+        } catch (NumberFormatException | NullPointerException e) {
             return ResponseEntity.badRequest().body(null); // Return 400 if discountAmount is not a valid number
         }
 
@@ -66,6 +69,7 @@ public class PromotionController {
         Promotion updatedPromotion = promotionService.updatePromotion(code, description, discountAmount);
         return ResponseEntity.ok(updatedPromotion);
     }
+
 
 
 

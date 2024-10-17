@@ -19,7 +19,7 @@ public class Promotion {
     private String description;
 
     @Column(name = "discount_amount")
-    private BigDecimal discountAmount;
+    private float discountAmount;
 
     private LocalDate startDate;
     private LocalDate endDate;
@@ -49,11 +49,11 @@ public class Promotion {
         this.description = description;
     }
 
-    public BigDecimal getDiscountAmount() {
+    public float getDiscountAmount() {
         return discountAmount;
     }
 
-    public void setDiscountAmount(BigDecimal discountAmount) {
+    public void setDiscountAmount(float discountAmount) {
         this.discountAmount = discountAmount;
     }
 

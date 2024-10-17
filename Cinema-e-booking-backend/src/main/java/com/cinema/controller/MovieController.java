@@ -87,7 +87,7 @@ public class MovieController {
 
     // Add this new method to handle the POST request for showtimes
     @PostMapping("/{id}/showtimes")
-    public ResponseEntity<?> addShowtimes(@PathVariable("id") Long movieId, @RequestBody List<String> showtimes) {
+    public ResponseEntity<?> addShowtimes(@PathVariable("id") int movieId, @RequestBody List<String> showtimes) {
         try {
             List<MovieShowtime> savedShowtimes = movieService.addShowtimes(movieId, showtimes);
             return ResponseEntity.ok(savedShowtimes);

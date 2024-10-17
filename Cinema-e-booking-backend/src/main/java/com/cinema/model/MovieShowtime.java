@@ -12,7 +12,7 @@ public class MovieShowtime {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long showtimeId;
 
-    private Long movieId;
+    private int movieId;
     private LocalTime showTime;
     private BigDecimal adultTicketPrice;
     private BigDecimal childrenTicketPrice;
@@ -27,11 +27,11 @@ public class MovieShowtime {
         this.showtimeId = showtimeId;
     }
 
-    public Long getMovieId() {
+    public int getMovieId() {
         return movieId;
     }
 
-    public void setMovieId(Long movieId) {
+    public void setMovieId(int movieId) {
         this.movieId = movieId;
     }
 

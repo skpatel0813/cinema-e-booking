@@ -99,6 +99,11 @@ public class UserService {
         existingUser.setZip(updatedUser.getZip());
         existingUser.setSubscribeToPromotions(updatedUser.getSubscribeToPromotions());
 
+        // Notify user of the profile update
+        String subject = "Profile Update Notification";
+        String message = "Dear " + existingUser.getName() + ",\n\nYour profile has been successfully updated." +
+                "\nIf you did not make this change, please contact support immediately.";
+        emailService.sendEmail(existingUser.getEmail(), subject, message);
 
         return userRepository.save(existingUser);
     }
