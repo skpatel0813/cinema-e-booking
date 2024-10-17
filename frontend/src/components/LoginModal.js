@@ -1,28 +1,41 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import '../styles/LoginModal.css'; // Ensure you have the CSS for styling
+import '../styles/LoginModal.css';
 
 const LoginModal = ({ isOpen, onClose }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState(''); // State to track login errors
-  const [isLoading, setIsLoading] = useState(false); // State to track loading status
+  const [rememberMe, setRememberMe] = useState(false); // Remember Me state
+  const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const [forgotPasswordEmail, setForgotPasswordEmail] = useState('');
   const [forgotPasswordSuccess, setForgotPasswordSuccess] = useState('');
-  const [showForgotPasswordModal, setShowForgotPasswordModal] = useState(false); // State to track Forgot Password modal visibility
-  const [showCodeVerification, setShowCodeVerification] = useState(false); // State to show/hide code verification fields
-  const [isCodeVerified, setIsCodeVerified] = useState(false); // State to show/hide new password fields after verification
+  const [showForgotPasswordModal, setShowForgotPasswordModal] = useState(false);
+  const [showCodeVerification, setShowCodeVerification] = useState(false);
+  const [isCodeVerified, setIsCodeVerified] = useState(false);
   const [resetCode, setResetCode] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const navigate = useNavigate(); // Hook to navigate to other routes
+  const navigate = useNavigate();
 
-  // Handle login form submission
+  useEffect(() => {
+    // Retrieve stored credentials if they exist and Remember Me was enabled
+    const storedEmail = localStorage.getItem('email');
+    const storedPassword = localStorage.getItem('password');
+    const storedRememberMe = localStorage.getItem('rememberMe') === 'true';
+
+    if (storedRememberMe) {
+      setEmail(storedEmail || '');
+      setPassword(storedPassword || '');
+      setRememberMe(storedRememberMe);
+    }
+  }, []);
+
   const handleLogin = (e) => {
     e.preventDefault();
-    setError(''); // Reset the error message
-    setIsLoading(true); // Start loading
+    setError('');
+    setIsLoading(true);
 
     axios.post('http://localhost:8081/user/login', { email, password })
       .then(response => {
@@ -31,16 +44,23 @@ const LoginModal = ({ isOpen, onClose }) => {
         if (role === 'suspended') {
           setError('Account has been suspended. Please contact an Administrator.');
         } else {
-          // Store the user's name and role in localStorage
+          // Save credentials if Remember Me is selected
+          if (rememberMe) {
+            localStorage.setItem('email', email);
+            localStorage.setItem('password', password); // For demonstration only; consider secure storage/encryption
+            localStorage.setItem('rememberMe', 'true');
+          } else {
+            localStorage.removeItem('email');
+            localStorage.removeItem('password');
+            localStorage.removeItem('rememberMe');
+          }
+
           localStorage.setItem('user', userName);
           localStorage.setItem('role', role);
           localStorage.setItem('email', email);
 
-          // Close the modal on successful login and navigate to homepage
           onClose();
           navigate('/');
-
-          // Optionally reload the page to update the UI
           window.location.reload();
         }
       })
@@ -49,17 +69,15 @@ const LoginModal = ({ isOpen, onClose }) => {
         setError('Invalid email or password. Please try again.');
       })
       .finally(() => {
-        setIsLoading(false); // Stop loading
+        setIsLoading(false);
       });
   };
 
-  // Function to navigate to the Register page
   const handleRegisterNavigation = () => {
-    onClose(); // Close the modal
-    navigate('/register'); // Navigate to the Register page
+    onClose();
+    navigate('/register');
   };
 
-  // Function to handle Forgot Password request
   const handleForgotPassword = () => {
     setError('');
     setForgotPasswordSuccess('');
@@ -68,7 +86,7 @@ const LoginModal = ({ isOpen, onClose }) => {
     axios.post('http://localhost:8081/user/request-password-reset', { email: forgotPasswordEmail })
       .then(response => {
         setForgotPasswordSuccess('Password reset code has been sent to your email.');
-        setShowCodeVerification(true); // Show code verification fields
+        setShowCodeVerification(true);
       })
       .catch(error => {
         console.error('Error sending reset password email:', error);
@@ -79,7 +97,6 @@ const LoginModal = ({ isOpen, onClose }) => {
       });
   };
 
-  // Function to verify the reset code
   const handleVerifyCode = () => {
     setError('');
     setIsLoading(true);
@@ -87,7 +104,7 @@ const LoginModal = ({ isOpen, onClose }) => {
     axios.post('http://localhost:8081/user/verify-reset-code', { email: forgotPasswordEmail, code: resetCode })
       .then(response => {
         setForgotPasswordSuccess('Code verified. You can now reset your password.');
-        setIsCodeVerified(true); // Show password reset fields
+        setIsCodeVerified(true);
       })
       .catch(error => {
         console.error('Error verifying code:', error);
@@ -98,7 +115,6 @@ const LoginModal = ({ isOpen, onClose }) => {
       });
   };
 
-  // Function to handle password reset
   const handleResetPassword = () => {
     setError('');
     setIsLoading(true);
@@ -123,6 +139,10 @@ const LoginModal = ({ isOpen, onClose }) => {
       });
   };
 
+  const handleRememberMeChange = () => {
+    setRememberMe(!rememberMe);
+  };
+
   if (!isOpen) return null;
 
   return (
@@ -131,8 +151,8 @@ const LoginModal = ({ isOpen, onClose }) => {
         <button className="close-button" onClick={onClose}>X</button>
         <form onSubmit={handleLogin} className="login-form">
           <h2>Sign In</h2>
-          {error && <p className="error-message">{error}</p>} {/* Display login errors */}
-          {isLoading && <p className="loading-message">Loading...</p>} {/* Display loading indicator */}
+          {error && <p className="error-message">{error}</p>}
+          {isLoading && <p className="loading-message">Loading...</p>}
           <input
             type="text"
             placeholder="Email or phone number"
@@ -147,6 +167,14 @@ const LoginModal = ({ isOpen, onClose }) => {
             onChange={(e) => setPassword(e.target.value)}
             required
           />
+          <div className="remember-me">
+            <input
+              type="checkbox"
+              checked={rememberMe}
+              onChange={handleRememberMeChange}
+            />
+            <label>Remember Me</label>
+          </div>
           <button type="submit" className="login-button" disabled={isLoading}>
             {isLoading ? 'Signing In...' : 'Sign In'}
           </button>
@@ -155,7 +183,7 @@ const LoginModal = ({ isOpen, onClose }) => {
             <button
               type="button"
               className="link-button"
-              onClick={() => setShowForgotPasswordModal(true)} // Show Forgot Password modal
+              onClick={() => setShowForgotPasswordModal(true)}
             >
               Reset Password
             </button>
@@ -165,7 +193,7 @@ const LoginModal = ({ isOpen, onClose }) => {
             <button
               type="button"
               className="link-button"
-              onClick={handleRegisterNavigation} // Updated button to navigate
+              onClick={handleRegisterNavigation}
             >
               Register here
             </button>

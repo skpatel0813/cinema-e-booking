@@ -173,7 +173,7 @@ nav ul li a:hover {
 /* Admin Movie List */
 .admin-movie-list {
   display: grid;
-  grid-template-columns: repeat(5, 1fr); /* Display 5 movies per row */
+  grid-template-columns: repeat(4, 1fr); /* Display 5 movies per row */
   grid-gap: 20px;
   padding: 30px;
   background-color: #141414; /* Dark background like the rest of the page */
@@ -197,7 +197,7 @@ nav ul li a:hover {
 
 .admin-movie-list .movie-poster {
   width: 100%;
-  height: 360px;
+  height: 400px;
   object-fit: cover;
   border-radius: 8px;
   margin-bottom: 15px;
