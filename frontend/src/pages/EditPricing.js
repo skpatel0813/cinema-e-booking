@@ -140,7 +140,7 @@ const EditPricing = () => {
 
   return (
     <div>
-      {localStorage.getItem("role") == "admin" ? (
+      {localStorage.getItem("role") === "admin" ? (
       <div>
         <NavBar 
           onLoginClick={() => console.log('Login')} 
