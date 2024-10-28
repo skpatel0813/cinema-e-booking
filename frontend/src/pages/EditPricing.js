@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import NavBar from '../components/NavBar';
-import { Link, useNavigate } from 'react-router-dom';
 import '../styles/EditPricing.css';
 
 const EditPricing = () => {
