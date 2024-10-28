@@ -147,6 +147,12 @@ public class UserService {
 
         user.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user);
+
+        // Send notification email
+        String subject = "Password Update Notification";
+        String message = "Dear " + user.getName() + ",\n\nYour password has been successfully updated." +
+                "\nIf you did not make this change, please contact support immediately.";
+        emailService.sendEmail(user.getEmail(), subject, message);
         return true;
     }
 
@@ -272,6 +278,13 @@ public class UserService {
             paymentMethod.setUserId(user.getId()); // Set the user ID
             paymentMethodRepository.save(paymentMethod); // Save each new payment method
         }
+
+        // Send notification email
+        String subject = "Payment Method Update Notification";
+        String message = "Dear " + user.getName() + ",\n\nYour payment methods have been successfully updated." +
+                "\nIf you did not make this change, please contact support immediately.";
+        emailService.sendEmail(user.getEmail(), subject, message);
+
     }
 
     public UserBillingAddress getBillingAddress(Long userId) {
