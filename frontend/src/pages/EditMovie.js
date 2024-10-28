@@ -158,199 +158,189 @@ const EditMovie = () => {
 
   return (
     <div>
-      {localStorage.getItem("role") == "admin" ? (
-      <div>
-        <NavBar 
-          onLoginClick={() => console.log('Login')}
-          userName="Admin"
-          onLogout={() => console.log('Logout')}
-          onEditProfileClick={() => console.log('Edit Profile')}
-          userType="admin"
-        />
+      <NavBar 
+        onLoginClick={() => console.log('Login')}
+        userName="Admin"
+        onLogout={() => console.log('Logout')}
+        onEditProfileClick={() => console.log('Edit Profile')}
+        userType="admin"
+      />
 
-        <div className="edit-movie-container">
-          <h1>Edit Movie</h1>
-          {error && <p className="error">{error}</p>}
-          <form onSubmit={handleSubmit}>
-            <div>
-              <label>Title:</label>
-              <input
-                type="text"
-                name="title"
-                value={movieDetails.title}
-                onChange={handleChange}
-                required
-              />
-            </div>
-            <div>
-              <label>Category:</label>
-              <input
-                type="text"
-                name="category"
-                value={movieDetails.category}
-                onChange={handleChange}
-                required
-              />
-            </div>
-            <div>
-              <label>Cast:</label>
-              <input
-                type="text"
-                name="cast"
-                value={movieDetails.cast}
-                onChange={handleChange}
-                required
-              />
-            </div>
-            <div>
-              <label>Director:</label>
-              <input
-                type="text"
-                name="director"
-                value={movieDetails.director}
-                onChange={handleChange}
-                required
-              />
-            </div>
-            <div>
-              <label>Producer:</label>
-              <input
-                type="text"
-                name="producer"
-                value={movieDetails.producer}
-                onChange={handleChange}
-                required
-              />
-            </div>
-            <div>
-              <label>Synopsis:</label>
-              <textarea
-                name="synopsis"
-                value={movieDetails.synopsis}
-                onChange={handleChange}
-                required
-              />
-            </div>
-            <div>
-              <label>Reviews:</label>
-              <textarea
-                name="reviews"
-                value={movieDetails.reviews}
-                onChange={handleChange}
-              />
-            </div>
-            <div>
-              <label>Trailer Picture URL:</label>
-              <input
-                type="text"
-                name="trailer_url"
-                value={movieDetails.trailerUrl}
-                onChange={handleChange}
-              />
-            </div>
-            <div>
-              <label>Poster URL:</label>
-              <input
-                type="text"
-                name="poster_url"
-                value={movieDetails.posterUrl}
-                onChange={handleChange}
-              />
-            </div>
-            <div>
-              <label>MPAA Rating Code:</label>
-              <input
-                type="text"
-                name="ratingCode"
-                value={movieDetails.ratingCode}
-                onChange={handleChange}
-              />
-            </div>
-            <div>
-              <label>Price:</label>
-              <input
-                type="text"
-                name="price"
-                value={movieDetails.price}
-                onChange={handleChange}
-              />
-            </div>
+      <div className="edit-movie-container">
+        <h1>Edit Movie</h1>
+        {error && <p className="error">{error}</p>}
+        <form onSubmit={handleSubmit}>
+          <div>
+            <label>Title:</label>
+            <input
+              type="text"
+              name="title"
+              value={movieDetails.title}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div>
+            <label>Category:</label>
+            <input
+              type="text"
+              name="category"
+              value={movieDetails.category}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div>
+            <label>Cast:</label>
+            <input
+              type="text"
+              name="cast"
+              value={movieDetails.cast}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div>
+            <label>Director:</label>
+            <input
+              type="text"
+              name="director"
+              value={movieDetails.director}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div>
+            <label>Producer:</label>
+            <input
+              type="text"
+              name="producer"
+              value={movieDetails.producer}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div>
+            <label>Synopsis:</label>
+            <textarea
+              name="synopsis"
+              value={movieDetails.synopsis}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div>
+            <label>Reviews:</label>
+            <textarea
+              name="reviews"
+              value={movieDetails.reviews}
+              onChange={handleChange}
+            />
+          </div>
+          <div>
+            <label>Trailer Picture URL:</label>
+            <input
+              type="text"
+              name="trailer_url"
+              value={movieDetails.trailerUrl}
+              onChange={handleChange}
+            />
+          </div>
+          <div>
+            <label>Poster URL:</label>
+            <input
+              type="text"
+              name="poster_url"
+              value={movieDetails.posterUrl}
+              onChange={handleChange}
+            />
+          </div>
+          <div>
+            <label>MPAA Rating Code:</label>
+            <input
+              type="text"
+              name="ratingCode"
+              value={movieDetails.ratingCode}
+              onChange={handleChange}
+            />
+          </div>
+          <div>
+            <label>Price:</label>
+            <input
+              type="text"
+              name="price"
+              value={movieDetails.price}
+              onChange={handleChange}
+            />
+          </div>
 
-            {/* Five showtimes with time input type */}
-            <div>
-              <label>Showtime 1:</label>
-              <input
-                type="time"
-                name="show_time_1"
-                value={movieDetails.show_time_1}
-                onChange={handleChange}
-                required
-              />
-            </div>
-            <div>
-              <label>Showtime 2:</label>
-              <input
-                type="time"
-                name="show_time_2"
-                value={movieDetails.show_time_2}
-                onChange={handleChange}
-              />
-            </div>
-            <div>
-              <label>Showtime 3:</label>
-              <input
-                type="time"
-                name="show_time_3"
-                value={movieDetails.show_time_3}
-                onChange={handleChange}
-              />
-            </div>
-            <div>
-              <label>Showtime 4:</label>
-              <input
-                type="time"
-                name="show_time_4"
-                value={movieDetails.show_time_4}
-                onChange={handleChange}
-              />
-            </div>
-            <div>
-              <label>Showtime 5:</label>
-              <input
-                type="time"
-                name="show_time_5"
-                value={movieDetails.show_time_5}
-                onChange={handleChange}
-              />
-            </div>
+          {/* Five showtimes with time input type */}
+          <div>
+            <label>Showtime 1:</label>
+            <input
+              type="time"
+              name="show_time_1"
+              value={movieDetails.show_time_1}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div>
+            <label>Showtime 2:</label>
+            <input
+              type="time"
+              name="show_time_2"
+              value={movieDetails.show_time_2}
+              onChange={handleChange}
+            />
+          </div>
+          <div>
+            <label>Showtime 3:</label>
+            <input
+              type="time"
+              name="show_time_3"
+              value={movieDetails.show_time_3}
+              onChange={handleChange}
+            />
+          </div>
+          <div>
+            <label>Showtime 4:</label>
+            <input
+              type="time"
+              name="show_time_4"
+              value={movieDetails.show_time_4}
+              onChange={handleChange}
+            />
+          </div>
+          <div>
+            <label>Showtime 5:</label>
+            <input
+              type="time"
+              name="show_time_5"
+              value={movieDetails.show_time_5}
+              onChange={handleChange}
+            />
+          </div>
 
-            {/* Dropdown for movie status */}
-            <div>
-              <label>Status:</label>
-              <select name="status" value={movieDetails.status} onChange={handleChange}>
-                <option value="">Select Status</option>
-                <option value="Coming Soon">Coming Soon</option>
-                <option value="Now Playing">Now Playing</option>
-              </select>
-            </div>
+          {/* Dropdown for movie status */}
+          <div>
+            <label>Status:</label>
+            <select name="status" value={movieDetails.status} onChange={handleChange}>
+              <option value="">Select Status</option>
+              <option value="Coming Soon">Coming Soon</option>
+              <option value="Now Playing">Now Playing</option>
+            </select>
+          </div>
 
-            <button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? 'Saving...' : 'Save Changes'}
-            </button>
+          <button type="submit" disabled={isSubmitting}>
+            {isSubmitting ? 'Saving...' : 'Save Changes'}
+          </button>
 
-            <button type="button" className="delete-button" onClick={handleDelete}>
-              Delete Movie
-            </button>
-          </form>
-        </div>
+          <button type="button" className="delete-button" onClick={handleDelete}>
+            Delete Movie
+          </button>
+        </form>
       </div>
-      ) : (
-        <div>
-          Error: Unqualified user role to access this page.
-          <br></br>
-          <Link to='/'>Home</Link>
-        </div>
-      )}
     </div>
   );
 };

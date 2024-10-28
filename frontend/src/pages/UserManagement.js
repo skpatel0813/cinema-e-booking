@@ -1,7 +1,7 @@
 // UserManagement.js - Updated component for managing users
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import '../styles/UserManagement.css';
 
 const UserManagement = () => {
@@ -39,103 +39,92 @@ const UserManagement = () => {
   };
 
   return (
-    <div>
-      {localStorage.getItem("role") == "admin" ? 
-      (
-        <div className="user-management-container">
-        <h1>User Management</h1>
-        <div className="user-table">
-          <h2>Administrators</h2>
-          <table>
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Role</th>
-                <th>Actions</th>
+    <div className="user-management-container">
+      <h1>User Management</h1>
+      <div className="user-table">
+        <h2>Administrators</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Role</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {categorizedUsers('admin').map(user => (
+              <tr key={user.id}>
+                <td>{user.name}</td>
+                <td>{user.email}</td>
+                <td>{user.role}</td>
+                <td>
+                  <button onClick={() => handleEditUser(user.id)}>Edit User</button>
+                  <button onClick={() => handleDeleteUser(user.id)} className="delete-button">
+                    Delete User
+                  </button>
+                </td>
               </tr>
-            </thead>
-            <tbody>
-              {categorizedUsers('admin').map(user => (
-                <tr key={user.id}>
-                  <td>{user.name}</td>
-                  <td>{user.email}</td>
-                  <td>{user.role}</td>
-                  <td>
-                    <button onClick={() => handleEditUser(user.id)}>Edit User</button>
-                    <button onClick={() => handleDeleteUser(user.id)} className="delete-button">
-                      Delete User
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-        <div className="user-table">
-          <h2>Users</h2>
-          <table>
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Role</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {categorizedUsers('user').map(user => (
-                <tr key={user.id}>
-                  <td>{user.name}</td>
-                  <td>{user.email}</td>
-                  <td>{user.role}</td>
-                  <td>
-                    <button onClick={() => handleEditUser(user.id)}>Edit User</button>
-                    <button onClick={() => handleDeleteUser(user.id)} className="delete-button">
-                      Delete User
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-        <div className="user-table">
-          <h2>Suspended Users</h2>
-          <table>
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Role</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {categorizedUsers('suspended').map(user => (
-                <tr key={user.id}>
-                  <td>{user.name}</td>
-                  <td>{user.email}</td>
-                  <td>{user.role}</td>
-                  <td>
-                    <button onClick={() => handleEditUser(user.id)}>Edit User</button>
-                    <button onClick={() => handleDeleteUser(user.id)} className="delete-button">
-                      Delete User
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+            ))}
+          </tbody>
+        </table>
       </div>
-      ) : (
-        <div>
-          Error: Unqualified user role to access this page.
-          <br></br>
-          <Link to='/'>Home</Link>
-        </div>
-      )}
+      <div className="user-table">
+        <h2>Users</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Role</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {categorizedUsers('user').map(user => (
+              <tr key={user.id}>
+                <td>{user.name}</td>
+                <td>{user.email}</td>
+                <td>{user.role}</td>
+                <td>
+                  <button onClick={() => handleEditUser(user.id)}>Edit User</button>
+                  <button onClick={() => handleDeleteUser(user.id)} className="delete-button">
+                    Delete User
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <div className="user-table">
+        <h2>Suspended Users</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Role</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {categorizedUsers('suspended').map(user => (
+              <tr key={user.id}>
+                <td>{user.name}</td>
+                <td>{user.email}</td>
+                <td>{user.role}</td>
+                <td>
+                  <button onClick={() => handleEditUser(user.id)}>Edit User</button>
+                  <button onClick={() => handleDeleteUser(user.id)} className="delete-button">
+                    Delete User
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };
