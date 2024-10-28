@@ -40,7 +40,7 @@ const UserManagement = () => {
 
   return (
     <div>
-      {localStorage.getItem("role") === "admin" ? 
+      {localStorage.getItem("role") == "admin" ? 
       (
         <div className="user-management-container">
         <h1>User Management</h1>
