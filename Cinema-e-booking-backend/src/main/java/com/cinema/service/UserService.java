@@ -11,6 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.crypto.Cipher;
+import javax.crypto.spec.SecretKeySpec;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,6 +39,25 @@ public class UserService {
     private PasswordEncoder passwordEncoder;
 
     private Map<String, String> resetCodeStore = new HashMap<>();
+
+    private final String encryptionKey = "your-secure-keys"; // Store securely (e.g., environment variable)
+
+    // Encryption helper methods
+    private String encrypt(String data) throws Exception {
+        SecretKeySpec secretKey = new SecretKeySpec(encryptionKey.getBytes(), "AES");
+        Cipher cipher = Cipher.getInstance("AES");
+        cipher.init(Cipher.ENCRYPT_MODE, secretKey);
+        byte[] encryptedData = cipher.doFinal(data.getBytes());
+        return Base64.getEncoder().encodeToString(encryptedData);
+    }
+
+    private String decrypt(String encryptedData) throws Exception {
+        SecretKeySpec secretKey = new SecretKeySpec(encryptionKey.getBytes(), "AES");
+        Cipher cipher = Cipher.getInstance("AES");
+        cipher.init(Cipher.DECRYPT_MODE, secretKey);
+        byte[] decryptedData = cipher.doFinal(Base64.getDecoder().decode(encryptedData));
+        return new String(decryptedData);
+    }
 
     public User getUserByEmail(String email) {
         return userRepository.findByEmail(email);
@@ -182,53 +204,32 @@ public class UserService {
         return user;
     }
 
-    // New methods for managing billing addresses and payment methods
-
-    public List<UserBillingAddress> getUserBillingAddresses(Long userId) {
-        return billingAddressRepository.findByUserId(userId);
-    }
-
-    public UserBillingAddress addBillingAddress(UserBillingAddress billingAddress) {
-        return billingAddressRepository.save(billingAddress);
-    }
-
     public List<UserPaymentMethod> getUserPaymentMethods(Long userId) {
-        return paymentMethodRepository.findByUserId(userId);
+        List<UserPaymentMethod> paymentMethods = paymentMethodRepository.findByUserId(userId);
+
+        // Decrypt sensitive information
+        for (UserPaymentMethod paymentMethod : paymentMethods) {
+            try {
+                paymentMethod.setCardNumber(decrypt(paymentMethod.getCardNumber()));
+                paymentMethod.setExpirationDate(decrypt(paymentMethod.getExpirationDate()));
+                paymentMethod.setCvv(decrypt(paymentMethod.getCvv()));
+            } catch (Exception e) {
+                throw new RuntimeException("Error decrypting payment method details", e);
+            }
+        }
+
+        return paymentMethods;
     }
 
     public UserPaymentMethod addPaymentMethod(UserPaymentMethod paymentMethod) {
-        return paymentMethodRepository.save(paymentMethod);
-    }
-
-    // Newly added updateUserCards method for updating user payment methods
-    public void updateUserCards(Long userId, Map<String, String> cardDetails) {
-        List<UserPaymentMethod> userPaymentMethods = paymentMethodRepository.findByUserId(userId);
-
-        if (!userPaymentMethods.isEmpty()) {
-            for (UserPaymentMethod paymentMethod : userPaymentMethods) {
-                if (cardDetails.containsKey("cardNumber")) {
-                    paymentMethod.setCardNumber(cardDetails.get("cardNumber"));
-                }
-                if (cardDetails.containsKey("expirationDate")) {
-                    paymentMethod.setExpirationDate(cardDetails.get("expirationDate"));
-                }
-                if (cardDetails.containsKey("cvv")) {
-                    paymentMethod.setCvv(cardDetails.get("cvv"));
-                }
-                if (cardDetails.containsKey("cardType")) {
-                    paymentMethod.setCardType(cardDetails.get("cardType"));
-                }
-                paymentMethodRepository.save(paymentMethod);
-            }
-        } else {
-            UserPaymentMethod newPaymentMethod = new UserPaymentMethod();
-            newPaymentMethod.setUserId(userId);
-            newPaymentMethod.setCardNumber(cardDetails.getOrDefault("cardNumber", ""));
-            newPaymentMethod.setExpirationDate(cardDetails.getOrDefault("expirationDate", ""));
-            newPaymentMethod.setCvv(cardDetails.getOrDefault("cvv", ""));
-            newPaymentMethod.setCardType(cardDetails.getOrDefault("cardType", ""));
-            paymentMethodRepository.save(newPaymentMethod);
+        try {
+            paymentMethod.setCardNumber(encrypt(paymentMethod.getCardNumber()));
+            paymentMethod.setExpirationDate(encrypt(paymentMethod.getExpirationDate()));
+            paymentMethod.setCvv(encrypt(paymentMethod.getCvv()));
+        } catch (Exception e) {
+            throw new RuntimeException("Error encrypting payment method details", e);
         }
+        return paymentMethodRepository.save(paymentMethod);
     }
 
     @Transactional
@@ -250,6 +251,7 @@ public class UserService {
         billingAddressRepository.save(billingAddress);
     }
 
+    @Transactional
     public void updateUserPaymentMethods(String email, List<UserPaymentMethod> paymentMethods) {
         User user = userRepository.findByEmail(email);
         if (user == null) {
@@ -260,6 +262,13 @@ public class UserService {
         paymentMethodRepository.deleteByUserId(user.getId());
 
         for (UserPaymentMethod paymentMethod : paymentMethods) {
+            try {
+                paymentMethod.setCardNumber(encrypt(paymentMethod.getCardNumber()));
+                paymentMethod.setExpirationDate(encrypt(paymentMethod.getExpirationDate()));
+                paymentMethod.setCvv(encrypt(paymentMethod.getCvv()));
+            } catch (Exception e) {
+                throw new RuntimeException("Error encrypting payment method details", e);
+            }
             paymentMethod.setUserId(user.getId()); // Set the user ID
             paymentMethodRepository.save(paymentMethod); // Save each new payment method
         }
@@ -270,7 +279,20 @@ public class UserService {
     }
 
     public List<UserPaymentMethod> getPaymentMethods(Long userId) {
-        return paymentMethodRepository.findByUserId(userId);
+        List<UserPaymentMethod> paymentMethods = paymentMethodRepository.findByUserId(userId);
+
+        // Decrypt sensitive information
+        for (UserPaymentMethod paymentMethod : paymentMethods) {
+            try {
+                paymentMethod.setCardNumber(decrypt(paymentMethod.getCardNumber()));
+                paymentMethod.setExpirationDate(decrypt(paymentMethod.getExpirationDate()));
+                paymentMethod.setCvv(decrypt(paymentMethod.getCvv()));
+            } catch (Exception e) {
+                throw new RuntimeException("Error decrypting payment method details", e);
+            }
+        }
+
+        return paymentMethods;
     }
 
 }
