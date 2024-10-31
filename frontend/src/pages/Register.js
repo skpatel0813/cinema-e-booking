@@ -5,7 +5,8 @@ import '../styles/Register.css';
 
 const Register = () => {
   const [formData, setFormData] = useState({
-    name: '',
+    firstName: '',
+    lastName: '',
     email: '',
     password: '',
     phone: '',
@@ -29,6 +30,7 @@ const Register = () => {
   const [userExists, setUserExists] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false);
   const [verificationError, setVerificationError] = useState('');
+  const [passwordError, setPasswordError] = useState(''); // New state for password error
 
   const navigate = useNavigate();
 
@@ -40,9 +42,21 @@ const Register = () => {
     });
   };
 
+  // Function to check if the password is strong
+  const isStrongPassword = (password) => {
+    const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    return strongPasswordRegex.test(password);
+  };
+
   const handleRegister = (e) => {
     e.preventDefault();
-    
+
+    // Check if the password is strong
+    if (!isStrongPassword(formData.password)) {
+      setPasswordError('Password must be at least 8 characters long, include an uppercase letter, a lowercase letter, a number, and a special character.');
+      return;
+    }
+
     axios.post('http://localhost:8081/user/register', formData)
       .then(response => {
         setGeneratedCode(response.data.verificationCode); // Set the generated code from backend
@@ -60,31 +74,27 @@ const Register = () => {
 
   const handleVerify = (e) => {
     e.preventDefault();
-    
+
     if (verificationCode === generatedCode) {
       axios.post('http://localhost:8081/user/verify', { email: formData.email, verificationCode })
         .then(response => {
-          // On successful verification, navigate to home page
-          navigate('/');
+          navigate('/'); // On successful verification, navigate to home page
           localStorage.setItem('user', formData.name); // Store user's name in localStorage
         })
         .catch(error => {
           console.error('Verification error:', error);
         });
     } else {
-      // Display an error if the verification code is incorrect
-      setVerificationError('Incorrect verification code');
+      setVerificationError('Incorrect verification code'); // Display an error if the verification code is incorrect
     }
   };
 
   const handleClose = () => {
-    // Optionally, reset the form or navigate to another page
-    navigate('/'); // Redirecting to home page
+    navigate('/'); // Optionally, reset the form or navigate to another page
   };
 
   return (
     <div className="register-container">
-      {/* Close "X" Button */}
       <button className="close-button" onClick={handleClose}>X</button>
 
       {!isRegistered ? (
@@ -92,9 +102,14 @@ const Register = () => {
           <h2>Register</h2>
 
           {/* Personal Information */}
-          <input type="text" name="name" placeholder="Full Name" value={formData.name} onChange={handleChange} required />
+          <input type="text" name="firstName" placeholder="First Name" value={formData.firstName} onChange={handleChange} required />
+          <input type="text" name="lastName" placeholder="Last Name" value={formData.lastName} onChange={handleChange} required />
           <input type="email" name="email" placeholder="Email" value={formData.email} onChange={handleChange} required />
           <input type="password" name="password" placeholder="Password" value={formData.password} onChange={handleChange} required />
+
+          {/* Password strength error */}
+          {passwordError && <div className="error-message">{passwordError}</div>}
+
           <input type="text" name="phone" placeholder="Phone Number" value={formData.phone} onChange={handleChange} required />
 
           {/* Home Address */}

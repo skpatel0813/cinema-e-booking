@@ -34,8 +34,35 @@ const UserManagement = () => {
     }
   };
 
+  const handleSuspendUser = (userId) => {
+    // Send suspension request to the backend with isSuspended: true
+    axios.put(`http://localhost:8081/user/${userId}/suspend`, { isSuspended: true })
+      .then(() => {
+        // Update the state to mark the user as suspended
+        setUsers(users.map(user => user.id === userId ? { ...user, isSuspended: true } : user));
+      })
+      .catch(error => console.error('Error suspending user:', error));
+  };
+
+  const handleUnsuspendUser = (userId) => {
+    // Send unsuspension request to the backend with isSuspended: false
+    axios.put(`http://localhost:8081/user/${userId}/suspend`, { isSuspended: false })
+      .then(() => {
+        // Update the state to mark the user as unsuspended
+        setUsers(users.map(user => user.id === userId ? { ...user, isSuspended: false } : user));
+      })
+      .catch(error => console.error('Error unsuspending user:', error));
+  };
+
   const categorizedUsers = (category) => {
-    return users.filter(user => user.role === category);
+    if (category === 'admin') {
+      return users.filter(user => user.role === 'admin');
+    } else if (category === 'user') {
+      return users.filter(user => user.role === 'user' && !user.isSuspended);
+    } else if (category === 'suspended') {
+      return users.filter(user => user.isSuspended);
+    }
+    return [];
   };
 
   return (
@@ -91,6 +118,9 @@ const UserManagement = () => {
                   <button onClick={() => handleDeleteUser(user.id)} className="delete-button">
                     Delete User
                   </button>
+                  <button onClick={() => handleSuspendUser(user.id)} className="suspend-button">
+                    Suspend User
+                  </button>
                 </td>
               </tr>
             ))}
@@ -118,6 +148,9 @@ const UserManagement = () => {
                   <button onClick={() => handleEditUser(user.id)}>Edit User</button>
                   <button onClick={() => handleDeleteUser(user.id)} className="delete-button">
                     Delete User
+                  </button>
+                  <button onClick={() => handleUnsuspendUser(user.id)} className="unsuspend-button">
+                    Unsuspend User
                   </button>
                 </td>
               </tr>

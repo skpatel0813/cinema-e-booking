@@ -6,7 +6,7 @@ import '../styles/LoginModal.css';
 const LoginModal = ({ isOpen, onClose }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [rememberMe, setRememberMe] = useState(false); // Remember Me state
+  const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [forgotPasswordEmail, setForgotPasswordEmail] = useState('');
@@ -17,20 +17,23 @@ const LoginModal = ({ isOpen, onClose }) => {
   const [resetCode, setResetCode] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [passwordError, setPasswordError] = useState(''); // New state for password error
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Retrieve stored credentials if they exist and Remember Me was enabled
-    const storedEmail = localStorage.getItem('email');
-    const storedPassword = localStorage.getItem('password');
-    const storedRememberMe = localStorage.getItem('rememberMe') === 'true';
-
-    if (storedRememberMe) {
-      setEmail(storedEmail || '');
-      setPassword(storedPassword || '');
-      setRememberMe(storedRememberMe);
+    const rememberMeData = JSON.parse(localStorage.getItem('rememberMeData'));
+    if (rememberMeData) {
+      setEmail(rememberMeData.email || '');
+      setPassword(rememberMeData.password || '');
+      setRememberMe(true);
     }
   }, []);
+
+  // Function to check if the password is strong
+  const isStrongPassword = (password) => {
+    const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    return strongPasswordRegex.test(password);
+  };
 
   const handleLogin = (e) => {
     e.preventDefault();
@@ -39,28 +42,28 @@ const LoginModal = ({ isOpen, onClose }) => {
 
     axios.post('http://localhost:8081/user/login', { email, password })
       .then(response => {
-        const { userName, role } = response.data;
+        const { firstName, role, isSuspended } = response.data;
 
-        if (role === 'suspended') {
+        if (isSuspended === "true") {
           setError('Account has been suspended. Please contact an Administrator.');
         } else {
-          // Save credentials if Remember Me is selected
+          localStorage.setItem('isLoggedIn', 'true');
+          localStorage.setItem('role', role);
+          localStorage.setItem('user', firstName);
+
           if (rememberMe) {
-            localStorage.setItem('email', email);
-            localStorage.setItem('password', password); // For demonstration only; consider secure storage/encryption
-            localStorage.setItem('rememberMe', 'true');
+            localStorage.setItem('rememberMeData', JSON.stringify({ email, password }));
           } else {
-            localStorage.removeItem('email');
-            localStorage.removeItem('password');
-            localStorage.removeItem('rememberMe');
+            localStorage.removeItem('rememberMeData');
           }
 
-          localStorage.setItem('user', userName);
-          localStorage.setItem('role', role);
-          localStorage.setItem('email', email);
-
           onClose();
-          navigate('/');
+          if (role === 'admin') {
+            navigate('/');
+          } else {
+            navigate('/account');
+          }
+
           window.location.reload();
         }
       })
@@ -117,10 +120,17 @@ const LoginModal = ({ isOpen, onClose }) => {
 
   const handleResetPassword = () => {
     setError('');
+    setPasswordError(''); // Reset password error
     setIsLoading(true);
 
     if (newPassword !== confirmPassword) {
       setError('Passwords do not match.');
+      setIsLoading(false);
+      return;
+    }
+
+    if (!isStrongPassword(newPassword)) {
+      setPasswordError('Password must be at least 8 characters long, include an uppercase letter, a lowercase letter, a number, and a special character.');
       setIsLoading(false);
       return;
     }
@@ -262,6 +272,10 @@ const LoginModal = ({ isOpen, onClose }) => {
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   required
                 />
+
+                {/* Display password strength error */}
+                {passwordError && <p className="error-message">{passwordError}</p>}
+
                 <button
                   type="button"
                   className="reset-button"

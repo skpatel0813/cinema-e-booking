@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import '../styles/NavBar.css';
 
@@ -6,7 +6,7 @@ const NavBar = ({ onLoginClick, userName, onLogout, onEditProfileClick }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [loginPromptVisible, setLoginPromptVisible] = useState(false);
   const [role, setRole] = useState(null);
-
+  const dropdownRef = useRef(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -14,6 +14,17 @@ const NavBar = ({ onLoginClick, userName, onLogout, onEditProfileClick }) => {
     if (storedRole) {
       setRole(storedRole);
     }
+
+    // Close dropdown if clicked outside
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
   }, []);
 
   const toggleDropdown = () => {
@@ -21,13 +32,14 @@ const NavBar = ({ onLoginClick, userName, onLogout, onEditProfileClick }) => {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('user');
-    localStorage.removeItem('role');
-    
+    const rememberMeData = localStorage.getItem('rememberMeData');
+    localStorage.clear();
+    if (rememberMeData) {
+      localStorage.setItem('rememberMeData', rememberMeData);
+    }
     if (onLogout) {
       onLogout();
     }
-
     navigate('/');
     setTimeout(() => {
       window.location.reload();
@@ -39,18 +51,17 @@ const NavBar = ({ onLoginClick, userName, onLogout, onEditProfileClick }) => {
   };
 
   const handleEditUsersClick = () => {
-    navigate('/edit-users'); // Navigate to the Edit Users page
+    navigate('/edit-users');
   };
 
   const handleEditPricingClick = () => {
-    navigate('/edit-pricing'); // Navigate to the Edit Pricing page
+    navigate('/edit-pricing');
   };
 
   const handleGetTicketsClick = () => {
     if (!userName) {
-      setLoginPromptVisible(true); // Show login prompt if not logged in
+      setLoginPromptVisible(true);
     } else {
-      // Logic for navigating to the ticket booking page
       navigate('/showtimes');
     }
   };
@@ -60,7 +71,7 @@ const NavBar = ({ onLoginClick, userName, onLogout, onEditProfileClick }) => {
   };
 
   const handleOrderHistoryClick = () => {
-    navigate('/order-history'); // Navigate to the Order History page
+    navigate('/order-history');
   };
 
   return (
@@ -88,11 +99,11 @@ const NavBar = ({ onLoginClick, userName, onLogout, onEditProfileClick }) => {
             </li>
           </>
         )}
-        
+
         {/* User Login/Logout Section */}
         <li className="nav-item right">
           {userName ? (
-            <div className="user-section">
+            <div className="user-section" ref={dropdownRef}>
               <span onClick={toggleDropdown} className="user-name">Welcome, {userName}</span>
               {dropdownOpen && (
                 <div className="dropdown">

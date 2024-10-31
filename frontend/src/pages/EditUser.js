@@ -8,6 +8,7 @@ const EditUser = () => {
   const { userId } = useParams();
   const [user, setUser] = useState(null);
   const [formData, setFormData] = useState({});
+  const [billingAddress, setBillingAddress] = useState({});
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -18,11 +19,23 @@ const EditUser = () => {
         setFormData(response.data);
       })
       .catch(error => console.error('Error fetching user details:', error));
+    
+    // Fetch billing address details by user ID
+    axios.get(`http://localhost:8081/user/${userId}/billing-address`)
+      .then(response => {
+        setBillingAddress(response.data);
+      })
+      .catch(error => console.error('Error fetching billing address:', error));
   }, [userId]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
+  };
+
+  const handleBillingAddressChange = (e) => {
+    const { name, value } = e.target;
+    setBillingAddress({ ...billingAddress, [name]: value });
   };
 
   const handleUpdateUser = () => {
@@ -31,6 +44,10 @@ const EditUser = () => {
         navigate('/edit-users');
       })
       .catch(error => console.error('Error updating user:', error));
+
+    // Update billing address
+    axios.put(`http://localhost:8081/user/${userId}/billing-address`, billingAddress)
+      .catch(error => console.error('Error updating billing address:', error));
   };
 
   return (
@@ -52,8 +69,17 @@ const EditUser = () => {
                 <label>Name:</label>
                 <input
                   type="text"
-                  name="name"
-                  value={formData.name || ''}
+                  name="firstName"
+                  value={formData.firstName || ''}
+                  onChange={handleInputChange}
+                />
+              </div>
+              <div className="form-group">
+                <label>Name:</label>
+                <input
+                  type="text"
+                  name="lastName"
+                  value={formData.lastName || ''}
                   onChange={handleInputChange}
                 />
               </div>
@@ -111,42 +137,46 @@ const EditUser = () => {
                   onChange={handleInputChange}
                 />
               </div>
+              
+              {/* Billing Address Section */}
+              <h2>Billing Address</h2>
               <div className="form-group">
                 <label>Billing Street:</label>
                 <input
                   type="text"
-                  name="billingStreet"
-                  value={formData.billingStreet || ''}
-                  onChange={handleInputChange}
+                  name="street"
+                  value={billingAddress.street || ''}
+                  onChange={handleBillingAddressChange}
                 />
               </div>
               <div className="form-group">
                 <label>Billing City:</label>
                 <input
                   type="text"
-                  name="billingCity"
-                  value={formData.billingCity || ''}
-                  onChange={handleInputChange}
+                  name="city"
+                  value={billingAddress.city || ''}
+                  onChange={handleBillingAddressChange}
                 />
               </div>
               <div className="form-group">
                 <label>Billing State:</label>
                 <input
                   type="text"
-                  name="billingState"
-                  value={formData.billingState || ''}
-                  onChange={handleInputChange}
+                  name="state"
+                  value={billingAddress.state || ''}
+                  onChange={handleBillingAddressChange}
                 />
               </div>
               <div className="form-group">
                 <label>Billing Zip:</label>
                 <input
                   type="text"
-                  name="billingZip"
-                  value={formData.billingZip || ''}
-                  onChange={handleInputChange}
+                  name="zip"
+                  value={billingAddress.zip || ''}
+                  onChange={handleBillingAddressChange}
                 />
               </div>
+
               <div className="form-group">
                 <label>Card Type 1:</label>
                 <input
@@ -255,6 +285,7 @@ const EditUser = () => {
                   onChange={handleInputChange}
                 />
               </div>
+
               <div className="form-group">
                 <label>Subscribe to Promotions:</label>
                 <input
@@ -265,7 +296,7 @@ const EditUser = () => {
                 />
               </div>
               <div className="form-group">
-                <label>Role:</label>
+                <label>Status:</label>
                 <select name="role" value={formData.role || 'ROLE_USER'} onChange={handleInputChange}>
                   <option value="user">user</option>
                   <option value="admin">admin</option>

@@ -4,7 +4,8 @@ import axios from 'axios';
 
 const EditProfileModal = ({ isOpen, onClose, email }) => {
   const [profileData, setProfileData] = useState({
-    name: '',
+    firstName: '',
+    lastName: '',
     phone: '',
     street: '',
     city: '',
@@ -35,6 +36,7 @@ const EditProfileModal = ({ isOpen, onClose, email }) => {
   });
 
   const [error, setError] = useState('');
+  const [passwordError, setPasswordError] = useState(''); // New state for password error
 
   email = localStorage.getItem('email');
 
@@ -46,7 +48,8 @@ const EditProfileModal = ({ isOpen, onClose, email }) => {
           // Update profileData with backend data, except passwords
           setProfileData({
             ...profileData,
-            name: data.name || '',
+            firstName: data["first name"] || '',
+            lastName: data["last name"] || '',
             phone: data.phone || '',
             street: data.street || '',
             city: data.city || '',
@@ -85,6 +88,12 @@ const EditProfileModal = ({ isOpen, onClose, email }) => {
     setPasswordData({ ...passwordData, [name]: value });
   };
 
+  // Function to check if the password is strong
+  const isStrongPassword = (password) => {
+    const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    return strongPasswordRegex.test(password);
+  };
+
   const handleProfileSubmit = (e) => {
     e.preventDefault();
     if (email) {
@@ -115,9 +124,19 @@ const EditProfileModal = ({ isOpen, onClose, email }) => {
 
   const handlePasswordSubmit = (e) => {
     e.preventDefault();
+
+    // Check if the new password is strong
+    if (!isStrongPassword(passwordData.newPassword)) {
+      setPasswordError('Password must be at least 8 characters long, include an uppercase letter, a lowercase letter, a number, and a special character.');
+      return;
+    }
+
     if (email) {
       axios.put(`http://localhost:8081/user/change-password/${email}`, passwordData)
-        .then(() => alert('Password updated successfully'))
+        .then(() => {
+          alert('Password updated successfully');
+          setPasswordError(''); // Clear any existing password error
+        })
         .catch(error => {
           console.error('Error updating password:', error);
           setError('Failed to update password.');
@@ -181,7 +200,8 @@ const EditProfileModal = ({ isOpen, onClose, email }) => {
         <button className="close-button" onClick={onClose}>X</button>
         <h2>Edit Profile</h2>
         <form onSubmit={handleProfileSubmit}>
-          <input type="text" name="name" placeholder="Full Name" value={profileData.name} onChange={handleProfileChange} required />
+          <input type="text" name="firstName" placeholder="First Name" value={profileData.firstName} onChange={handleProfileChange} required />
+          <input type="text" name="lastName" placeholder="Last Name" value={profileData.lastName} onChange={handleProfileChange} required />
           <input type="text" name="phone" placeholder="Phone" value={profileData.phone} onChange={handleProfileChange} required />
           <input type="text" name="street" placeholder="Street" value={profileData.street} onChange={handleProfileChange} required />
           <input type="text" name="city" placeholder="City" value={profileData.city} onChange={handleProfileChange} required />
@@ -202,6 +222,10 @@ const EditProfileModal = ({ isOpen, onClose, email }) => {
         <form onSubmit={handlePasswordSubmit}>
           <input type="password" name="oldPassword" placeholder="Old Password" value={passwordData.oldPassword} onChange={handlePasswordChange} required />
           <input type="password" name="newPassword" placeholder="New Password" value={passwordData.newPassword} onChange={handlePasswordChange} required />
+          
+          {/* Password strength error */}
+          {passwordError && <div className="error-message">{passwordError}</div>}
+          
           <button type="submit">Change Password</button>
         </form>
 
