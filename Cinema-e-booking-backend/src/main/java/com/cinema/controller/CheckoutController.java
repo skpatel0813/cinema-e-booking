@@ -54,7 +54,7 @@ public class CheckoutController {
 
         // Send confirmation email
         String subject = "Booking Confirmation";
-        String body = "Dear " + user.getName() + ",\n\n" +
+        String body = "Dear " + user.getFirstName() + " " + user.getLastName() + ",\n\n" +
                 "Thank you for your purchase! Your booking number is: " + booking.getBookingNumber() + ".\n" +
                 "Ticket Number: " + ticketNumber + "\n" +
                 "Total amount: $" + paymentRequest.getTotalAmount() + "\n\n" +

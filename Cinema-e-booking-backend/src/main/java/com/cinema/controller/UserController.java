@@ -49,14 +49,17 @@ public class UserController {
         if (user != null) {
             // Return role and username for frontend to manage user/admin behavior
             Map<String, String> response = new HashMap<>();
-            response.put("userName", user.getName());
+            response.put("userName", user.getFirstName());
             response.put("role", user.getRole());
+            response.put("isSuspended", String.valueOf(user.isSuspended()));
+
 
             System.out.println(user.getId());
             response.put("userID", String.valueOf(user.getId()));
 
             return ResponseEntity.ok(response);
         }
+
         return ResponseEntity.badRequest().body("Invalid credentials");
     }
 
@@ -232,7 +235,8 @@ public class UserController {
 
         // Prepare response data
         Map<String, Object> responseData = new HashMap<>();
-        responseData.put("name", user.getName());
+        responseData.put("first name", user.getFirstName());
+        responseData.put("last name", user.getLastName());
         responseData.put("phone", user.getPhone());
         responseData.put("street", user.getStreet());
         responseData.put("city", user.getCity());
@@ -283,6 +287,18 @@ public class UserController {
         }
 
         return ResponseEntity.ok(formattedMethods);
+    }
+
+    @PutMapping("/{userId}/suspend")
+    public ResponseEntity<String> updateSuspensionStatus(@PathVariable Long userId, @RequestBody Map<String, Boolean> request) {
+        boolean isSuspended = request.getOrDefault("isSuspended", false);
+
+        boolean updated = userService.updateSuspensionStatus(userId, isSuspended);
+        if (updated) {
+            return ResponseEntity.ok(isSuspended ? "User suspended successfully" : "User unsuspended successfully");
+        } else {
+            return ResponseEntity.status(404).body("User not found");
+        }
     }
 
 }

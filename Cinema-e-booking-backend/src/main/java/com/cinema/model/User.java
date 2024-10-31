@@ -12,7 +12,9 @@ public class User {
     @Column(name = "id")
     private Long id;
 
-    private String name;
+    private String firstName;
+
+    private String lastName;
 
     @Column(unique = true, nullable = false)
     private String email;
@@ -26,10 +28,9 @@ public class User {
     private String state;
     private String zip;
     private boolean isVerified;
+    private boolean isSuspended;
     private String verificationCode;
     private String role = "user";
-    private String resetToken;
-    private LocalDateTime tokenExpiryTime;
 
     // New field for promotional subscription status
     private Boolean subscribeToPromotions;
@@ -37,12 +38,14 @@ public class User {
     // Constructors
     public User() {}
 
-    public User(String name, String email, String password, String phone, Boolean subscribeToPromotions, String role) {
-        this.name = name;
+    public User(String firstName, String lastName, String email, String password, String phone, Boolean subscribeToPromotions, String role) {
+        this.firstName = firstName;
+        this.lastName = lastName;
         this.email = email;
         this.password = password;
         this.phone = phone;
         this.isVerified = false;
+        this.isSuspended = false;
         this.subscribeToPromotions = subscribeToPromotions;
         this.role = role;
     }
@@ -51,8 +54,21 @@ public class User {
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
 
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
@@ -84,11 +100,13 @@ public class User {
     public String getRole() { return role; }
     public void setRole(String role) { this.role = role; }
 
-    public String getResetToken() { return resetToken; }
-    public void setResetToken(String resetToken) { this.resetToken = resetToken; }
+    public boolean isSuspended() {
+        return isSuspended;
+    }
 
-    public LocalDateTime getTokenExpiryTime() { return tokenExpiryTime; }
-    public void setTokenExpiryTime(LocalDateTime tokenExpiryTime) { this.tokenExpiryTime = tokenExpiryTime; }
+    public void setSuspended(boolean suspended) {
+        isSuspended = suspended;
+    }
 
     public Boolean getSubscribeToPromotions() { return subscribeToPromotions; }
     public void setSubscribeToPromotions(Boolean subscribeToPromotions) { this.subscribeToPromotions = subscribeToPromotions; }

@@ -93,6 +93,12 @@ public class UserService {
         if (user != null && user.getVerificationCode().equals(verificationCode)) {
             user.setVerified(true);
             userRepository.save(user);
+
+            String subject = "Account Creation Confirmation";
+            String message = "Dear " + user.getFirstName() + " " + user.getLastName() + ",\n\nYour account for Cinema eBooking has been created" +
+                    "\nIf you did not create this account, please contact support immediately.";
+            emailService.sendEmail(user.getEmail(), subject, message);
+
             return true;
         }
         return false;
@@ -113,7 +119,8 @@ public class UserService {
             throw new IllegalArgumentException("User not found.");
         }
 
-        existingUser.setName(updatedUser.getName());
+        existingUser.setFirstName(updatedUser.getFirstName());
+        existingUser.setLastName(updatedUser.getLastName());
         existingUser.setPhone(updatedUser.getPhone());
         existingUser.setStreet(updatedUser.getStreet());
         existingUser.setCity(updatedUser.getCity());
@@ -123,7 +130,7 @@ public class UserService {
 
         // Notify user of the profile update
         String subject = "Profile Update Notification";
-        String message = "Dear " + existingUser.getName() + ",\n\nYour profile has been successfully updated." +
+        String message = "Dear " + existingUser.getFirstName() + " " + existingUser.getLastName() + ",\n\nYour profile has been successfully updated." +
                 "\nIf you did not make this change, please contact support immediately.";
         emailService.sendEmail(existingUser.getEmail(), subject, message);
 
@@ -150,7 +157,7 @@ public class UserService {
 
         // Send notification email
         String subject = "Password Update Notification";
-        String message = "Dear " + user.getName() + ",\n\nYour password has been successfully updated." +
+        String message = "Dear " + user.getFirstName() + " " + user.getLastName() + ",\n\nYour password has been successfully updated." +
                 "\nIf you did not make this change, please contact support immediately.";
         emailService.sendEmail(user.getEmail(), subject, message);
         return true;
@@ -177,7 +184,8 @@ public class UserService {
         Optional<User> existingUserOpt = userRepository.findById(id);
         if (existingUserOpt.isPresent()) {
             User existingUser = existingUserOpt.get();
-            existingUser.setName(updatedUser.getName());
+            existingUser.setFirstName(updatedUser.getFirstName());
+            existingUser.setLastName(updatedUser.getLastName());
             existingUser.setEmail(updatedUser.getEmail());
             existingUser.setRole(updatedUser.getRole());
             return userRepository.save(existingUser);
@@ -202,14 +210,6 @@ public class UserService {
         return userRepository.findById(id).orElse(null);
     }
 
-    @Transactional
-    public User updateUserPaymentCards(User updatedUser) {
-        User user = getUserByEmail(updatedUser.getEmail());
-
-        userRepository.save(user);
-        return user;
-    }
-
     public List<UserPaymentMethod> getUserPaymentMethods(Long userId) {
         List<UserPaymentMethod> paymentMethods = paymentMethodRepository.findByUserId(userId);
 
@@ -225,17 +225,6 @@ public class UserService {
         }
 
         return paymentMethods;
-    }
-
-    public UserPaymentMethod addPaymentMethod(UserPaymentMethod paymentMethod) {
-        try {
-            paymentMethod.setCardNumber(encrypt(paymentMethod.getCardNumber()));
-            paymentMethod.setExpirationDate(encrypt(paymentMethod.getExpirationDate()));
-            paymentMethod.setCvv(encrypt(paymentMethod.getCvv()));
-        } catch (Exception e) {
-            throw new RuntimeException("Error encrypting payment method details", e);
-        }
-        return paymentMethodRepository.save(paymentMethod);
     }
 
     @Transactional
@@ -281,7 +270,7 @@ public class UserService {
 
         // Send notification email
         String subject = "Payment Method Update Notification";
-        String message = "Dear " + user.getName() + ",\n\nYour payment methods have been successfully updated." +
+        String message = "Dear " + user.getFirstName() + " " + user.getLastName() + ",\n\nYour payment methods have been successfully updated." +
                 "\nIf you did not make this change, please contact support immediately.";
         emailService.sendEmail(user.getEmail(), subject, message);
 
@@ -306,6 +295,18 @@ public class UserService {
         }
 
         return paymentMethods;
+    }
+
+    // Method to update suspension status
+    public boolean updateSuspensionStatus(Long userId, boolean isSuspended) {
+        Optional<User> userOptional = userRepository.findById(userId);
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            user.setSuspended(isSuspended);
+            userRepository.save(user);
+            return true;
+        }
+        return false;
     }
 
 }
