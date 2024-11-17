@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import '../styles/EditProfileModal.css';
 import axios from 'axios';
 
-const EditProfileModal = ({ isOpen, onClose, email }) => {
+const EditProfileModal = ({ isOpen, onClose }) => {
+  const [email, setEmail] = useState('');
   const [profileData, setProfileData] = useState({
     firstName: '',
     lastName: '',
@@ -36,20 +37,32 @@ const EditProfileModal = ({ isOpen, onClose, email }) => {
   });
 
   const [error, setError] = useState('');
-  const [passwordError, setPasswordError] = useState(''); // New state for password error
+  const [passwordError, setPasswordError] = useState('');
 
-  email = localStorage.getItem('email');
+  useEffect(() => {
+    const rememberMeData = localStorage.getItem('rememberMeData');
+    if (rememberMeData) {
+      try {
+        const parsedData = JSON.parse(rememberMeData);
+        setEmail(parsedData.email || '');
+      } catch (error) {
+        console.error('Error parsing rememberMeData:', error);
+      }
+    }
+  }, []);
 
   useEffect(() => {
     if (isOpen && email) {
+      console.log('Fetching profile data...');
       axios.get(`http://localhost:8081/user/profile?email=${email}`)
         .then(response => {
+          console.log('Profile data received:', response.data);
           const data = response.data;
-          // Update profileData with backend data, except passwords
+
+          // Directly update profileData with the data from the response
           setProfileData({
-            ...profileData,
-            firstName: data["first name"] || '',
-            lastName: data["last name"] || '',
+            firstName: data['first name'] || '',
+            lastName: data['last name'] || '',  
             phone: data.phone || '',
             street: data.street || '',
             city: data.city || '',
@@ -74,7 +87,10 @@ const EditProfileModal = ({ isOpen, onClose, email }) => {
             cvv3: data.cvv3 || ''
           });
         })
-        .catch(error => console.error('Error fetching profile:', error));
+        .catch(error => {
+          console.error('Error fetching profile:', error);
+          setError('Failed to fetch profile data.');
+        });
     }
   }, [isOpen, email]);
 
@@ -88,7 +104,6 @@ const EditProfileModal = ({ isOpen, onClose, email }) => {
     setPasswordData({ ...passwordData, [name]: value });
   };
 
-  // Function to check if the password is strong
   const isStrongPassword = (password) => {
     const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
     return strongPasswordRegex.test(password);
@@ -124,18 +139,15 @@ const EditProfileModal = ({ isOpen, onClose, email }) => {
 
   const handlePasswordSubmit = (e) => {
     e.preventDefault();
-
-    // Check if the new password is strong
     if (!isStrongPassword(passwordData.newPassword)) {
       setPasswordError('Password must be at least 8 characters long, include an uppercase letter, a lowercase letter, a number, and a special character.');
       return;
     }
-
     if (email) {
       axios.put(`http://localhost:8081/user/change-password/${email}`, passwordData)
         .then(() => {
           alert('Password updated successfully');
-          setPasswordError(''); // Clear any existing password error
+          setPasswordError('');
         })
         .catch(error => {
           console.error('Error updating password:', error);
@@ -180,7 +192,6 @@ const EditProfileModal = ({ isOpen, onClose, email }) => {
       }
 
       setError('');
-
       axios.put(`http://localhost:8081/user/profile/${email}/payment-methods`, paymentMethods)
         .then(() => alert("Payment methods updated successfully"))
         .catch((error) => {
@@ -222,10 +233,7 @@ const EditProfileModal = ({ isOpen, onClose, email }) => {
         <form onSubmit={handlePasswordSubmit}>
           <input type="password" name="oldPassword" placeholder="Old Password" value={passwordData.oldPassword} onChange={handlePasswordChange} required />
           <input type="password" name="newPassword" placeholder="New Password" value={passwordData.newPassword} onChange={handlePasswordChange} required />
-          
-          {/* Password strength error */}
           {passwordError && <div className="error-message">{passwordError}</div>}
-          
           <button type="submit">Change Password</button>
         </form>
 

@@ -300,7 +300,6 @@ const EditUser = () => {
                 <select name="role" value={formData.role || 'ROLE_USER'} onChange={handleInputChange}>
                   <option value="user">user</option>
                   <option value="admin">admin</option>
-                  <option value="suspended">suspended</option>
                 </select>
               </div>
               <button type="button" onClick={handleUpdateUser}>Update User</button>

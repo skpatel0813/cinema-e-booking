@@ -1,11 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import '../styles/NavBar.css';
 
-const NavBar = ({ onLoginClick, userName, onLogout, onEditProfileClick }) => {
+const NavBar = ({ onLoginClick, onLogout, onEditProfileClick }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [loginPromptVisible, setLoginPromptVisible] = useState(false);
   const [role, setRole] = useState(null);
+  const [userName, setUserName] = useState('');
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
 
@@ -13,6 +15,21 @@ const NavBar = ({ onLoginClick, userName, onLogout, onEditProfileClick }) => {
     const storedRole = localStorage.getItem('role');
     if (storedRole) {
       setRole(storedRole);
+    }
+
+    const storedUserName = localStorage.getItem('user');
+    if (storedUserName) {
+      setUserName(storedUserName);
+    }
+
+    const rememberMeData = localStorage.getItem('rememberMeData');
+    if (rememberMeData) {
+      const parsedData = JSON.parse(rememberMeData); // Parse the JSON string
+      const email = parsedData.email;
+      if (email) {
+        console.log('Calling fetchUserProfile with email:', email); // Log before API call
+        fetchUserProfile(email);
+      }
     }
 
     // Close dropdown if clicked outside
@@ -26,6 +43,18 @@ const NavBar = ({ onLoginClick, userName, onLogout, onEditProfileClick }) => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
+
+  const fetchUserProfile = async (email) => {
+    try {
+      const response = await axios.get(`http://localhost:8081/user/profile?email=${email}`);
+      console.log('User profile response:', response); // Log the response
+      const firstName = response.data['first name']; // Access 'first name' with bracket notation
+      localStorage.setItem('user', firstName);
+      setUserName(firstName);
+    } catch (error) {
+      console.error('Error fetching user profile:', error); // Log the error
+    }
+  };
 
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen);
@@ -78,7 +107,7 @@ const NavBar = ({ onLoginClick, userName, onLogout, onEditProfileClick }) => {
     <nav>
       <ul className="nav-list">
         <li className="nav-item left"><Link to="/">Home</Link></li>
-        
+
         {/* Render Admin Specific Buttons */}
         {role === 'admin' && (
           <>
@@ -104,7 +133,9 @@ const NavBar = ({ onLoginClick, userName, onLogout, onEditProfileClick }) => {
         <li className="nav-item right">
           {userName ? (
             <div className="user-section" ref={dropdownRef}>
-              <span onClick={toggleDropdown} className="user-name">Welcome, {userName}</span>
+              <span onClick={toggleDropdown} className="user-name">
+                Welcome, {userName}
+              </span>
               {dropdownOpen && (
                 <div className="dropdown">
                   <button className="dropdown-btn" onClick={onEditProfileClick}>Edit Profile</button>

@@ -17,7 +17,7 @@ const LoginModal = ({ isOpen, onClose }) => {
   const [resetCode, setResetCode] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [passwordError, setPasswordError] = useState(''); // New state for password error
+  const [passwordError, setPasswordError] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -42,14 +42,16 @@ const LoginModal = ({ isOpen, onClose }) => {
 
     axios.post('http://localhost:8081/user/login', { email, password })
       .then(response => {
-        const { firstName, role, isSuspended } = response.data;
+        const { role, isSuspended } = response.data;
+        const firstName = response.data["first name"]; // Accessing "first name" from backend
 
         if (isSuspended === "true") {
           setError('Account has been suspended. Please contact an Administrator.');
         } else {
+          // Save first name and other data to local storage
           localStorage.setItem('isLoggedIn', 'true');
           localStorage.setItem('role', role);
-          localStorage.setItem('user', firstName);
+          localStorage.setItem('user', firstName); // Save the first name
 
           if (rememberMe) {
             localStorage.setItem('rememberMeData', JSON.stringify({ email, password }));
@@ -120,7 +122,7 @@ const LoginModal = ({ isOpen, onClose }) => {
 
   const handleResetPassword = () => {
     setError('');
-    setPasswordError(''); // Reset password error
+    setPasswordError('');
     setIsLoading(true);
 
     if (newPassword !== confirmPassword) {
@@ -161,7 +163,11 @@ const LoginModal = ({ isOpen, onClose }) => {
         <button className="close-button" onClick={onClose}>X</button>
         <form onSubmit={handleLogin} className="login-form">
           <h2>Sign In</h2>
-          {error && <p className="error-message">{error}</p>}
+          {error && (
+            <div className="error-popup">
+              <p>{error}</p>
+            </div>
+          )}
           {isLoading && <p className="loading-message">Loading...</p>}
           <input
             type="text"
@@ -210,7 +216,7 @@ const LoginModal = ({ isOpen, onClose }) => {
           </div>
         </form>
       </div>
-      
+
       {/* Forgot Password Modal */}
       {showForgotPasswordModal && (
         <div className="forgot-password-modal modal-content-overlay">
@@ -273,7 +279,6 @@ const LoginModal = ({ isOpen, onClose }) => {
                   required
                 />
 
-                {/* Display password strength error */}
                 {passwordError && <p className="error-message">{passwordError}</p>}
 
                 <button

@@ -9,7 +9,7 @@ const Checkout = () => {
   const navigate = useNavigate();
 
   const { movieId, showtime, selectedSeats = [], ticketCounts = {} } = location.state || {};
-  
+
   const [movieTitle, setMovieTitle] = useState('');
   const [totalPrice, setTotalPrice] = useState(0);
   const [promotionCode, setPromotionCode] = useState('');
@@ -17,14 +17,26 @@ const Checkout = () => {
   const [fee, setFee] = useState(0);
   const [finalPrice, setFinalPrice] = useState(0);
   const [salesTax, setSalesTax] = useState(0);
-  const [user, setUser] = useState({ name: '', email: '', cards: [] });
+  const [user, setUser] = useState({ firstName: '', lastName: '', email: '', cards: [] });
   const [selectedCard, setSelectedCard] = useState('');
   const [promotionError, setPromotionError] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editableCards, setEditableCards] = useState([]);
   const [currentTicketCounts, setCurrentTicketCounts] = useState(ticketCounts);
 
-  const email = localStorage.getItem('email');
+  // Retrieve and parse email from rememberMeData in localStorage
+  useEffect(() => {
+    const rememberMeData = localStorage.getItem('rememberMeData');
+    if (rememberMeData) {
+      try {
+        const parsedData = JSON.parse(rememberMeData);
+        const email = parsedData.email || '';
+        setUser((prevUser) => ({ ...prevUser, email }));
+      } catch (error) {
+        console.error('Error parsing rememberMeData:', error);
+      }
+    }
+  }, []);
 
   useEffect(() => {
     if (movieId) {
@@ -37,22 +49,28 @@ const Checkout = () => {
   }, [movieId]);
 
   useEffect(() => {
-    if (email) {
-      axios.get(`http://localhost:8081/user/getUserInfoByEmail?email=${email}`)
+    if (user.email) {
+      axios.get(`http://localhost:8081/user/getUserInfoByEmail?email=${user.email}`)
         .then(response => {
           const userData = response.data;
-          setUser(prevUser => ({ ...prevUser, id: userData.id, name: userData.name, email: userData.email }));
+          setUser(prevUser => ({
+            ...prevUser,
+            id: userData.id,
+            firstName: userData.firstName,
+            lastName: userData.lastName,
+            email: userData.email,
+          }));
         })
         .catch(error => console.error('Error fetching user info:', error));
       
-      axios.get(`http://localhost:8081/user/getPaymentMethodsByEmail?email=${email}`)
+      axios.get(`http://localhost:8081/user/getPaymentMethodsByEmail?email=${user.email}`)
         .then(response => {
           const cards = response.data; // Array of card details
-          setUser(prevUser => ({ ...prevUser, cards: cards }));
+          setUser(prevUser => ({ ...prevUser, cards }));
         })
         .catch(error => console.error('Error fetching payment methods:', error));
     }
-  }, [email]);
+  }, [user.email]);
 
   useEffect(() => {
     axios.get('http://localhost:8081/api/pricing/getPrices')
@@ -134,7 +152,7 @@ const Checkout = () => {
         }
 
         const orderDetails = {
-          userName: user.name,
+          userName: `${user.firstName} ${user.lastName}`,
           userEmail: user.email,
           movieTitle,
           showtime,
@@ -173,7 +191,7 @@ const Checkout = () => {
   const closeModal = () => setIsModalOpen(false);
 
   const handleSaveCards = () => {
-    axios.put(`http://localhost:8081/user/updatePaymentCards`, { email, cards: editableCards })
+    axios.put(`http://localhost:8081/user/updatePaymentCards`, { email: user.email, cards: editableCards })
       .then(() => {
         setUser((prevUser) => ({ ...prevUser, cards: editableCards }));
         alert('Cards updated successfully');
@@ -206,7 +224,7 @@ const Checkout = () => {
     <div>
       <NavBar 
         onLoginClick={() => console.log('Login')} 
-        userName={user.name || "Guest"} 
+        userName={`${user.firstName} ${user.lastName}` || "Guest"} 
         onLogout={() => console.log('Logout')} 
         onEditProfileClick={() => console.log('Edit Profile')}
       />
@@ -215,7 +233,7 @@ const Checkout = () => {
         <h1>Checkout</h1>
         <div className="user-info">
           <h3>User Information</h3>
-          <p>Name: {user.name || 'Guest'}</p>
+          <p>Name: {`${user.firstName} ${user.lastName}` || 'Guest'}</p>
           <p>Email: {user.email || 'Not Provided'}</p>
         </div>
         <div className="movie-details">

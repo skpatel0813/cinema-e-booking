@@ -37,14 +37,6 @@ const App = () => {
           }
         />
         <Route
-          path="/account"
-          element={
-            <ProtectedRoute>
-              <Account />
-            </ProtectedRoute>
-          }
-        />
-        <Route
           path="/order-history"
           element={
             <ProtectedRoute>
