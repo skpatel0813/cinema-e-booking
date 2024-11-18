@@ -12,23 +12,23 @@ const NavBar = ({ onLoginClick, onLogout, onEditProfileClick }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    // Retrieve the user's role from localStorage
     const storedRole = localStorage.getItem('role');
     if (storedRole) {
       setRole(storedRole);
     }
 
-    const storedUserName = localStorage.getItem('user');
-    if (storedUserName) {
-      setUserName(storedUserName);
-    }
-
+    // Retrieve and parse the user's email from rememberMeData in localStorage
     const rememberMeData = localStorage.getItem('rememberMeData');
     if (rememberMeData) {
-      const parsedData = JSON.parse(rememberMeData); // Parse the JSON string
-      const email = parsedData.email;
-      if (email) {
-        console.log('Calling fetchUserProfile with email:', email); // Log before API call
-        fetchUserProfile(email);
+      try {
+        const parsedData = JSON.parse(rememberMeData);
+        const email = parsedData.email;
+        if (email) {
+          fetchUserProfile(email);
+        }
+      } catch (error) {
+        console.error('Error parsing rememberMeData:', error);
       }
     }
 
@@ -44,15 +44,15 @@ const NavBar = ({ onLoginClick, onLogout, onEditProfileClick }) => {
     };
   }, []);
 
+  // Function to fetch user profile using email
   const fetchUserProfile = async (email) => {
     try {
       const response = await axios.get(`http://localhost:8081/user/profile?email=${email}`);
-      console.log('User profile response:', response); // Log the response
-      const firstName = response.data['first name']; // Access 'first name' with bracket notation
+      const firstName = response.data['first name']; // Access 'first name' from backend response
       localStorage.setItem('user', firstName);
       setUserName(firstName);
     } catch (error) {
-      console.error('Error fetching user profile:', error); // Log the error
+      console.error('Error fetching user profile:', error);
     }
   };
 
@@ -61,15 +61,25 @@ const NavBar = ({ onLoginClick, onLogout, onEditProfileClick }) => {
   };
 
   const handleLogout = () => {
-    const rememberMeData = localStorage.getItem('rememberMeData');
+    // Clear all data from localStorage, including rememberMeData
     localStorage.clear();
-    if (rememberMeData) {
-      localStorage.setItem('rememberMeData', rememberMeData);
-    }
+
+    // Set the loggedOut flag in localStorage
+    localStorage.setItem('loggedOut', 'true');
+
+    // Clear the userName and role states to reflect that the user has logged out
+    setUserName('');
+    setRole(null);
+
+    // Call the onLogout callback if it exists
     if (onLogout) {
       onLogout();
     }
+
+    // Navigate to the home page
     navigate('/');
+
+    // Reload the page to ensure the UI updates
     setTimeout(() => {
       window.location.reload();
     }, 100);

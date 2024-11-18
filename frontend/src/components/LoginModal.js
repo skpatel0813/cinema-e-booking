@@ -6,7 +6,6 @@ import '../styles/LoginModal.css';
 const LoginModal = ({ isOpen, onClose }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [forgotPasswordEmail, setForgotPasswordEmail] = useState('');
@@ -24,8 +23,6 @@ const LoginModal = ({ isOpen, onClose }) => {
     const rememberMeData = JSON.parse(localStorage.getItem('rememberMeData'));
     if (rememberMeData) {
       setEmail(rememberMeData.email || '');
-      setPassword(rememberMeData.password || '');
-      setRememberMe(true);
     }
   }, []);
 
@@ -53,11 +50,8 @@ const LoginModal = ({ isOpen, onClose }) => {
           localStorage.setItem('role', role);
           localStorage.setItem('user', firstName); // Save the first name
 
-          if (rememberMe) {
-            localStorage.setItem('rememberMeData', JSON.stringify({ email, password }));
-          } else {
-            localStorage.removeItem('rememberMeData');
-          }
+          // Always save the email to local storage
+          localStorage.setItem('rememberMeData', JSON.stringify({ email }));
 
           onClose();
           if (role === 'admin') {
@@ -151,10 +145,6 @@ const LoginModal = ({ isOpen, onClose }) => {
       });
   };
 
-  const handleRememberMeChange = () => {
-    setRememberMe(!rememberMe);
-  };
-
   if (!isOpen) return null;
 
   return (
@@ -183,14 +173,6 @@ const LoginModal = ({ isOpen, onClose }) => {
             onChange={(e) => setPassword(e.target.value)}
             required
           />
-          <div className="remember-me">
-            <input
-              type="checkbox"
-              checked={rememberMe}
-              onChange={handleRememberMeChange}
-            />
-            <label>Remember Me</label>
-          </div>
           <button type="submit" className="login-button" disabled={isLoading}>
             {isLoading ? 'Signing In...' : 'Sign In'}
           </button>
