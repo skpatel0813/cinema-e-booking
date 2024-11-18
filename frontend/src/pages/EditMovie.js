@@ -49,23 +49,21 @@ const EditMovie = () => {
         });
 
       // Fetch showtimes
-    axios.get(`/api/movies/${id}/getShowtimes`)
-    .then(response => {
-      setMovieDetails(prevDetails => ({
-        ...prevDetails,
-        show_time_1: response.data[0] || '',
-        show_time_2: response.data[1] || '',
-        show_time_3: response.data[2] || '',
-        show_time_4: response.data[3] || '',
-        show_time_5: response.data[4] || ''
-      }));
-    })
-    .catch(error => {
-      console.error('Error fetching showtimes:', error);
-      setError('Error fetching showtimes');
-    });
-
-        
+      axios.get(`/api/movies/${id}/getShowtimes`)
+        .then(response => {
+          setMovieDetails(prevDetails => ({
+            ...prevDetails,
+            show_time_1: response.data[0] || '',
+            show_time_2: response.data[1] || '',
+            show_time_3: response.data[2] || '',
+            show_time_4: response.data[3] || '',
+            show_time_5: response.data[4] || ''
+          }));
+        })
+        .catch(error => {
+          console.error('Error fetching showtimes:', error);
+          setError('Error fetching showtimes');
+        });
     } else {
       console.error('Movie ID is undefined');
       setError('Invalid movie ID');
@@ -106,6 +104,9 @@ const EditMovie = () => {
       isNowPlaying: movieDetails.status === 'Now Playing',
       isComingSoon: movieDetails.status === 'Coming Soon',
     };
+
+    // Log the updated movie details before making the API call
+    console.log('Updated Movie Details:', updatedMovieDetails);
 
     axios.put(`/api/movies/${id}`, updatedMovieDetails)
       .then(() => {
@@ -241,7 +242,7 @@ const EditMovie = () => {
             <label>Trailer Picture URL:</label>
             <input
               type="text"
-              name="trailer_url"
+              name="trailerUrl"
               value={movieDetails.trailerUrl}
               onChange={handleChange}
             />
@@ -250,7 +251,7 @@ const EditMovie = () => {
             <label>Poster URL:</label>
             <input
               type="text"
-              name="poster_url"
+              name="posterUrl"
               value={movieDetails.posterUrl}
               onChange={handleChange}
             />
@@ -261,15 +262,6 @@ const EditMovie = () => {
               type="text"
               name="ratingCode"
               value={movieDetails.ratingCode}
-              onChange={handleChange}
-            />
-          </div>
-          <div>
-            <label>Price:</label>
-            <input
-              type="text"
-              name="price"
-              value={movieDetails.price}
               onChange={handleChange}
             />
           </div>

@@ -12,8 +12,8 @@ const AddMovie = () => {
     producer: '',
     synopsis: '',
     reviews: '',
-    trailerPicture: '',
-    trailerVideo: '',
+    posterUrl: '',
+    trailerUrl: '',
     ratingCode: '',
     showDates: '',
     show_time_1: '', // Individual showtime fields
@@ -53,6 +53,9 @@ const AddMovie = () => {
       isNowPlaying: movieData.status === 'Now Playing',
       isComingSoon: movieData.status === 'Coming Soon',
     };
+
+    // Log the movie payload before making the API call
+    console.log('Movie Payload:', moviePayload);
 
     fetch('http://localhost:8081/api/movies', {
       method: 'POST',
@@ -98,8 +101,8 @@ const AddMovie = () => {
           <input type="text" name="producer" placeholder="Producer" value={movieData.producer} onChange={handleChange} required />
           <textarea name="synopsis" placeholder="Synopsis" value={movieData.synopsis} onChange={handleChange} required />
           <textarea name="reviews" placeholder="Reviews" value={movieData.reviews} onChange={handleChange} />
-          <input type="text" name="trailerPicture" placeholder="Trailer Picture URL" value={movieData.trailerPicture} onChange={handleChange} required />
-          <input type="text" name="trailerVideo" placeholder="Trailer Video URL" value={movieData.trailerVideo} onChange={handleChange} required />
+          <input type="text" name="posterUrl" placeholder="Poster Url" value={movieData.posterUrl} onChange={handleChange} required />
+          <input type="text" name="trailerUrl" placeholder="Trailer URL" value={movieData.trailerUrl} onChange={handleChange} required />
           <input type="text" name="ratingCode" placeholder="MPAA-US Film Rating Code" value={movieData.ratingCode} onChange={handleChange} required />
 
           {/* Five showtimes with time input type */}
@@ -109,19 +112,19 @@ const AddMovie = () => {
           </div>
           <div>
             <label>Showtime 2:</label>
-            <input type="time" name="show_time_2" value={movieData.show_time_2} onChange={handleChange} required />
+            <input type="time" name="show_time_2" value={movieData.show_time_2} onChange={handleChange}/>
           </div>
           <div>
             <label>Showtime 3:</label>
-            <input type="time" name="show_time_3" value={movieData.show_time_3} onChange={handleChange} required />
+            <input type="time" name="show_time_3" value={movieData.show_time_3} onChange={handleChange}/>
           </div>
           <div>
             <label>Showtime 4:</label>
-            <input type="time" name="show_time_4" value={movieData.show_time_4} onChange={handleChange} required />
+            <input type="time" name="show_time_4" value={movieData.show_time_4} onChange={handleChange}/>
           </div>
           <div>
             <label>Showtime 5:</label>
-            <input type="time" name="show_time_5" value={movieData.show_time_5} onChange={handleChange} required />
+            <input type="time" name="show_time_5" value={movieData.show_time_5} onChange={handleChange}/>
           </div>
 
           {/* Dropdown for movie status */}

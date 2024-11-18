@@ -6,7 +6,7 @@ import '../styles/Confirmation.css';
 const Confirmation = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  
+
   const {
     booking = {},
     selectedSeats = [],
@@ -16,9 +16,23 @@ const Confirmation = () => {
     ticketNumber = ''
   } = location.state || {};
 
-  const [userEmail, setUserEmail] = useState(localStorage.getItem('email') || '');
+  // Extract the email from rememberMeData in localStorage
+  const [userEmail, setUserEmail] = useState('');
 
   useEffect(() => {
+    // Get rememberMeData from localStorage and parse it
+    const rememberMeData = localStorage.getItem('rememberMeData');
+    if (rememberMeData) {
+      try {
+        const parsedData = JSON.parse(rememberMeData);
+        if (parsedData.email) {
+          setUserEmail(parsedData.email);
+        }
+      } catch (error) {
+        console.error('Error parsing rememberMeData:', error);
+      }
+    }
+
     if (!booking || !selectedSeats || !movieTitle || !showtime) {
       navigate('/'); // Redirect to home if no state is found
     }
