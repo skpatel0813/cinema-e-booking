@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import NavBar from '../components/NavBar'; // Import NavBar component
+import EditProfileModal from '../components/EditProfileModal'; // Import EditProfileModal component
 import '../styles/SelectSeats.css';
 
 const SelectSeats = () => {
@@ -14,6 +15,7 @@ const SelectSeats = () => {
   const [seats, setSeats] = useState([]);
   const [selectedSeats, setSelectedSeats] = useState([]);
   const [reservedSeats, setReservedSeats] = useState([]);
+  const [isEditProfileOpen, setIsEditProfileOpen] = useState(false); // Modal state
 
   // Retrieve movieId and showtime from local storage
   const movieId = localStorage.getItem('selectedMovieId');
@@ -73,6 +75,14 @@ const SelectSeats = () => {
     });
   };
 
+  const handleEditProfileClick = () => {
+    setIsEditProfileOpen(true); // Open the modal
+  };
+
+  const closeEditProfileModal = () => {
+    setIsEditProfileOpen(false); // Close the modal
+  };
+
   return (
     <div>
       {/* Include NavBar at the top */}
@@ -80,9 +90,10 @@ const SelectSeats = () => {
         onLoginClick={() => console.log('Login')} 
         userName="User" 
         onLogout={() => console.log('Logout')} 
-        onEditProfileClick={() => console.log('Edit Profile')}
+        onEditProfileClick={handleEditProfileClick} // Use modal opening function
       />
-      
+      <EditProfileModal isOpen={isEditProfileOpen} onClose={closeEditProfileModal} />
+
       <div className="select-seats-container">
         <h1>Select Your Seats</h1>
         <p>Total Tickets: {totalTickets}</p>

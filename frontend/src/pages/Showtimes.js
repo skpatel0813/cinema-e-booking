@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import NavBar from '../components/NavBar'; // Import NavBar component
+import EditProfileModal from '../components/EditProfileModal'; // Import EditProfileModal component
 import '../styles/Showtimes.css';
 
 const Showtimes = () => {
@@ -12,6 +13,7 @@ const Showtimes = () => {
   const [dates, setDates] = useState([]);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [showtimes, setShowtimes] = useState([]); // Array to store fetched showtimes
+  const [isEditProfileOpen, setIsEditProfileOpen] = useState(false); // Modal state
 
   // Get movie title from location state
   useEffect(() => {
@@ -19,10 +21,10 @@ const Showtimes = () => {
       setSelectedMovie(location.state.movieTitle);
 
       // Retrieve movieId from location state or fallback to localStorage
-    const movieId = location.state.movieId || localStorage.getItem('selectedMovieId');
-    if (movieId) {
-      fetchShowtimes(movieId);
-    }
+      const movieId = location.state.movieId || localStorage.getItem('selectedMovieId');
+      if (movieId) {
+        fetchShowtimes(movieId);
+      }
     }
   }, [location.state]);
 
@@ -77,6 +79,14 @@ const Showtimes = () => {
     }
   };
 
+  const handleEditProfileClick = () => {
+    setIsEditProfileOpen(true); // Open the modal
+  };
+
+  const closeEditProfileModal = () => {
+    setIsEditProfileOpen(false); // Close the modal
+  };
+
   return (
     <div>
       {/* Include NavBar at the top */}
@@ -84,9 +94,10 @@ const Showtimes = () => {
         onLoginClick={() => console.log('Login')} 
         userName="User" 
         onLogout={() => console.log('Logout')} 
-        onEditProfileClick={() => console.log('Edit Profile')}
+        onEditProfileClick={handleEditProfileClick} // Use modal opening function
       />
-      
+      <EditProfileModal isOpen={isEditProfileOpen} onClose={closeEditProfileModal} />
+
       <div className="showtimes-container">
         <div className="showtimes-header">
           <h2>{selectedMovie || 'Select a Movie'}</h2>

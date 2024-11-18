@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import NavBar from '../components/NavBar'; // Import NavBar component
+import EditProfileModal from '../components/EditProfileModal'; // Import EditProfileModal component
 import '../styles/Confirmation.css'; 
 
 const Confirmation = () => {
@@ -18,6 +19,7 @@ const Confirmation = () => {
 
   // Extract the email from rememberMeData in localStorage
   const [userEmail, setUserEmail] = useState('');
+  const [isEditProfileOpen, setIsEditProfileOpen] = useState(false); // Modal state
 
   useEffect(() => {
     // Get rememberMeData from localStorage and parse it
@@ -38,6 +40,14 @@ const Confirmation = () => {
     }
   }, [booking, selectedSeats, movieTitle, showtime, navigate]);
 
+  const handleEditProfileClick = () => {
+    setIsEditProfileOpen(true); // Open the modal
+  };
+
+  const closeEditProfileModal = () => {
+    setIsEditProfileOpen(false); // Close the modal
+  };
+
   return (
     <div>
       {/* Include NavBar at the top */}
@@ -45,8 +55,9 @@ const Confirmation = () => {
         onLoginClick={() => console.log('Login')} 
         userName="User" 
         onLogout={() => console.log('Logout')} 
-        onEditProfileClick={() => console.log('Edit Profile')}
+        onEditProfileClick={handleEditProfileClick} // Use modal opening function
       />
+      <EditProfileModal isOpen={isEditProfileOpen} onClose={closeEditProfileModal} />
 
       <div className="confirmation-container">
         <h1>Booking Confirmation</h1>

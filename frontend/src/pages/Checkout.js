@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import NavBar from '../components/NavBar'; // Import NavBar component
+import EditProfileModal from '../components/EditProfileModal'; // Import EditProfileModal component
 import '../styles/Checkout.css';
 
 const Checkout = () => {
@@ -21,6 +22,7 @@ const Checkout = () => {
   const [selectedCard, setSelectedCard] = useState('');
   const [promotionError, setPromotionError] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isEditProfileOpen, setIsEditProfileOpen] = useState(false); // Modal state for Edit Profile
   const [editableCards, setEditableCards] = useState([]);
   const [currentTicketCounts, setCurrentTicketCounts] = useState(ticketCounts);
 
@@ -190,6 +192,14 @@ const Checkout = () => {
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
 
+  const handleEditProfileClick = () => {
+    setIsEditProfileOpen(true); // Open the Edit Profile modal
+  };
+
+  const closeEditProfileModal = () => {
+    setIsEditProfileOpen(false); // Close the Edit Profile modal
+  };
+
   const handleSaveCards = () => {
     axios.put(`http://localhost:8081/user/updatePaymentCards`, { email: user.email, cards: editableCards })
       .then(() => {
@@ -226,8 +236,10 @@ const Checkout = () => {
         onLoginClick={() => console.log('Login')} 
         userName={`${user.firstName} ${user.lastName}` || "Guest"} 
         onLogout={() => console.log('Logout')} 
-        onEditProfileClick={() => console.log('Edit Profile')}
+        onEditProfileClick={handleEditProfileClick} // Use modal opening function
       />
+
+      <EditProfileModal isOpen={isEditProfileOpen} onClose={closeEditProfileModal} />
 
       <div className="checkout-container">
         <h1>Checkout</h1>
