@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import NavBar from '../components/NavBar'; // Import NavBar component
 import '../styles/UserManagement.css';
 
 const UserManagement = () => {
@@ -67,6 +68,11 @@ const UserManagement = () => {
 
   return (
     <div className="user-management-container">
+      <NavBar
+        onLoginClick={() => navigate('/login')}
+        onLogout={() => navigate('/')}
+        onEditProfileClick={() => navigate('/edit-profile')}
+      />
       <h1>User Management</h1>
       <div className="user-table">
         <h2>Administrators</h2>
