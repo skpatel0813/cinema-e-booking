@@ -16,10 +16,12 @@
 /* Set a higher z-index for the Forgot Password modal */
 .modal-content-overlay {
   position: fixed;
+  width: 100%;
   top: 50%;
-  left: 50%;
+  left: 58%;
   transform: translate(-50%, -50%);
   z-index: 2000; /* Higher z-index for the Forgot Password modal */
+  overflow-x: hidden;
 }
   
   .close-button {

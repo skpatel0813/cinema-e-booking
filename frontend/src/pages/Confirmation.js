@@ -17,7 +17,6 @@ const Confirmation = () => {
     ticketNumber = ''
   } = location.state || {};
 
-  // Extract the email from rememberMeData in localStorage
   const [userEmail, setUserEmail] = useState('');
   const [isEditProfileOpen, setIsEditProfileOpen] = useState(false); // Modal state
 
@@ -35,8 +34,22 @@ const Confirmation = () => {
       }
     }
 
+    // Redirect to home if critical state is missing
     if (!booking || !selectedSeats || !movieTitle || !showtime) {
       navigate('/'); // Redirect to home if no state is found
+    }
+
+    // Replace history entries to prevent back navigation to restricted pages
+    const restrictedPages = ['/checkout', '/selectseats', '/showtimes'];
+    const filteredHistory = window.history.state?.entries?.filter(
+      (entry) => !restrictedPages.includes(entry.pathname)
+    );
+
+    if (filteredHistory) {
+      window.history.replaceState(
+        { ...window.history.state, entries: filteredHistory },
+        ''
+      );
     }
   }, [booking, selectedSeats, movieTitle, showtime, navigate]);
 

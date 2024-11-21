@@ -25,6 +25,8 @@ const Checkout = () => {
   const [isEditProfileOpen, setIsEditProfileOpen] = useState(false); // Modal state for Edit Profile
   const [editableCards, setEditableCards] = useState([]);
   const [currentTicketCounts, setCurrentTicketCounts] = useState(ticketCounts);
+  const [originalTicketCounts] = useState(ticketCounts); // Store original counts
+  const [ticketCountsChanged, setTicketCountsChanged] = useState(false); // New state
 
   // Retrieve and parse email from rememberMeData in localStorage
   useEffect(() => {
@@ -40,6 +42,7 @@ const Checkout = () => {
     }
   }, []);
 
+  // Fetch movie title
   useEffect(() => {
     if (movieId) {
       axios.get(`http://localhost:8081/api/movies/${movieId}`)
@@ -50,6 +53,7 @@ const Checkout = () => {
     }
   }, [movieId]);
 
+  // Fetch user info and payment methods
   useEffect(() => {
     if (user.email) {
       axios.get(`http://localhost:8081/user/getUserInfoByEmail?email=${user.email}`)
@@ -64,7 +68,7 @@ const Checkout = () => {
           }));
         })
         .catch(error => console.error('Error fetching user info:', error));
-      
+
       axios.get(`http://localhost:8081/user/getPaymentMethodsByEmail?email=${user.email}`)
         .then(response => {
           const cards = response.data; // Array of card details
@@ -74,6 +78,7 @@ const Checkout = () => {
     }
   }, [user.email]);
 
+  // Fetch pricing details and calculate total price
   useEffect(() => {
     axios.get('http://localhost:8081/api/pricing/getPrices')
       .then(response => {
@@ -84,6 +89,17 @@ const Checkout = () => {
       .catch(error => console.error('Error fetching prices:', error));
   }, [currentTicketCounts]);
 
+  // Check if ticket counts have changed
+  useEffect(() => {
+    const countsHaveChanged = 
+      currentTicketCounts.adult !== (ticketCounts.adult || 0) ||
+      currentTicketCounts.child !== (ticketCounts.child || 0) ||
+      currentTicketCounts.senior !== (ticketCounts.senior || 0);
+
+    setTicketCountsChanged(countsHaveChanged);
+  }, [currentTicketCounts, ticketCounts]);
+
+  // Calculate total price
   const calculateTotalPrice = (pricing) => {
     const { adultPrice = 0, childrenPrice = 0, seniorPrice = 0 } = pricing;
     const ticketPrice = (currentTicketCounts.adult || 0) * adultPrice + 
@@ -98,7 +114,7 @@ const Checkout = () => {
     setFinalPrice(initialTotal);
   };
 
-  // Updated applyPromotion function
+  // Apply promotion code
   const applyPromotion = () => {
     if (promotionCode.trim() === '') {
       setPromotionError('Please enter a promotion code.');
@@ -123,6 +139,7 @@ const Checkout = () => {
       });
   };
 
+  // Handle payment and seat reservation
   const handlePayment = async () => {
     if (!selectedCard) {
       alert('Please select a card for payment.');
@@ -136,6 +153,8 @@ const Checkout = () => {
         totalAmount: finalPrice,
         bookingNumber: movieId + showtime,
       };
+
+      console.log('Payment Details:', paymentDetails); // Log for debugging
 
       const paymentResponse = await axios.post('http://localhost:8081/api/checkout/processPayment', paymentDetails);
 
@@ -169,6 +188,8 @@ const Checkout = () => {
           promotionDiscount,
           totalCost: finalPrice,
         };
+
+        console.log('Order Details:', orderDetails); // Log for debugging
 
         await axios.post('http://localhost:8081/api/orders/save', orderDetails);
 
@@ -229,6 +250,13 @@ const Checkout = () => {
       return updatedCards;
     });
   };
+
+  const handleCancelChanges = () => {
+    setCurrentTicketCounts(originalTicketCounts); // Reset to original counts
+    setTicketCountsChanged(false); // Reset the changed flag
+  };
+
+  const canProceedToPayment = currentTicketCounts.adult > 0 || currentTicketCounts.senior > 0;
 
   return (
     <div>
@@ -304,6 +332,9 @@ const Checkout = () => {
           <button onClick={() => navigate('/selectseats', { state: { movieId, showtime, ticketCounts: currentTicketCounts } })}>
             Update Seats
           </button>
+          <button onClick={handleCancelChanges} className="cancel-changes-button">
+            Cancel
+          </button>
         </div>
 
         <div className="ticket-summary">
@@ -331,9 +362,11 @@ const Checkout = () => {
           {promotionError && <p className="error">{promotionError}</p>}
         </div>
         <div className="checkout-buttons">
-          <button className="payment-button" onClick={handlePayment}>
-            Proceed to Payment
-          </button>
+          {!ticketCountsChanged && canProceedToPayment && (
+            <button className="payment-button" onClick={handlePayment}>
+              Proceed to Payment
+            </button>
+          )}
           <button className="cancel-button" onClick={handleCancelBooking}>
             Cancel Booking
           </button>

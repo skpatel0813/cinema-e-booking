@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Navigate, useLocation } from 'react-router-dom';
 import Home from './pages/Home';
 import MovieDetails from './pages/MovieDetails';
 import Booking from './pages/Booking';
@@ -17,6 +17,14 @@ import Checkout from './pages/Checkout';
 import Confirmation from './pages/Confirmation';
 import OrderHistory from './pages/OrderHistory';
 import ProtectedRoute from './components/ProtectedRoute';
+
+// Helper Component to Block Restricted Navigation
+const RestrictedRoute = ({ element, restrictedPaths, ...rest }) => {
+  const location = useLocation();
+  const isRestricted = restrictedPaths.includes(location.pathname);
+
+  return isRestricted ? <Navigate to="/" replace /> : element;
+};
 
 const App = () => {
   return (
@@ -87,11 +95,43 @@ const App = () => {
           }
         />
 
-        {/* Other Routes */}
-        <Route path="/showtimes" element={<Showtimes />} />
-        <Route path="/tickets" element={<Tickets />} />
-        <Route path="/selectseats" element={<SelectSeats />} />
-        <Route path="/checkout" element={<Checkout />} />
+        {/* Pages Restricted After Confirmation */}
+        <Route
+          path="/showtimes"
+          element={
+            <RestrictedRoute
+              element={<Showtimes />}
+              restrictedPaths={["/confirmation"]}
+            />
+          }
+        />
+        <Route
+          path="/tickets"
+          element={
+            <RestrictedRoute
+              element={<Tickets />}
+              restrictedPaths={["/confirmation"]}
+            />
+          }
+        />
+        <Route
+          path="/selectseats"
+          element={
+            <RestrictedRoute
+              element={<SelectSeats />}
+              restrictedPaths={["/confirmation"]}
+            />
+          }
+        />
+        <Route
+          path="/checkout"
+          element={
+            <RestrictedRoute
+              element={<Checkout />}
+              restrictedPaths={["/confirmation"]}
+            />
+          }
+        />
         <Route path="/confirmation" element={<Confirmation />} />
 
         {/* Fallback Route: Redirect to Home */}

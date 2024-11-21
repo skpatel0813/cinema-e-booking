@@ -1,5 +1,3 @@
-/* Checkout.css */
-
 .checkout-container {
   max-width: 800px;
   margin: 0 auto;
@@ -110,6 +108,45 @@ h1 {
   color: #ffffff;
 }
 
+.ticket-count-edit {
+  padding: 15px;
+  border-radius: 8px;
+  background-color: #222222; /* Slightly lighter dark for contrast */
+  margin-bottom: 20px;
+  color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.ticket-count-edit h3 {
+  color: #e50914; /* Netflix red for the heading */
+  font-weight: bold;
+  margin-bottom: 10px;
+  font-size: 1.5em;
+}
+
+.ticket-count-edit .ticket-type {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px;
+  background-color: #141414; /* Dark background for ticket types */
+  border-radius: 5px;
+}
+
+.ticket-count-edit label {
+  font-size: 16px;
+  font-weight: bold;
+  color: #e50914; /* Netflix red for labels */
+}
+
+.ticket-count-edit .counter-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
 .ticket-count-edit button {
   background-color: #e50914;
   color: #ffffff;
@@ -119,33 +156,44 @@ h1 {
   font-size: 14px;
   cursor: pointer;
   transition: background-color 0.3s ease;
-  margin: 0 5px;
 }
 
 .ticket-count-edit button:hover {
   background-color: #b20710;
 }
 
-.ticket-count-edit label {
-  color: #e50914; /* Red for labels */
+.ticket-count-edit span {
+  font-size: 16px;
   font-weight: bold;
+  color: #ffffff;
+}
+
+.ticket-count-edit .update-cancel-buttons {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.ticket-count-edit .update-cancel-buttons button {
+  flex: 1;
 }
 
 @media (max-width: 768px) {
   .checkout-container {
-      padding: 15px;
+    padding: 15px;
   }
 
   .promotion-section {
-      flex-direction: column;
+    flex-direction: column;
   }
 
   .promotion-section input[type="text"] {
-      width: 100%;
-      margin-bottom: 10px;
+    width: 100%;
+    margin-bottom: 10px;
   }
 
   .promotion-section button {
-      width: 100%;
+    width: 100%;
   }
 }
