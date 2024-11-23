@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface SeatRepository extends JpaRepository<Seat, Integer> {
 
@@ -19,5 +20,10 @@ public interface SeatRepository extends JpaRepository<Seat, Integer> {
     @Modifying
     @Query("UPDATE Seat s SET s.reserved = true WHERE s.id IN :seatIds AND s.movieId = :movieId AND s.showtime = :showtime AND s.reserved = false")
     int reserveSeats(@Param("seatIds") List<Integer> seatIds, @Param("movieId") Long movieId, @Param("showtime") String showtime);
+
+    @Query("SELECT s FROM Seat s WHERE s.row = :row AND s.number = :number")
+    Optional<Seat> findByRowAndNumber(@Param("row") String row, @Param("number") int number);
+
+
 
 }

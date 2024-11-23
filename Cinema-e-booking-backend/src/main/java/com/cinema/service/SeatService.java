@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -50,21 +51,36 @@ public class SeatService {
         }
     }
 
-    /**
-     * Release seats by removing or updating the reservation status.
-     * This method uses ReservationRepository to locate and cancel the reservations.
-     */
     @Transactional
-    public void releaseSeats(int movieId, String showtime, List<Integer> seatIds) {
-        for (Integer seatId : seatIds) {
-            // Find the reservation by seat ID, movie ID, and showtime
-            reservationRepository.findBySeatIdAndMovieIdAndShowtime(seatId, movieId, showtime)
-                    .ifPresent(reservation -> {
-                        reservation.setReserved(false); // Update reservation status
-                        reservationRepository.save(reservation); // Save changes to the reservation
+    public List<Integer> releaseSeats(List<String> letters, List<Integer> numbers) {
+        if (letters == null || numbers == null || letters.size() != numbers.size()) {
+            throw new IllegalArgumentException("Invalid seat data: letters and numbers must not be null and must have the same size.");
+        }
+
+        List<Integer> releasedSeatIds = new ArrayList<>();
+
+        for (int i = 0; i < letters.size(); i++) {
+            String letter = letters.get(i);
+            int number = numbers.get(i);
+
+            // Find the seat by row and number
+            seatRepository.findByRowAndNumber(letter, number)
+                    .ifPresentOrElse(seat -> {
+                        System.out.println("Releasing seat with ID: " + seat.getId() + ", Row: " + seat.getRow() + ", Number: " + seat.getNumber());
+                        seat.setReserved(false); // Mark seat as available
+                        seatRepository.save(seat); // Save the updated seat status
+                        releasedSeatIds.add(seat.getId()); // Add seat ID to the list
+                    }, () -> {
+                        System.err.println("Seat not found for Row: " + letter + ", Number: " + number);
                     });
         }
+
+        return releasedSeatIds;
     }
+
+
+
+
 
 
     @Autowired
