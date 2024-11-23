@@ -63,6 +63,66 @@ const OrderHistory = () => {
     setIsEditProfileOpen(false); // Close the modal
   };
 
+  const handleCancelOrder = (orderId, showtime, movieTitle, selectedSeats) => {
+    if (!selectedSeats || !Array.isArray(selectedSeats)) {
+      console.error("Invalid or undefined selectedSeats:", selectedSeats);
+      return;
+    }
+
+    // Parse each seat into letter and number
+    const parsedSeats = selectedSeats.map((seat) => {
+      const match = seat.match(/^([A-Za-z]+)(\d+)$/);
+      if (match) {
+        return { letter: match[1], number: parseInt(match[2], 10) };
+      } else {
+        console.error(`Invalid seat format: ${seat}`);
+        return null;
+      }
+    }).filter(Boolean); // Filter out invalid seats (null values)
+
+    console.log("Parsed seats:", parsedSeats);
+
+    // Send parsed data to the backend
+    axios.post(
+      `http://localhost:8081/api/orders/cancel`,
+      { // Include orderId and parsedSeats in the payload
+        orderId,
+        showtime,
+        movieTitle,
+        seats: parsedSeats,
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    )
+      .then((response) => {
+        alert(response.data);
+        setOrders((prevOrders) =>
+          prevOrders.filter(
+            (order) => order.id !== orderId // Remove canceled order
+          )
+        );
+      })
+      .catch((error) => {
+        console.error("Error canceling order:", error);
+        alert(error.response?.data || "Failed to cancel order.");
+      });
+  };
+
+  // Helper function to check if cancellation is allowed
+  const isCancellationAllowed = (showtime) => {
+    const currentTime = new Date();
+    const orderTime = new Date(showtime);
+    const diffMinutes = (orderTime - currentTime) / (1000 * 60); // Difference in minutes
+
+    if (diffMinutes > 0) {
+      console.log(`Seats available for cancellation (time hasn't passed): ${showtime}`);
+    }
+    return diffMinutes > 60; // Cancellation allowed only if more than 60 minutes left
+  };
+
   return (
     <>
       <NavBar
@@ -80,8 +140,19 @@ const OrderHistory = () => {
               let selectedSeats = [];
               try {
                 selectedSeats = JSON.parse(order.selectedSeats);
+                if (!Array.isArray(selectedSeats)) {
+                  throw new Error('Parsed selectedSeats is not an array');
+                }
               } catch (error) {
                 console.error('Error parsing selectedSeats:', error);
+                selectedSeats = []; // Default to an empty array
+              }
+
+              const canCancel = isCancellationAllowed(order.showtime);
+
+              // Log seats if the date and time haven't passed
+              if (canCancel) {
+                console.log(`Seats for order ${order.id}:`, selectedSeats);
               }
 
               return (
@@ -89,11 +160,21 @@ const OrderHistory = () => {
                   <div className="order-details">
                     <h2>{order.movieTitle}</h2>
                     <p>Date: {order.showtime}</p>
-                    <p>Seats: {Array.isArray(selectedSeats) 
-                      ? selectedSeats.join(', ') 
+                    <p>Seats: {Array.isArray(selectedSeats)
+                      ? selectedSeats.join(', ')
                       : 'N/A'}
                     </p>
                     <p>Total Cost: ${order.totalCost.toFixed(2)}</p>
+                    {canCancel ? (
+                      <button
+                        onClick={() => handleCancelOrder(order.id, order.showtime, order.movieTitle, selectedSeats || [])}
+                        className="cancel-button"
+                      >
+                        Cancel Order
+                      </button>
+                    ) : (
+                      <p className="cancel-info">Cancellation not allowed</p>
+                    )}
                   </div>
                 </li>
               );
