@@ -64,9 +64,17 @@ const Showtimes = () => {
   };
 
   const isPastShowtime = (showtime) => {
-    const currentDateTime = new Date();
-    const showtimeDateTime = new Date(`${selectedDate}T${showtime}`); // Assuming showtime is in 'HH:mm' format
+    const currentDateTime = new Date(); // Current date and time
 
+    // Combine selectedDate and showtime into a valid Date string
+    const showtimeDateTimeString = `${selectedDate} ${showtime}`;
+    const showtimeDateTime = new Date(showtimeDateTimeString);
+
+    console.log('Current DateTime:', currentDateTime);
+    console.log('Showtime String:', showtimeDateTimeString);
+    console.log('Showtime DateTime:', showtimeDateTime);
+
+    // Return true if the showtime has passed, false otherwise
     return showtimeDateTime < currentDateTime;
   };
 
@@ -119,16 +127,17 @@ const Showtimes = () => {
         <div className="showtimes-body">
           <h3>Select a Time</h3>
           <div className="time-slots">
-            {showtimes.map((showtime, index) => (
-              <button
-                key={index}
-                className={`pill-button ${isPastShowtime(showtime) ? 'disabled' : ''}`}
-                onClick={() => handleShowtimeClick(showtime)}
-                disabled={isPastShowtime(showtime)}
-              >
-                {showtime}
-              </button>
-            ))}
+            {showtimes
+              .filter((showtime) => !isPastShowtime(showtime)) // Exclude past showtimes
+              .map((showtime, index) => (
+                <button
+                  key={index}
+                  className="pill-button"
+                  onClick={() => handleShowtimeClick(showtime)}
+                >
+                  {showtime}
+                </button>
+              ))}
           </div>
         </div>
       </div>
