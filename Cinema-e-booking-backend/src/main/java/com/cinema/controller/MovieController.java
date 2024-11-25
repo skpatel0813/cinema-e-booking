@@ -2,17 +2,13 @@ package com.cinema.controller;
 
 import com.cinema.model.Movie;
 import com.cinema.model.MovieShowtime;
-import com.cinema.model.Promotion;
 import com.cinema.service.MovieService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
+
 
 @RestController
 @RequestMapping("/api/movies")
@@ -52,7 +48,6 @@ public class MovieController {
             movie.setTrailerUrl(movieDetails.getTrailerUrl());
             movie.setPosterUrl(movieDetails.getPosterUrl());
             movie.setRatingCode(movieDetails.getRatingCode());
-            movie.setPrice(movieDetails.getPrice());
             movie.setIsNowPlaying(movieDetails.getIsNowPlaying());
             movie.setIsComingSoon(movieDetails.getIsComingSoon());
 

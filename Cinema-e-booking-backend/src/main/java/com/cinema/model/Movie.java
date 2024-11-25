@@ -26,8 +26,6 @@ public class Movie {
     @Column(name = "poster_url")
     private String posterUrl;
     private String ratingCode;
-    private BigDecimal price;
-    private String producers;
     private Boolean isNowPlaying;
     private Boolean isComingSoon;
     private Boolean isOnDemand;
@@ -123,21 +121,6 @@ public class Movie {
         this.ratingCode = ratingCode;
     }
 
-    public BigDecimal getPrice() {
-        return price;
-    }
-
-    public void setPrice(BigDecimal price) {
-        this.price = price;
-    }
-
-    public String getProducers() {
-        return producers;
-    }
-
-    public void setProducers(String producers) {
-        this.producers = producers;
-    }
 
     public Boolean getIsNowPlaying() {
         return isNowPlaying;

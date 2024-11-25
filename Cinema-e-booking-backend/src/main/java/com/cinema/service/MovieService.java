@@ -50,7 +50,6 @@ public class MovieService {
             existingMovie.setTrailerUrl(updatedMovie.getTrailerUrl());
             existingMovie.setPosterUrl(updatedMovie.getPosterUrl());
             existingMovie.setRatingCode(updatedMovie.getRatingCode());
-            existingMovie.setPrice(updatedMovie.getPrice());
             existingMovie.setIsNowPlaying(updatedMovie.getIsNowPlaying());
             existingMovie.setIsComingSoon(updatedMovie.getIsComingSoon());
             return movieRepository.save(existingMovie);
@@ -79,18 +78,6 @@ public class MovieService {
             savedShowtimes.add(movieShowtimeRepository.save(showtime));
         }
         return savedShowtimes;
-    }
-
-
-    // Modify the existing addOrUpdateShowtime method to use LocalTime
-    public MovieShowtime addOrUpdateShowtime(int movieId, LocalTime showTime, BigDecimal adultPrice, BigDecimal childrenPrice, BigDecimal seniorPrice) {
-        MovieShowtime movieShowtime = new MovieShowtime();
-        movieShowtime.setMovieId(movieId);
-        movieShowtime.setShowTime(showTime);
-        movieShowtime.setAdultTicketPrice(adultPrice);
-        movieShowtime.setChildrenTicketPrice(childrenPrice);
-        movieShowtime.setSeniorTicketPrice(seniorPrice);
-        return movieShowtimeRepository.save(movieShowtime);
     }
 
     // In MovieService.java or relevant service class

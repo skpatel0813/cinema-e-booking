@@ -14,9 +14,7 @@ public class MovieShowtime {
 
     private int movieId;
     private LocalTime showTime;
-    private BigDecimal adultTicketPrice;
-    private BigDecimal childrenTicketPrice;
-    private BigDecimal seniorTicketPrice;
+
 
     // Getters and Setters
     public Long getShowtimeId() {
@@ -43,27 +41,5 @@ public class MovieShowtime {
         this.showTime = showTime;
     }
 
-    public BigDecimal getAdultTicketPrice() {
-        return adultTicketPrice;
-    }
 
-    public void setAdultTicketPrice(BigDecimal adultTicketPrice) {
-        this.adultTicketPrice = adultTicketPrice;
-    }
-
-    public BigDecimal getChildrenTicketPrice() {
-        return childrenTicketPrice;
-    }
-
-    public void setChildrenTicketPrice(BigDecimal childrenTicketPrice) {
-        this.childrenTicketPrice = childrenTicketPrice;
-    }
-
-    public BigDecimal getSeniorTicketPrice() {
-        return seniorTicketPrice;
-    }
-
-    public void setSeniorTicketPrice(BigDecimal seniorTicketPrice) {
-        this.seniorTicketPrice = seniorTicketPrice;
-    }
 }
