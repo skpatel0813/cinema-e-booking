@@ -63,16 +63,39 @@ const Showtimes = () => {
     setDropdownOpen(false); // Close the dropdown after selecting a date
   };
 
+  const convertTo24HourFormat = (time) => {
+    const [timePart, modifier] = time.split(' '); // Split time into "HH:mm" and "AM/PM"
+    let [hours, minutes] = timePart.split(':').map(Number);
+
+    if (modifier === 'PM' && hours !== 12) {
+      hours += 12;
+    } else if (modifier === 'AM' && hours === 12) {
+      hours = 0;
+    }
+
+    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+  };
+
   const isPastShowtime = (showtime) => {
     const currentDateTime = new Date(); // Current date and time
 
-    // Combine selectedDate and showtime into a valid Date string
-    const showtimeDateTimeString = `${selectedDate} ${showtime}`;
+    let showtime24;
+    // Check if the showtime is already in 24-hour format
+    if (showtime.match(/^\d{2}:\d{2}$/)) {
+      showtime24 = showtime; // Already in 24-hour format
+    } else {
+      // Convert to 24-hour format if in 12-hour format
+      showtime24 = convertTo24HourFormat(showtime);
+    }
+
+    // Combine selectedDate and the valid showtime string into a Date
+    const showtimeDateTimeString = `${selectedDate} ${showtime24}`;
     const showtimeDateTime = new Date(showtimeDateTimeString);
 
     console.log('Current DateTime:', currentDateTime);
-    console.log('Showtime String:', showtimeDateTimeString);
-    console.log('Showtime DateTime:', showtimeDateTime);
+    console.log('Showtime String (Original):', showtime);
+    console.log('Showtime DateTime (24hr):', showtime24);
+    console.log('Parsed Showtime DateTime:', showtimeDateTime);
 
     // Return true if the showtime has passed, false otherwise
     return showtimeDateTime < currentDateTime;
