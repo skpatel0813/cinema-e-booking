@@ -139,12 +139,13 @@ public class UserController {
         }
     }
 
-    // Get all users
     @GetMapping
     public ResponseEntity<List<User>> getAllUsers() {
         List<User> users = userService.getAllUsers();
+        users.forEach(user -> System.out.println(user)); // Debugging: Log each user
         return ResponseEntity.ok(users);
     }
+
 
     // Get user by ID
     @GetMapping("/{id}")
