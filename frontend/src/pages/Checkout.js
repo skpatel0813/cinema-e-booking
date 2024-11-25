@@ -28,6 +28,13 @@ const Checkout = () => {
   const [originalTicketCounts] = useState(ticketCounts); // Store original counts
   const [ticketCountsChanged, setTicketCountsChanged] = useState(false); // New state
 
+  const [newCard, setNewCard] = useState({
+    cardType: '',
+    cardNumber: '',
+    expirationDate: '',
+    cvv: '',
+  });
+
   // Retrieve and parse email from rememberMeData in localStorage
   useEffect(() => {
     const rememberMeData = localStorage.getItem('rememberMeData');
@@ -91,7 +98,7 @@ const Checkout = () => {
 
   // Check if ticket counts have changed
   useEffect(() => {
-    const countsHaveChanged = 
+    const countsHaveChanged =
       currentTicketCounts.adult !== (ticketCounts.adult || 0) ||
       currentTicketCounts.child !== (ticketCounts.child || 0) ||
       currentTicketCounts.senior !== (ticketCounts.senior || 0);
@@ -102,8 +109,8 @@ const Checkout = () => {
   // Calculate total price
   const calculateTotalPrice = (pricing) => {
     const { adultPrice = 0, childrenPrice = 0, seniorPrice = 0 } = pricing;
-    const ticketPrice = (currentTicketCounts.adult || 0) * adultPrice + 
-                        (currentTicketCounts.child || 0) * childrenPrice + 
+    const ticketPrice = (currentTicketCounts.adult || 0) * adultPrice +
+                        (currentTicketCounts.child || 0) * childrenPrice +
                         (currentTicketCounts.senior || 0) * seniorPrice;
 
     const tax = ticketPrice * 0.07; // Sales tax of 7%
@@ -221,18 +228,7 @@ const Checkout = () => {
     setIsEditProfileOpen(false); // Close the Edit Profile modal
   };
 
-  const handleSaveCards = () => {
-    axios.put(`http://localhost:8081/user/updatePaymentCards`, { email: user.email, cards: editableCards })
-      .then(() => {
-        setUser((prevUser) => ({ ...prevUser, cards: editableCards }));
-        alert('Cards updated successfully');
-        closeModal();
-      })
-      .catch(error => {
-        console.error('Error updating cards:', error);
-        alert('Failed to update cards. Please try again.');
-      });
-  };
+  
 
   const handleCancelBooking = () => {
     axios.post('http://localhost:8081/api/seats/releaseSeats', { movieId, showtime, seats: selectedSeats })
@@ -257,6 +253,37 @@ const Checkout = () => {
   };
 
   const canProceedToPayment = currentTicketCounts.adult > 0 || currentTicketCounts.senior > 0;
+
+  const handleAddNewCard = () => {
+    if (!newCard.cardType || !newCard.cardNumber || !newCard.expirationDate || !newCard.cvv) {
+      alert('Please fill in all fields to add a new card.');
+      return;
+    }
+  
+    // Prepare updated cards
+    const updatedCards = [...user.cards, {
+      id: null, // Or omit this field if the backend generates it
+      cardType: newCard.cardType,
+      cardNumber: newCard.cardNumber,
+      expirationDate: newCard.expirationDate,
+      cvv: newCard.cvv
+    }];
+  
+    axios.put(`http://localhost:8081/user/updatePaymentCards`, {
+      email: user.email,
+      cards: updatedCards
+    })
+    .then(() => {
+      setUser((prevUser) => ({ ...prevUser, cards: updatedCards }));
+      setNewCard({ cardType: '', cardNumber: '', expirationDate: '', cvv: '' }); // Reset form
+      alert('New card added successfully');
+    })
+    .catch(error => {
+      console.error('Error adding new card:', error);
+      alert('Failed to add new card. Please try again.');
+    });
+  };
+  
 
   return (
     <div>
@@ -304,9 +331,6 @@ const Checkout = () => {
           ) : (
             <p>No saved cards. Please add a card in your profile settings.</p>
           )}
-          <button className="edit-cards-button" onClick={openModal}>
-            Edit Payment Cards
-          </button>
         </div>
 
         <div className="ticket-count-edit">
@@ -400,7 +424,7 @@ const Checkout = () => {
                 />
               </div>
             ))}
-            <button onClick={handleSaveCards}>Save Changes</button>
+            
           </div>
         </div>
       )}
