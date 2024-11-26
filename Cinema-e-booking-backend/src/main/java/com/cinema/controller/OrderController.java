@@ -25,6 +25,12 @@ public class OrderController {
     @Autowired
     private MovieRepository movieRepository;
 
+    /**
+     * Saves a new order to the database.
+     *
+     * @param order The order object to be saved.
+     * @return ResponseEntity indicating success or failure of the operation.
+     */
     @PostMapping("/save")
     public ResponseEntity<String> saveOrder(@RequestBody Order order) {
         try {
@@ -35,6 +41,12 @@ public class OrderController {
         }
     }
 
+    /**
+     * Retrieves all orders for a specific user by email.
+     *
+     * @param email The email of the user.
+     * @return ResponseEntity containing a list of orders for the user.
+     */
     @GetMapping("/user/{email}")
     public ResponseEntity<List<Order>> getOrdersByEmail(@PathVariable String email) {
         List<Order> orders = orderRepository.findByUserEmail(email);
@@ -42,6 +54,12 @@ public class OrderController {
     }
 
 
+    /**
+     * Cancels an order and releases the associated seats.
+     *
+     * @param payload JSON payload containing order ID, movie title, and seat details.
+     * @return ResponseEntity indicating success or failure of the cancellation.
+     */
     @PostMapping("/cancel")
     public ResponseEntity<String> cancelOrder(@RequestBody Map<String, Object> payload) {
         try {

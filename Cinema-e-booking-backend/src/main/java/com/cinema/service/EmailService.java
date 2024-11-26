@@ -41,6 +41,13 @@ public class EmailService {
         }
     }
 
+    /**
+     * Sends an email with specified subject and body.
+     * @param to recipient email.
+     * @param subject email subject.
+     * @param body email content.
+     * @return true if email is sent successfully.
+     */
     public boolean sendEmail(String to, String subject, String body) {
         try {
             SimpleMailMessage message = new SimpleMailMessage();
@@ -57,6 +64,11 @@ public class EmailService {
         }
     }
 
+    /**
+     * Sends promotional emails to a list of recipients.
+     * @param recipients list of email addresses.
+     * @param message promotional content.
+     */
     public void sendPromotionEmails(List<String> recipients, String message) {
         for (String recipient : recipients) {
             sendEmail(recipient, "Cinema Promotion", message);

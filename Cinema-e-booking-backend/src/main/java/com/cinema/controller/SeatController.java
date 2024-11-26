@@ -17,7 +17,13 @@ public class SeatController {
     @Autowired
     private SeatService seatService;
 
-    // Endpoint to get reserved seats for a specific movie and showtime
+    /**
+     * Retrieves reserved seats for a movie and showtime.
+     *
+     * @param movieId The movie's unique ID.
+     * @param showtime The showtime of the movie.
+     * @return A list of reserved seats.
+     */
     @GetMapping("/getReservedSeats")
     public ResponseEntity<List<Seat>> getReservedSeats(@RequestParam int movieId, @RequestParam String showtime) {
         List<Seat> reservedSeats = seatService.getReservedSeats(movieId, showtime);

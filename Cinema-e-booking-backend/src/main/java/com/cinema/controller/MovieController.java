@@ -18,11 +18,22 @@ public class MovieController {
     @Autowired
     private MovieService movieService;
 
+    /**
+     * Retrieves random movies for the homepage.
+     *
+     * @return A list of random movies.
+     */
     @GetMapping("/home")
     public List<Movie> getHomeMovies() {
         return movieService.getRandomMovies();
     }
 
+    /**
+     * Retrieves details of a specific movie by ID.
+     *
+     * @param id The unique ID of the movie.
+     * @return ResponseEntity containing the movie or HTTP 404 if not found.
+     */
     @GetMapping("/{id}")
     public ResponseEntity<Movie> getMovieDetails(@PathVariable int id) {
         Movie movie = movieService.getMovieById(id);
@@ -33,6 +44,13 @@ public class MovieController {
         }
     }
 
+    /**
+     * Updates the details of an existing movie.
+     *
+     * @param id The unique ID of the movie.
+     * @param movieDetails Updated movie details.
+     * @return ResponseEntity with the updated movie or HTTP 404 if not found.
+     */
     @PutMapping("/{id}")
     public ResponseEntity<Movie> updateMovie(@PathVariable int id, @RequestBody Movie movieDetails) {
         Movie movie = movieService.getMovieById(id);
@@ -58,6 +76,12 @@ public class MovieController {
         }
     }
 
+    /**
+     * Deletes a specific movie by its ID.
+     *
+     * @param id The unique ID of the movie.
+     * @return ResponseEntity indicating the success or failure of the operation.
+     */
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteMovie(@PathVariable int id) {
         try {
@@ -68,6 +92,13 @@ public class MovieController {
         }
     }
 
+    /**
+     * Adds new showtimes for a specific movie.
+     *
+     * @param movieId The unique ID of the movie.
+     * @param showtimes A list of showtime strings to be added.
+     * @return ResponseEntity containing the saved showtimes.
+     */
     @PostMapping
     public ResponseEntity<?> addMovie(@RequestBody Movie movie) {
         try {
@@ -79,8 +110,6 @@ public class MovieController {
     }
 
 
-
-    // Add this new method to handle the POST request for showtimes
     @PostMapping("/{id}/showtimes")
     public ResponseEntity<?> addShowtimes(@PathVariable("id") int movieId, @RequestBody List<String> showtimes) {
         try {
@@ -91,7 +120,7 @@ public class MovieController {
         }
     }
 
-    // In MovieController.java
+
     @GetMapping("/{id}/getShowtimes")
     public ResponseEntity<List<String>> getShowtimes(@PathVariable("id") Long movieId) {
         List<String> showtimeStrings = movieService.getShowtimesByMovieId(movieId); // Returns List<String>

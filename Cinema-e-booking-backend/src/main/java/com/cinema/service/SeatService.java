@@ -21,22 +21,46 @@ public class SeatService {
     @Autowired
     private SeatRepository seatRepository;
 
-    // Method to fetch all seats
+    /**
+     * Retrieves a list of all seats in the cinema.
+     *
+     * @return A list of Seat objects.
+     */
     public List<Seat> getAllSeats() {
         return seatRepository.findAll();
     }
 
+    /**
+     * Retrieves a list of reserved seats for a specific movie and showtime.
+     *
+     * @param movieId The ID of the movie.
+     * @param showtime The specific showtime of the movie.
+     * @return A list of reserved Seat objects.
+     */
     public List<Seat> getReservedSeats(int movieId, String showtime) {
         return reservationRepository.findReservedSeatsByMovieIdAndShowtime(movieId, showtime);
     }
 
-    // Check if a seat is already reserved for a specific movie and showtime
+    /**
+     * Checks if a seat is reserved for a specific movie and showtime.
+     *
+     * @param seatId The unique ID of the seat.
+     * @param movieId The ID of the movie.
+     * @param showtime The specific showtime.
+     * @return True if the seat is reserved, otherwise false.
+     */
     public boolean isSeatReserved(int seatId, int movieId, String showtime) {
         Optional<Reservation> reservation = reservationRepository.findBySeatIdAndMovieIdAndShowtime(seatId, movieId, showtime);
         return reservation.isPresent();
     }
 
-    // Reserve a seat for a specific movie and showtime
+    /**
+     * Reserves a seat for a specific movie and showtime.
+     *
+     * @param seatId The unique ID of the seat.
+     * @param movieId The ID of the movie.
+     * @param showtime The specific showtime.
+     */
     public void reserveSeat(int seatId, int movieId, String showtime) {
         if (!isSeatReserved(seatId, movieId, showtime)) {
             Reservation reservation = new Reservation();
@@ -51,6 +75,13 @@ public class SeatService {
         }
     }
 
+    /**
+     * Releases reserved seats based on the row and seat number details.
+     *
+     * @param letters The row letters of the seats to release.
+     * @param numbers The seat numbers to release.
+     * @return A list of released seat IDs.
+     */
     @Transactional
     public List<Integer> releaseSeats(List<String> letters, List<Integer> numbers) {
         if (letters == null || numbers == null || letters.size() != numbers.size()) {
@@ -77,10 +108,6 @@ public class SeatService {
 
         return releasedSeatIds;
     }
-
-
-
-
 
 
     @Autowired

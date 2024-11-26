@@ -13,6 +13,11 @@ public class PricingController {
     @Autowired
     private PricingService pricingService;
 
+    /**
+     * Retrieves current pricing details.
+     *
+     * @return A Pricing object containing current prices.
+     */
     @GetMapping("/getPrices")
     public Pricing getPricing() {
 
@@ -21,6 +26,12 @@ public class PricingController {
         return pricingService.getPricing();
     }
 
+    /**
+     * Updates pricing details.
+     *
+     * @param pricing A Pricing object containing updated pricing information.
+     * @return The updated Pricing object.
+     */
     @PostMapping("/updatePrices")
     public Pricing updatePricing(@RequestBody Pricing pricing) {
 

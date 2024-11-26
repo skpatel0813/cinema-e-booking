@@ -26,12 +26,22 @@ public class PromotionController {
     @Autowired
     private UserService userService;
 
-    // Fetch all promotions
+    /**
+     * Retrieves all promotions.
+     *
+     * @return A list of promotions.
+     */
     @GetMapping("/getPromotions")
     public List<Promotion> getAllPromotions() {
         return promotionService.getAllPromotions();
     }
 
+    /**
+     * Adds a new promotion.
+     *
+     * @param payload JSON payload containing promotion details.
+     * @return The saved Promotion object.
+     */
     @PostMapping("/addPromotions")
     public ResponseEntity<Promotion> createPromotion(@RequestBody Map<String, Object> payload) {
         String code = (String) payload.get("code");
@@ -71,13 +81,16 @@ public class PromotionController {
     }
 
 
-
-
-    // Delete a promotion
-    @DeleteMapping("/{id}")
-    public void deletePromotion(@PathVariable Long id) {
-        promotionService.deletePromotion(id);
+    @DeleteMapping("/delete/{code}")
+    public ResponseEntity<String> deletePromotionByCode(@PathVariable String code) {
+        try {
+            promotionService.deletePromotionByCode(code); // Call service to handle deletion
+            return ResponseEntity.ok("Promotion deleted successfully");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error deleting promotion: " + e.getMessage());
+        }
     }
+
 
     // Send promotion to subscribers
     @PostMapping("/send")

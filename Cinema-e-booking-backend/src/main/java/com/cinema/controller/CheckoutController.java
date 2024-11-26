@@ -27,6 +27,12 @@ public class CheckoutController {
     @Autowired
     private EmailService emailService;
 
+    /**
+     * Processes the payment request and creates a booking.
+     *
+     * @param paymentRequest The request containing payment and user details.
+     * @return ResponseEntity containing booking details and ticket number.
+     */
     @PostMapping("/processPayment")
     public ResponseEntity<Map<String, Object>> processPayment(@RequestBody PaymentRequest paymentRequest) {
 

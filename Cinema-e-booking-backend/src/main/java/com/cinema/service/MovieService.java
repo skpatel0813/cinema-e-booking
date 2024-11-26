@@ -9,8 +9,6 @@ import com.cinema.repository.PromotionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,14 +27,32 @@ public class MovieService {
     @Autowired
     private MovieShowtimeRepository movieShowtimeRepository;
 
+    /**
+     * Retrieves a random list of movies.
+     * @return a list of movies.
+     */
     public List<Movie> getRandomMovies() {
         return movieRepository.getRandomMovies();
     }
 
+    /**
+     * Retrieves a movie by its unique identifier.
+     *
+     * @param id The unique ID of the movie.
+     * @return The Movie object if found, otherwise null.
+     */
     public Movie getMovieById(int id) {
         return movieRepository.findById(id).orElse(null);
     }
 
+    /**
+     * Updates an existing movie with new details.
+     *
+     * @param id The unique ID of the movie to update.
+     * @param updatedMovie The Movie object containing updated details.
+     * @return The updated Movie object.
+     * @throws IllegalArgumentException if the movie is not found.
+     */
     public Movie updateMovie(int id, Movie updatedMovie) {
         Optional<Movie> existingMovieOpt = movieRepository.findById(id);
         if (existingMovieOpt.isPresent()) {
@@ -57,18 +73,22 @@ public class MovieService {
         throw new IllegalArgumentException("Movie with ID " + id + " not found.");
     }
 
+    /**
+     * Deletes a movie by its ID.
+     *
+     * @param id The unique ID of the movie to delete.
+     */
     public void deleteMovie(int id) {
         movieRepository.deleteById(id);
     }
 
-    public Promotion addOrUpdatePromotion(Promotion promotion) {
-        return promotionRepository.save(promotion);
-    }
-
-    public void deletePromotion(Long promotionId) {
-        promotionRepository.deleteById(promotionId);
-    }
-
+    /**
+     * Adds showtimes for a specific movie.
+     *
+     * @param movieId The ID of the movie to associate with showtimes.
+     * @param showtimes A list of showtime strings.
+     * @return A list of saved MovieShowtime objects.
+     */
     public List<MovieShowtime> addShowtimes(int movieId, List<String> showtimes) {
         List<MovieShowtime> savedShowtimes = new ArrayList<>();
         for (String time : showtimes) {
@@ -80,13 +100,24 @@ public class MovieService {
         return savedShowtimes;
     }
 
-    // In MovieService.java or relevant service class
+    /**
+     * Retrieves showtimes for a specific movie by its ID.
+     *
+     * @param movieId The unique ID of the movie.
+     * @return A list of showtime strings.
+     */
     public List<String> getShowtimesByMovieId(Long movieId) {
         return movieShowtimeRepository.findByMovieId(movieId).stream()
                 .map(showtime -> showtime.getShowTime().toString()) // Convert LocalTime to String
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Saves a new movie to the repository.
+     *
+     * @param movie The Movie object to save.
+     * @return The saved Movie object.
+     */
     public Movie saveMovie(Movie movie) {
         return movieRepository.save(movie);
     }
