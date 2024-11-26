@@ -3,52 +3,68 @@ import { useNavigate } from 'react-router-dom';
 import '../styles/modal.css';
 import LoginModal from './LoginModal';
 
+// The DetailedModal component displays detailed information about a movie.
+// It includes a trailer, synopsis, cast, and other details, and allows users to book tickets if logged in.
 const DetailedModal = ({ show, onClose, movie, isLoggedIn, response }) => {
-  console.log("Movie prop in DetailedModal:", movie); // Check the movie object structure
+  console.log("Movie prop in DetailedModal:", movie); // Debug log to check the movie object structure
 
+  // State to manage the visibility of the login prompt
   const [loginPromptVisible, setLoginPromptVisible] = useState(false);
+
+  // State to manage the visibility of the LoginModal component
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
-  const [userId, setUserId] = useState(null); // State to store userId
+
+  // State to store the user ID from local storage
+  const [userId, setUserId] = useState(null);
+
+  // Hook to navigate between pages
   const navigate = useNavigate();
 
-  
+  // Effect to retrieve the userId from local storage when the component mounts
   useEffect(() => {
-    // Retrieve userId from local storage
     const storedUserId = localStorage.getItem('userId');
     if (storedUserId) {
       setUserId(storedUserId);
     }
   }, []);
 
+  // Return null if the modal should not be shown or the movie object is undefined
   if (!show || !movie) return null;
 
+  // Handler for the "Get Tickets" button click
   const handleGetTicketsClick = () => {
     console.log("Is user logged in? ", isLoggedIn); // Debugging log
     console.log("User ID:", userId); // Log the user ID
-    console.log("Movie ID:", movie.movieId);
+    console.log("Movie ID:", movie.movieId); // Log the movie ID
 
     if (isLoggedIn) {
-      console.log("Navigating to showtimes with movie title:", movie.title); // Debugging log
+      // If the user is logged in, navigate to the showtimes page
+      console.log("Navigating to showtimes with movie title:", movie.title);
 
-      // Store the movie ID in local storage
+      // Store the selected movie ID in local storage
       localStorage.setItem('selectedMovieId', movie.movieId);
 
+      // Navigate to the showtimes page, passing movie details in the state
       navigate('/showtimes', { state: { movieTitle: movie.title, movieId: movie.id } });
     } else {
-      console.log("Showing login prompt"); // Debugging log
+      // If the user is not logged in, show the login prompt
+      console.log("Showing login prompt");
       setLoginPromptVisible(true);
     }
   };
 
+  // Handler to close the login prompt
   const closeLoginPrompt = () => {
     setLoginPromptVisible(false);
   };
 
+  // Handler to open the LoginModal
   const handleLoginModalOpen = () => {
     setIsLoginModalOpen(true);
-    setLoginPromptVisible(false);
+    setLoginPromptVisible(false); // Close the login prompt when opening the modal
   };
 
+  // Handler to close the LoginModal
   const handleLoginModalClose = () => {
     setIsLoginModalOpen(false);
   };
@@ -58,10 +74,10 @@ const DetailedModal = ({ show, onClose, movie, isLoggedIn, response }) => {
       <div className="modal-content">
         <span className="close" onClick={onClose}>&times;</span>
 
-        {/* Movie Title */}
+        {/* Display the movie title */}
         <h2>{movie.title}</h2>
 
-        {/* Movie Trailer */}
+        {/* Embed the movie trailer if available */}
         {movie.trailerUrl ? (
           <div className="trailer-container">
             <iframe 
@@ -78,7 +94,7 @@ const DetailedModal = ({ show, onClose, movie, isLoggedIn, response }) => {
           <p>Trailer not available</p>
         )}
 
-        {/* Movie Details */}
+        {/* Display movie details like synopsis, cast, director, etc. */}
         <div className="movie-details">
           <p><strong>Synopsis:</strong> {movie.synopsis || 'Not available'}</p>
           <p><strong>Cast:</strong> {movie.cast || 'Not available'}</p>
@@ -87,13 +103,13 @@ const DetailedModal = ({ show, onClose, movie, isLoggedIn, response }) => {
           <p><strong>Rating:</strong> {movie.ratingCode || 'Not available'}</p>
         </div>
 
-        {/* Book Now Button */}
+        {/* Button to book tickets */}
         <button className="book-now-btn" onClick={handleGetTicketsClick}>
           Get Tickets
         </button>
       </div>
 
-      {/* Login Prompt Modal */}
+      {/* Modal to show a login prompt if the user is not logged in */}
       {loginPromptVisible && (
         <div className="modal">
           <div className="modal-content">
@@ -104,7 +120,7 @@ const DetailedModal = ({ show, onClose, movie, isLoggedIn, response }) => {
         </div>
       )}
 
-      {/* Login Modal */}
+      {/* Render the LoginModal component */}
       <LoginModal isOpen={isLoginModalOpen} onClose={handleLoginModalClose} />
     </div>
   );

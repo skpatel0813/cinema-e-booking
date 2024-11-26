@@ -162,7 +162,7 @@ const Home = () => {
     let nowPlayingMovies = getCategoryMovies().filter(movie => movie.isNowPlaying);
 
     if (userRole !== 'admin' && !browseAll) {
-      nowPlayingMovies = nowPlayingMovies.slice(0, 5);
+      nowPlayingMovies = nowPlayingMovies.slice(0, 10);
     }
 
     if (nowPlayingMovies.length === 0) {

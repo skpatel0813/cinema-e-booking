@@ -137,6 +137,28 @@ const EditPricing = () => {
     }
   };
 
+  const handleDeletePromotion = async (code, index) => {
+    if (!window.confirm(`Are you sure you want to delete the promotion with code "${code}"?`)) {
+      return;
+    }
+    
+    try {
+      await axios.delete(`http://localhost:8081/api/promotions/delete/${code}`);
+      
+      // Update frontend promotions list
+      const updatedPromotions = [...promotions];
+      updatedPromotions.splice(index, 1);
+      setPromotions(updatedPromotions);
+  
+      setSuccessMessage('Promotion deleted successfully');
+      setTimeout(() => setSuccessMessage(''), 3000);
+    } catch (error) {
+      console.error('Error deleting promotion:', error);
+      alert('Failed to delete promotion. Please try again.');
+    }
+  };
+  
+
   return (
     <div>
       <NavBar 
@@ -239,6 +261,9 @@ const EditPricing = () => {
                   <td>
                     <button className="edit-button" onClick={() => handleEditPromotion(index)}>
                       Edit
+                    </button>
+                    <button className="delete-button" onClick={() => handleDeletePromotion(promotion.code, index)}>
+                       Delete
                     </button>
                     <button className="send-button" onClick={() => handleSendPromotion(promotion)}>
                       Send to Customers

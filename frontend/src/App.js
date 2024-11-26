@@ -2,8 +2,6 @@ import React from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate, useLocation } from 'react-router-dom';
 import Home from './pages/Home';
 import MovieDetails from './pages/MovieDetails';
-import Booking from './pages/Booking';
-import Account from './pages/Account';
 import Register from './pages/Register';
 import EditMovie from './pages/EditMovie';
 import AddMovie from './pages/AddMovie';
@@ -36,14 +34,6 @@ const App = () => {
         <Route path="/register" element={<Register />} />
         
         {/* Protected Routes for All Logged-In Users */}
-        <Route
-          path="/booking"
-          element={
-            <ProtectedRoute>
-              <Booking />
-            </ProtectedRoute>
-          }
-        />
         <Route
           path="/order-history"
           element={

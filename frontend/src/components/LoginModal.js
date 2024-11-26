@@ -3,22 +3,31 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import '../styles/LoginModal.css';
 
+// The LoginModal component handles user authentication (login) and password reset workflows
 const LoginModal = ({ isOpen, onClose }) => {
+  // State variables for managing login form data and error messages
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+
+  // State variables for forgot password functionality
   const [forgotPasswordEmail, setForgotPasswordEmail] = useState('');
   const [forgotPasswordSuccess, setForgotPasswordSuccess] = useState('');
   const [showForgotPasswordModal, setShowForgotPasswordModal] = useState(false);
   const [showCodeVerification, setShowCodeVerification] = useState(false);
   const [isCodeVerified, setIsCodeVerified] = useState(false);
+
+  // State variables for reset code and new password inputs
   const [resetCode, setResetCode] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [passwordError, setPasswordError] = useState('');
+
+  // Hook for navigation
   const navigate = useNavigate();
 
+  // Effect to prefill email if "remember me" data exists in local storage
   useEffect(() => {
     const rememberMeData = JSON.parse(localStorage.getItem('rememberMeData'));
     if (rememberMeData) {
@@ -26,12 +35,13 @@ const LoginModal = ({ isOpen, onClose }) => {
     }
   }, []);
 
-  // Function to check if the password is strong
+  // Function to check if a password is strong
   const isStrongPassword = (password) => {
     const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
     return strongPasswordRegex.test(password);
   };
 
+  // Handler for login form submission
   const handleLogin = (e) => {
     e.preventDefault();
     setError('');
@@ -45,22 +55,20 @@ const LoginModal = ({ isOpen, onClose }) => {
         if (isSuspended === "true") {
           setError('Account has been suspended. Please contact an Administrator.');
         } else {
-          // Save first name and other data to local storage
+          // Save authentication data to local storage
           localStorage.setItem('isLoggedIn', 'true');
           localStorage.setItem('role', role);
           localStorage.setItem('user', firstName); // Save the first name
+          localStorage.setItem('rememberMeData', JSON.stringify({ email })); // Save email for future login
 
-          // Always save the email to local storage
-          localStorage.setItem('rememberMeData', JSON.stringify({ email }));
-
-          onClose();
+          onClose(); // Close the modal
           if (role === 'admin') {
-            navigate('/');
+            navigate('/'); // Navigate to admin home page
           } else {
-            navigate('/account');
+            navigate('/account'); // Navigate to user account page
           }
 
-          window.location.reload();
+          window.location.reload(); // Reload the page to apply changes
         }
       })
       .catch(error => {
@@ -72,11 +80,13 @@ const LoginModal = ({ isOpen, onClose }) => {
       });
   };
 
+  // Navigate to the registration page
   const handleRegisterNavigation = () => {
-    onClose();
-    navigate('/register');
+    onClose(); // Close the modal
+    navigate('/register'); // Redirect to registration page
   };
 
+  // Handler for initiating the password reset process
   const handleForgotPassword = () => {
     setError('');
     setForgotPasswordSuccess('');
@@ -85,7 +95,7 @@ const LoginModal = ({ isOpen, onClose }) => {
     axios.post('http://localhost:8081/user/request-password-reset', { email: forgotPasswordEmail })
       .then(response => {
         setForgotPasswordSuccess('Password reset code has been sent to your email.');
-        setShowCodeVerification(true);
+        setShowCodeVerification(true); // Show the code verification input
       })
       .catch(error => {
         console.error('Error sending reset password email:', error);
@@ -96,6 +106,7 @@ const LoginModal = ({ isOpen, onClose }) => {
       });
   };
 
+  // Handler for verifying the reset code
   const handleVerifyCode = () => {
     setError('');
     setIsLoading(true);
@@ -103,7 +114,7 @@ const LoginModal = ({ isOpen, onClose }) => {
     axios.post('http://localhost:8081/user/verify-reset-code', { email: forgotPasswordEmail, code: resetCode })
       .then(response => {
         setForgotPasswordSuccess('Code verified. You can now reset your password.');
-        setIsCodeVerified(true);
+        setIsCodeVerified(true); // Allow the user to reset their password
       })
       .catch(error => {
         console.error('Error verifying code:', error);
@@ -114,6 +125,7 @@ const LoginModal = ({ isOpen, onClose }) => {
       });
   };
 
+  // Handler for resetting the password
   const handleResetPassword = () => {
     setError('');
     setPasswordError('');
@@ -134,7 +146,7 @@ const LoginModal = ({ isOpen, onClose }) => {
     axios.post('http://localhost:8081/user/reset-password', { email: forgotPasswordEmail, newPassword, confirmPassword })
       .then(response => {
         setForgotPasswordSuccess('Password has been reset successfully. You can now log in.');
-        setShowForgotPasswordModal(false);
+        setShowForgotPasswordModal(false); // Close the forgot password modal
       })
       .catch(error => {
         console.error('Error resetting password:', error);
@@ -145,6 +157,7 @@ const LoginModal = ({ isOpen, onClose }) => {
       });
   };
 
+  // Return null if the modal is not open
   if (!isOpen) return null;
 
   return (

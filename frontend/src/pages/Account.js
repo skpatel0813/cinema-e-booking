@@ -3,54 +3,61 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
+// Account component to display user information and order history
 const Account = () => {
+  // State to manage user information
   const [userInfo, setUserInfo] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    subscription: false,
+    name: '',        // User's full name
+    email: '',       // User's email address
+    phone: '',       // User's phone number
+    subscription: false, // User's subscription status for promotions
   });
+
+  // State to manage user's order history
   const [orderHistory, setOrderHistory] = useState([]);
 
   // Fetch user information and order history when the component mounts
   useEffect(() => {
-    // Mock API call to fetch user information
-    axios.get('/api/user')
+    axios.get('/api/user') // Mock API endpoint to fetch user data
       .then(response => {
-        setUserInfo(response.data.user);
-        setOrderHistory(response.data.orders);
+        setUserInfo(response.data.user); // Update user information state
+        setOrderHistory(response.data.orders); // Update order history state
       })
-      .catch(error => console.error('Error fetching user data:', error));
+      .catch(error => console.error('Error fetching user data:', error)); // Log any errors
   }, []);
 
+  // Handle input changes in the user information form
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setUserInfo(prevState => ({
-      ...prevState,
-      [name]: value,
+      ...prevState, // Preserve existing state
+      [name]: value, // Update the specific field
     }));
   };
 
+  // Handle changes to the subscription checkbox
   const handleSubscriptionChange = () => {
     setUserInfo(prevState => ({
       ...prevState,
-      subscription: !prevState.subscription,
+      subscription: !prevState.subscription, // Toggle subscription status
     }));
   };
 
+  // Handle profile update submission
   const handleUpdateProfile = (e) => {
-    e.preventDefault();
-    // Mock API call to update user information
-    axios.post('/api/user/update', userInfo)
+    e.preventDefault(); // Prevent the default form submission behavior
+    axios.post('/api/user/update', userInfo) // Mock API endpoint to update user data
       .then(response => {
-        alert('Profile updated successfully!');
+        alert('Profile updated successfully!'); // Notify the user of a successful update
       })
-      .catch(error => console.error('Error updating profile:', error));
+      .catch(error => console.error('Error updating profile:', error)); // Log any errors
   };
 
   return (
     <div>
       <h1>User Account</h1>
+
+      {/* User Information Form */}
       <form onSubmit={handleUpdateProfile}>
         <div>
           <label>
@@ -58,8 +65,8 @@ const Account = () => {
             <input
               type="text"
               name="name"
-              value={userInfo.name}
-              onChange={handleInputChange}
+              value={userInfo.name} // Bind input to userInfo state
+              onChange={handleInputChange} // Handle input change
             />
           </label>
         </div>
@@ -69,9 +76,9 @@ const Account = () => {
             <input
               type="email"
               name="email"
-              value={userInfo.email}
-              onChange={handleInputChange}
-              disabled // Typically, email would not be changed
+              value={userInfo.email} // Bind input to userInfo state
+              onChange={handleInputChange} // Handle input change
+              disabled // Email field is read-only
             />
           </label>
         </div>
@@ -81,8 +88,8 @@ const Account = () => {
             <input
               type="tel"
               name="phone"
-              value={userInfo.phone}
-              onChange={handleInputChange}
+              value={userInfo.phone} // Bind input to userInfo state
+              onChange={handleInputChange} // Handle input change
             />
           </label>
         </div>
@@ -91,18 +98,19 @@ const Account = () => {
             Subscribe to Promotions:
             <input
               type="checkbox"
-              checked={userInfo.subscription}
-              onChange={handleSubscriptionChange}
+              checked={userInfo.subscription} // Bind checkbox to subscription state
+              onChange={handleSubscriptionChange} // Handle subscription toggle
             />
           </label>
         </div>
-        <button type="submit">Update Profile</button>
+        <button type="submit">Update Profile</button> {/* Submit button to save changes */}
       </form>
 
+      {/* Order History Section */}
       <h2>Order History</h2>
       <ul>
         {orderHistory.map(order => (
-          <li key={order.id}>
+          <li key={order.id}> {/* Each order is displayed as a list item */}
             {order.movieTitle} - {order.showtime} - {order.ticketCount} tickets
           </li>
         ))}

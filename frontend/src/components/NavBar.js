@@ -3,14 +3,21 @@ import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import '../styles/NavBar.css';
 
+// NavBar component to display navigation links, admin controls, and user-specific options
 const NavBar = ({ onLoginClick, onLogout, onEditProfileClick }) => {
-  const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [loginPromptVisible, setLoginPromptVisible] = useState(false);
-  const [role, setRole] = useState(null);
-  const [userName, setUserName] = useState('');
+  // State variables
+  const [dropdownOpen, setDropdownOpen] = useState(false); // Manages the visibility of the dropdown menu
+  const [loginPromptVisible, setLoginPromptVisible] = useState(false); // Manages the visibility of the login prompt modal
+  const [role, setRole] = useState(null); // Stores the role of the logged-in user (e.g., admin or user)
+  const [userName, setUserName] = useState(''); // Stores the user's first name
+
+  // Reference for detecting clicks outside the dropdown menu
   const dropdownRef = useRef(null);
+
+  // Hook for navigation
   const navigate = useNavigate();
 
+  // Effect to fetch user role and profile details on component mount
   useEffect(() => {
     // Retrieve the user's role from localStorage
     const storedRole = localStorage.getItem('role');
@@ -25,20 +32,22 @@ const NavBar = ({ onLoginClick, onLogout, onEditProfileClick }) => {
         const parsedData = JSON.parse(rememberMeData);
         const email = parsedData.email;
         if (email) {
-          fetchUserProfile(email);
+          fetchUserProfile(email); // Fetch user's profile data
         }
       } catch (error) {
         console.error('Error parsing rememberMeData:', error);
       }
     }
 
-    // Close dropdown if clicked outside
+    // Close dropdown if user clicks outside of it
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setDropdownOpen(false);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
+
+    // Cleanup event listener on component unmount
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
@@ -48,30 +57,30 @@ const NavBar = ({ onLoginClick, onLogout, onEditProfileClick }) => {
   const fetchUserProfile = async (email) => {
     try {
       const response = await axios.get(`http://localhost:8081/user/profile?email=${email}`);
-      const firstName = response.data['first name']; // Access 'first name' from backend response
-      localStorage.setItem('user', firstName);
-      setUserName(firstName);
+      const firstName = response.data['first name']; // Access 'first name' from the backend response
+      localStorage.setItem('user', firstName); // Save the first name to localStorage
+      setUserName(firstName); // Update the userName state
     } catch (error) {
       console.error('Error fetching user profile:', error);
     }
   };
 
+  // Toggle dropdown menu visibility
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen);
   };
 
+  // Logout handler
   const handleLogout = () => {
-    // Clear all data from localStorage, including rememberMeData
+    // Clear all data from localStorage
     localStorage.clear();
+    localStorage.setItem('loggedOut', 'true'); // Set a flag for logout
 
-    // Set the loggedOut flag in localStorage
-    localStorage.setItem('loggedOut', 'true');
-
-    // Clear the userName and role states to reflect that the user has logged out
+    // Reset states
     setUserName('');
     setRole(null);
 
-    // Call the onLogout callback if it exists
+    // Trigger the onLogout callback if provided
     if (onLogout) {
       onLogout();
     }
@@ -79,12 +88,13 @@ const NavBar = ({ onLoginClick, onLogout, onEditProfileClick }) => {
     // Navigate to the home page
     navigate('/');
 
-    // Reload the page to ensure the UI updates
+    // Reload the page to reflect logout changes
     setTimeout(() => {
       window.location.reload();
     }, 100);
   };
 
+  // Handlers for admin actions
   const handleAddMovieClick = () => {
     navigate('/add-movie');
   };
@@ -97,18 +107,21 @@ const NavBar = ({ onLoginClick, onLogout, onEditProfileClick }) => {
     navigate('/edit-pricing');
   };
 
+  // Handle clicking on "Get Tickets"
   const handleGetTicketsClick = () => {
     if (!userName) {
-      setLoginPromptVisible(true);
+      setLoginPromptVisible(true); // Show login prompt if user is not logged in
     } else {
-      navigate('/showtimes');
+      navigate('/showtimes'); // Navigate to the showtimes page
     }
   };
 
+  // Close the login prompt modal
   const closeLoginPrompt = () => {
     setLoginPromptVisible(false);
   };
 
+  // Navigate to order history page
   const handleOrderHistoryClick = () => {
     navigate('/order-history');
   };
@@ -116,9 +129,11 @@ const NavBar = ({ onLoginClick, onLogout, onEditProfileClick }) => {
   return (
     <nav>
       <ul className="nav-list">
-        <li className="nav-item left"><Link to="/">Home</Link></li>
+        <li className="nav-item left">
+          <Link to="/">Home</Link>
+        </li>
 
-        {/* Render Admin Specific Buttons */}
+        {/* Render admin-specific buttons */}
         {role === 'admin' && (
           <>
             <li className="nav-item left">
@@ -139,7 +154,7 @@ const NavBar = ({ onLoginClick, onLogout, onEditProfileClick }) => {
           </>
         )}
 
-        {/* User Login/Logout Section */}
+        {/* User login/logout section */}
         <li className="nav-item right">
           {userName ? (
             <div className="user-section" ref={dropdownRef}>
@@ -148,17 +163,25 @@ const NavBar = ({ onLoginClick, onLogout, onEditProfileClick }) => {
               </span>
               {dropdownOpen && (
                 <div className="dropdown">
-                  <button className="dropdown-btn" onClick={onEditProfileClick}>Edit Profile</button>
+                  <button className="dropdown-btn" onClick={onEditProfileClick}>
+                    Edit Profile
+                  </button>
                   {/* Show Order History button for non-admin users */}
                   {role !== 'admin' && (
-                    <button className="dropdown-btn" onClick={handleOrderHistoryClick}>Order History</button>
+                    <button className="dropdown-btn" onClick={handleOrderHistoryClick}>
+                      Order History
+                    </button>
                   )}
-                  <button className="dropdown-btn" onClick={handleLogout}>Logout</button>
+                  <button className="dropdown-btn" onClick={handleLogout}>
+                    Logout
+                  </button>
                 </div>
               )}
             </div>
           ) : (
-            <button className="login-button" onClick={onLoginClick}>Login</button>
+            <button className="login-button" onClick={onLoginClick}>
+              Login
+            </button>
           )}
         </li>
       </ul>
@@ -167,9 +190,13 @@ const NavBar = ({ onLoginClick, onLogout, onEditProfileClick }) => {
       {loginPromptVisible && (
         <div className="modal">
           <div className="modal-content">
-            <span className="close" onClick={closeLoginPrompt}>&times;</span>
+            <span className="close" onClick={closeLoginPrompt}>
+              &times;
+            </span>
             <p>You need to sign in to get tickets</p>
-            <button className="login-button" onClick={onLoginClick}>Sign In</button>
+            <button className="login-button" onClick={onLoginClick}>
+              Sign In
+            </button>
           </div>
         </div>
       )}

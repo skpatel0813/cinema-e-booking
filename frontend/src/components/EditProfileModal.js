@@ -2,8 +2,12 @@ import React, { useState, useEffect } from 'react';
 import '../styles/EditProfileModal.css';
 import axios from 'axios';
 
+// Component to handle editing user profile data, including personal details, billing address, password, and payment methods
 const EditProfileModal = ({ isOpen, onClose }) => {
+  // State for storing user email
   const [email, setEmail] = useState('');
+
+  // State for managing user profile details
   const [profileData, setProfileData] = useState({
     firstName: '',
     lastName: '',
@@ -31,14 +35,19 @@ const EditProfileModal = ({ isOpen, onClose }) => {
     cvv3: ''
   });
 
+  // State for handling password update form inputs
   const [passwordData, setPasswordData] = useState({
     oldPassword: '',
     newPassword: ''
   });
 
+  // State to handle errors for general form updates
   const [error, setError] = useState('');
+
+  // State to handle password-specific validation errors
   const [passwordError, setPasswordError] = useState('');
 
+  // Effect to retrieve "remember me" email from local storage
   useEffect(() => {
     const rememberMeData = localStorage.getItem('rememberMeData');
     if (rememberMeData) {
@@ -51,6 +60,7 @@ const EditProfileModal = ({ isOpen, onClose }) => {
     }
   }, []);
 
+  // Effect to fetch profile details when modal opens
   useEffect(() => {
     if (isOpen && email) {
       console.log('Fetching profile data...');
@@ -59,10 +69,10 @@ const EditProfileModal = ({ isOpen, onClose }) => {
           console.log('Profile data received:', response.data);
           const data = response.data;
 
-          // Directly update profileData with the data from the response
+          // Update the state with the fetched profile data
           setProfileData({
             firstName: data['first name'] || '',
-            lastName: data['last name'] || '',  
+            lastName: data['last name'] || '',
             phone: data.phone || '',
             street: data.street || '',
             city: data.city || '',
@@ -94,33 +104,37 @@ const EditProfileModal = ({ isOpen, onClose }) => {
     }
   }, [isOpen, email]);
 
+  // Function to handle changes in profile inputs
   const handleProfileChange = (e) => {
     const { name, value } = e.target;
     setProfileData({ ...profileData, [name]: value });
   };
 
+  // Function to handle changes in password inputs
   const handlePasswordChange = (e) => {
     const { name, value } = e.target;
     setPasswordData({ ...passwordData, [name]: value });
   };
 
+  // Function to validate the strength of a password
   const isStrongPassword = (password) => {
     const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
     return strongPasswordRegex.test(password);
   };
 
+  // Handler for submitting the profile update form
   const handleProfileSubmit = (e) => {
     e.preventDefault();
     if (email) {
+      // Update general profile data
       axios.put(`http://localhost:8081/user/profile/${email}`, profileData)
-        .then(response => {
-          alert('Profile updated successfully');
-        })
+        .then(() => alert('Profile updated successfully'))
         .catch(error => {
           console.error('Error updating profile:', error);
           setError('Failed to update profile.');
         });
 
+      // Update billing address separately
       axios.put(`http://localhost:8081/user/profile/${email}/billing-address`, {
         billingStreet: profileData.billingStreet,
         billingCity: profileData.billingCity,
@@ -137,6 +151,7 @@ const EditProfileModal = ({ isOpen, onClose }) => {
     }
   };
 
+  // Handler for submitting the password change form
   const handlePasswordSubmit = (e) => {
     e.preventDefault();
     if (!isStrongPassword(passwordData.newPassword)) {
@@ -158,6 +173,7 @@ const EditProfileModal = ({ isOpen, onClose }) => {
     }
   };
 
+  // Handler for submitting the payment methods update form
   const handleCardSubmit = (e) => {
     e.preventDefault();
     if (email) {
@@ -182,6 +198,7 @@ const EditProfileModal = ({ isOpen, onClose }) => {
         },
       ];
 
+      // Validate card details
       const invalidCard = paymentMethods.some(card => {
         return (card.cardNumber && card.cardNumber.length < 16) || (card.cvv && card.cvv.length < 3);
       });
@@ -203,6 +220,7 @@ const EditProfileModal = ({ isOpen, onClose }) => {
     }
   };
 
+  // Render nothing if the modal is not open
   if (!isOpen) return null;
 
   return (
